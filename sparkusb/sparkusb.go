@@ -1,6 +1,7 @@
 package sparkusb
 
 import (
+	"fmt"
 	"log"
 
 	serial "go.bug.st/serial.v1"
@@ -40,7 +41,45 @@ func ListDevices(all bool) []*enumerator.PortDetails {
 	return tmp
 }
 
-func connect(com string) {
+func IsConnected() bool {
+	if localPort == nil {
+		return false
+	}
+	return true
+}
+
+/*
+func GetDefaultDevice() (device string) {
+	return ListDevices(false)[0].Name
+}
+
+func RunCommand(frame UsbFrame, device string, persist bool) error {
+	if IsConnected() == true {
+		if persist == false {
+			Disconnect()
+			err := Connect(device)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		err := Connect(device)
+		if err != nil {
+			return err
+		}
+	}
+
+	if persist == false {
+		defer Disconnect()
+	}
+
+	//write(frame)
+	return nil
+}
+*/
+
+func Connect(com string) error {
+	//Dummy parameters when using USB CDC driver
 	mode := &serial.Mode{
 		BaudRate: 9600,
 		Parity:   serial.NoParity,
@@ -49,22 +88,48 @@ func connect(com string) {
 	}
 	port, err := serial.Open(com, mode)
 
-	if err != nil {
-		log.Fatal(err)
+	if err == nil {
+		localPort = port
 	}
 
-	localPort = port
+	return err
 }
 
-func disconnect() {
+func Disconnect() error {
 	if localPort == nil {
-		return
+		return nil
 	}
 
 	err := localPort.Close()
-	if err != nil {
-		log.Fatal(err)
+	localPort = nil
+	return err
+}
+
+func write(frame UsbFrame) error {
+	if localPort == nil {
+		return fmt.Errorf("Attempted write to uninitialized serial port")
+	}
+	_, err := localPort.Write(SerializeUsbFrame(frame))
+	return err
+}
+
+func read() (UsbFrame, error) {
+	var frame UsbFrame
+	if localPort == nil {
+		return frame, fmt.Errorf("Attempted read to uninitialized serial port")
 	}
 
-	localPort = nil
+	var buf []byte
+	len, err := localPort.Read(buf)
+	if err != nil {
+		return frame, err
+	}
+
+	if len%FrameSize != 0 {
+		return frame, fmt.Errorf("Packet frame unaligned, size: %d", len)
+	}
+
+	frame, err = DeserializeUsbFrame(buf)
+
+	return frame, err
 }

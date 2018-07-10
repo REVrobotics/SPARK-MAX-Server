@@ -28,6 +28,9 @@ var cfgFile string
 // Device is the COM port
 var Device string
 
+// Persist mode keeps connection alive while application is running
+var Persist bool
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "revbldc",
@@ -63,6 +66,7 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.PersistentFlags().StringVarP(&Device, "device", "d", "", "Set the device COM port")
+	rootCmd.PersistentFlags().BoolVarP(&Persist, "interactive", "i", false, "Keep connection alive between commands")
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -15,10 +15,10 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
+
+var version bool
 
 // firmwareCmd represents the firmware command
 var firmwareCmd = &cobra.Command{
@@ -30,21 +30,17 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("firmware called")
-	},
+	Run: firmware,
 }
 
 func init() {
 	rootCmd.AddCommand(firmwareCmd)
 
-	// Here you will define your flags and configuration settings.
+	firmwareCmd.Flags().BoolVar(&version, "version", false, "Get current firmware version from device")
+}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// firmwareCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// firmwareCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func firmware(cmd *cobra.Command, args []string) {
+	if version == true {
+		return
+	}
 }

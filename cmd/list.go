@@ -24,9 +24,15 @@ import (
 var listAll bool
 var verbose bool
 
-func listDevices(all bool) (ports, details []string) {
-
-	return
+func listDevices(cmd *cobra.Command, args []string) {
+	ports := sparkusb.ListDevices(listAll)
+	for _, port := range ports {
+		if verbose {
+			fmt.Printf("Device: %v\n", port)
+		} else {
+			fmt.Printf("Device: %v %v\n", port.SerialNumber, port.Name)
+		}
+	}
 }
 
 // listCmd represents the list command
@@ -39,16 +45,7 @@ USB or selected device
 Use this command to list available connected devices if
 more than one device is connected. Output of this command
 can be used to specify device for other commands`,
-	Run: func(cmd *cobra.Command, args []string) {
-		ports := sparkusb.ListDevices(listAll)
-		for _, port := range ports {
-			if verbose {
-				fmt.Printf("Device: %v\n", port)
-			} else {
-				fmt.Printf("Device: %v %v\n", port.SerialNumber, port.Name)
-			}
-		}
-	},
+	Run: listDevices,
 }
 
 func init() {
