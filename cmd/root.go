@@ -16,11 +16,13 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	sparkgrpc "github.com/willtoth/USB-BLDC-TOOL/sparkgrpc"
 )
 
 var cfgFile string
@@ -30,6 +32,12 @@ var Device string
 
 // Persist mode keeps connection alive while application is running
 var Persist bool
+
+// Remote mode sets up a TCP/IP server to stream the command line
+var Remote bool
+
+// port for grpc server
+var port uint
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -42,7 +50,15 @@ revbldc tool provides bindings to talk to the REV motor
 controller and can be called via command line or
 externally. It can update firmware, set and get parameters
 and save/load configurations.`,
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		if Remote == true {
+			if err := sparkgrpc.RunServer(8001); err != nil {
+				log.Fatalf("Failed to start server %v", err)
+			}
+		} else {
+			cmd.Usage()
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -67,6 +83,8 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.PersistentFlags().StringVarP(&Device, "device", "d", "", "Set the device COM port")
 	rootCmd.PersistentFlags().BoolVarP(&Persist, "interactive", "i", false, "Keep connection alive between commands")
+	rootCmd.PersistentFlags().BoolVarP(&Remote, "remote", "r", false, "Run a TCP/IP server to stream command line")
+	rootCmd.PersistentFlags().UintVarP(&port, "port", "p", 8001, "Set port for grpc server")
 }
 
 // initConfig reads in config file and ENV variables if set.
