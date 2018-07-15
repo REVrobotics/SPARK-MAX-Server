@@ -11,3 +11,10 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 USB-BLDC-TOOL
+
+# nodejs
+node_modules
+build
+npm-debug.log
+.env
+.DS_Store

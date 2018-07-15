@@ -7,23 +7,42 @@ import (
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
 
 type sparkusbServer struct{}
 
-/*
 func (s *sparkusbServer) Connect(ctx context.Context, command *RootCommand) (*RootResponse, error) {
-
+	var resp RootResponse
+	err := sparkusb.Connect(command.Device)
+	if err != nil {
+		resp.Error = err.Error()
+	}
+	return &resp, err
 }
 
 func (s *sparkusbServer) Disconnect(ctx context.Context, command *RootCommand) (*RootResponse, error) {
-
+	var resp RootResponse
+	err := sparkusb.Disconnect()
+	if err != nil {
+		resp.Error = err.Error()
+	}
+	return &resp, err
 }
 
 func (s *sparkusbServer) List(ctx context.Context, command *ListRequest) (*ListResponse, error) {
+	var resp ListResponse
+	ports := sparkusb.ListDevices(command.All)
 
+	for _, p := range ports {
+		resp.DeviceList = append(resp.DeviceList, p.Name)
+	}
+
+	return &resp, nil
 }
 
+/*
 func (s *sparkusbServer) Firmware(ctx context.Context, command *FirmwareRequest) (*FirmwareResponse, error) {
 
 }

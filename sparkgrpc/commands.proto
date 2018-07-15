@@ -74,7 +74,7 @@ message firmwareStreamResponse
 
 message heartbeat {
     rootCommand root = 1;
-    bool ok = 2;
+    bool enable = 2;
 }
 
 message addressRequest {
