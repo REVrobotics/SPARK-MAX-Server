@@ -4,19 +4,19 @@ package sparkgrpc;
 
 // Interface exported by the server.
 service sparkusb {
-    /*
+    
     rpc Connect(rootCommand) returns (rootResponse) {}
     rpc Disconnect(rootCommand) returns (rootResponse) {}
 
     rpc List(listRequest) returns (listResponse) {}
-    rpc Firmware(firmwareRequest) returns (firmwareResponse) {}
-    rpc Heartbeat(heartbeat) returns (rootResponse) {}
-    rpc Address(addressRequest) returns (addressResponse) {}
-    rpc SetParameter(parameterRequest) returns (parameterResponse) {}
-    rpc GetParameter(parameterRequest) returns (parameterResponse) {}
-    rpc ListParameters(parameterListRequest) returns (parameterListResponse) {}
-    rpc Setpoint(setpointRequest) returns (setpointResponse) {}
-*/
+    //rpc Firmware(firmwareRequest) returns (firmwareResponse) {}
+    //rpc Heartbeat(heartbeat) returns (rootResponse) {}
+    //rpc Address(addressRequest) returns (addressResponse) {}
+    //rpc SetParameter(parameterRequest) returns (parameterResponse) {}
+    //rpc GetParameter(parameterRequest) returns (parameterResponse) {}
+    //rpc ListParameters(parameterListRequest) returns (parameterListResponse) {}
+    //rpc Setpoint(setpointRequest) returns (setpointResponse) {}
+
     rpc CommandLine(commandLineRequest) returns (commandLineResponse) {}
 }
 

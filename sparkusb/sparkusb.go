@@ -9,15 +9,14 @@ import (
 )
 
 const (
-	spark2PID   = "5740"
-	sparkTNGPID = "5740"
-	sparkVID    = "0483"
+	spark2PID = "5740"
+	sparkVID  = "0483"
 )
 
 var localPort serial.Port
 
 func isSparkPID(pid string) (isSpark bool) {
-	if spark2PID == pid || sparkTNGPID == pid {
+	if spark2PID == pid {
 		isSpark = true
 	}
 	return
@@ -48,11 +47,48 @@ func IsConnected() bool {
 	return true
 }
 
-/*
 func GetDefaultDevice() (device string) {
 	return ListDevices(false)[0].Name
 }
 
+func RunCommand(frame UsbFrame, device string, persist bool) error {
+	if IsConnected() == true {
+		if persist == false {
+			Disconnect()
+			err := Connect(device)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		err := Connect(device)
+		if err != nil {
+			return err
+		}
+	}
+
+	if persist == false {
+		defer Disconnect()
+	}
+
+	fmt.Println(frame)
+
+	err := write(frame)
+	if err != nil {
+		return err
+	}
+
+	out, err := read()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(out)
+
+	return nil
+}
+
+/*
 func RunCommand(frame UsbFrame, device string, persist bool) error {
 	if IsConnected() == true {
 		if persist == false {
@@ -81,7 +117,7 @@ func RunCommand(frame UsbFrame, device string, persist bool) error {
 func Connect(com string) error {
 	//Dummy parameters when using USB CDC driver
 	mode := &serial.Mode{
-		BaudRate: 9600,
+		BaudRate: 115200,
 		Parity:   serial.NoParity,
 		DataBits: 8,
 		StopBits: serial.OneStopBit,
@@ -109,7 +145,8 @@ func write(frame UsbFrame) error {
 	if localPort == nil {
 		return fmt.Errorf("Attempted write to uninitialized serial port")
 	}
-	_, err := localPort.Write(SerializeUsbFrame(frame))
+	writeData := SerializeUsbFrame(frame)
+	_, err := localPort.Write(writeData)
 	return err
 }
 
@@ -119,7 +156,7 @@ func read() (UsbFrame, error) {
 		return frame, fmt.Errorf("Attempted read to uninitialized serial port")
 	}
 
-	var buf []byte
+	buf := make([]byte, 128)
 	len, err := localPort.Read(buf)
 	if err != nil {
 		return frame, err
@@ -129,7 +166,10 @@ func read() (UsbFrame, error) {
 		return frame, fmt.Errorf("Packet frame unaligned, size: %d", len)
 	}
 
-	frame, err = DeserializeUsbFrame(buf)
+	//TODO: Depending on frame size, parse multiple frames
+	//Maybe a different function, as this would need to
+	//return multiple frames
+	frame, err = DeserializeUsbFrame(buf[:12])
 
 	return frame, err
 }

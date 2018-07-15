@@ -58,19 +58,19 @@ const (
 	bitsDeviceID     = 0x3F
 )
 
-type usbFrameHeader struct {
-	packetNum    uint32
-	deviceType   uint32
-	manufacturer uint32
-	apiClass     uint32
-	apiIndex     uint32
-	deviceID     uint32
+type UsbFrameHeader struct {
+	PacketNum    uint32
+	DeviceType   uint32
+	Manufacturer uint32
+	ApiClass     uint32
+	ApiIndex     uint32
+	DeviceID     uint32
 }
 
 // UsbFrame structure sent to device
 type UsbFrame struct {
-	header usbFrameHeader
-	data   [8]uint8
+	Header UsbFrameHeader
+	Data   [8]uint8
 }
 
 func DefaultFrame() UsbFrame {
@@ -82,9 +82,9 @@ func DefaultFrame() UsbFrame {
 // SerializeUsbFrame convert frame to byte array
 func SerializeUsbFrame(frame UsbFrame) (out []byte) {
 	out = make([]byte, 12)
-	header := usbFrameHeaderToUint32(frame.header)
+	header := usbFrameHeaderToUint32(frame.Header)
 
-	copy(frame.data[:], out[4:])
+	copy(out[4:], frame.Data[:])
 	binary.LittleEndian.PutUint32(out[:4], header)
 	return
 }
@@ -96,29 +96,29 @@ func DeserializeUsbFrame(in []byte) (UsbFrame, error) {
 		return frame, fmt.Errorf("Frame size mismatch, expected %d, was %d", FrameSize, len(in))
 	}
 
-	copy(in, frame.data[:])
-	tmp := binary.BigEndian.Uint32(in)
-	frame.header = uint32ToUsbFrameHeader(tmp)
+	copy(frame.Data[:], in[4:])
+	tmp := binary.LittleEndian.Uint32(in)
+	frame.Header = uint32ToUsbFrameHeader(tmp)
 
 	return frame, nil
 }
 
-func usbFrameHeaderToUint32(header usbFrameHeader) (output uint32) {
-	output |= header.packetNum << shiftPacketNum
-	output |= header.deviceType << shiftDeviceType
-	output |= header.manufacturer << shiftManufacturer
-	output |= header.apiClass << shiftAPIClass
-	output |= header.apiIndex << shiftAPIIndex
-	output |= header.deviceID << shiftDeviceID
+func usbFrameHeaderToUint32(header UsbFrameHeader) (output uint32) {
+	output |= header.PacketNum << shiftPacketNum
+	output |= header.DeviceType << shiftDeviceType
+	output |= header.Manufacturer << shiftManufacturer
+	output |= header.ApiClass << shiftAPIClass
+	output |= header.ApiIndex << shiftAPIIndex
+	output |= header.DeviceID << shiftDeviceID
 	return
 }
 
-func uint32ToUsbFrameHeader(input uint32) (header usbFrameHeader) {
-	header.packetNum = (input & bitsPacketNum) >> shiftPacketNum
-	header.deviceType = (input & bitsDeviceType) >> shiftDeviceType
-	header.manufacturer = (input & bitsManufacturer) >> shiftManufacturer
-	header.apiClass = (input & bitsAPIClass) >> shiftAPIClass
-	header.apiIndex = (input & bitsAPIIndex) >> shiftAPIIndex
-	header.deviceID = (input & bitsDeviceID) >> shiftDeviceID
+func uint32ToUsbFrameHeader(input uint32) (header UsbFrameHeader) {
+	header.PacketNum = (input & bitsPacketNum) >> shiftPacketNum
+	header.DeviceType = (input & bitsDeviceType) >> shiftDeviceType
+	header.Manufacturer = (input & bitsManufacturer) >> shiftManufacturer
+	header.ApiClass = (input & bitsAPIClass) >> shiftAPIClass
+	header.ApiIndex = (input & bitsAPIIndex) >> shiftAPIIndex
+	header.DeviceID = (input & bitsDeviceID) >> shiftDeviceID
 	return
 }

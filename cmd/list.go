@@ -33,6 +33,25 @@ func listDevices(cmd *cobra.Command, args []string) {
 			fmt.Printf("Device: %v %v\n", port.SerialNumber, port.Name)
 		}
 	}
+
+	spName := sparkusb.GetDefaultDevice()
+	frame := sparkusb.DefaultFrame()
+
+	frame.Data[1] = 1
+	frame.Data[3] = 3
+	frame.Header.DeviceType = 2
+
+	err := sparkusb.Connect(spName)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = sparkusb.RunCommand(frame, spName, false)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	sparkusb.Disconnect()
 }
 
 // listCmd represents the list command

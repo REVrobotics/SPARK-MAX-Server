@@ -12,43 +12,43 @@ import (
 type sparkusbServer struct{}
 
 /*
-func (s *sparkusbServer) Connect(ctx context.Context, cmd *RootCommand) (*RootResponse, error) {
+func (s *sparkusbServer) Connect(ctx context.Context, command *RootCommand) (*RootResponse, error) {
 
 }
 
-func (s *sparkusbServer) Disconnect(ctx context.Context, cmd *RootCommand) (*RootResponse, error) {
+func (s *sparkusbServer) Disconnect(ctx context.Context, command *RootCommand) (*RootResponse, error) {
 
 }
 
-func (s *sparkusbServer) List(ctx context.Context, cmd *ListRequest) (*ListResponse, error) {
+func (s *sparkusbServer) List(ctx context.Context, command *ListRequest) (*ListResponse, error) {
 
 }
 
-func (s *sparkusbServer) Firmware(ctx context.Context, cmd *FirmwareRequest) (*FirmwareResponse, error) {
+func (s *sparkusbServer) Firmware(ctx context.Context, command *FirmwareRequest) (*FirmwareResponse, error) {
 
 }
 
-func (s *sparkusbServer) Heartbeat(ctx context.Context, cmd *Heartbeat) (*RootResponse, error) {
+func (s *sparkusbServer) Heartbeat(ctx context.Context, command *Heartbeat) (*RootResponse, error) {
 
 }
 
-func (s *sparkusbServer) Address(ctx context.Context, cmd *AddressRequest) (*AddressResponse, error) {
+func (s *sparkusbServer) Address(ctx context.Context, command *AddressRequest) (*AddressResponse, error) {
 
 }
 
-func (s *sparkusbServer) SetParameter(ctx context.Context, cmd *ParameterRequest) (*ParameterResponse, error) {
+func (s *sparkusbServer) SetParameter(ctx context.Context, command *ParameterRequest) (*ParameterResponse, error) {
 
 }
 
-func (s *sparkusbServer) GetParameter(ctx context.Context, cmd *ParameterRequest) (*ParameterResponse, error) {
+func (s *sparkusbServer) GetParameter(ctx context.Context, command *ParameterRequest) (*ParameterResponse, error) {
 
 }
 
-func (s *sparkusbServer) ListParameters(ctx context.Context, cmd *ParameterListRequest) (*ParameterListResponse, error) {
+func (s *sparkusbServer) ListParameters(ctx context.Context, command *ParameterListRequest) (*ParameterListResponse, error) {
 
 }
 
-func (s *sparkusbServer) Setpoint(ctx context.Context, cmd *SetpointRequest) (*SetpointResponse, error) {
+func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest) (*SetpointResponse, error) {
 
 }
 */

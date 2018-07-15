@@ -52,7 +52,7 @@ externally. It can update firmware, set and get parameters
 and save/load configurations.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if Remote == true {
-			if err := sparkgrpc.RunServer(8001); err != nil {
+			if err := sparkgrpc.RunServer(port); err != nil {
 				log.Fatalf("Failed to start server %v", err)
 			}
 		} else {
