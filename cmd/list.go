@@ -35,11 +35,14 @@ func listDevices(cmd *cobra.Command, args []string) {
 	}
 
 	spName := sparkusb.GetDefaultDevice()
+  
+  fmt.Println(spName)
 
 	if spName == "" {
 		fmt.Println("No devices detected")
 		return
 	}
+  
 	frame := sparkusb.DefaultFrame()
 
 	err := sparkusb.Connect(spName)
