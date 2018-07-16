@@ -50,7 +50,7 @@ func listDevices(cmd *cobra.Command, args []string) {
 
 	frame.Header.ApiClass = sparkusb.ApiConfiguration
 	frame.Header.ApiIndex = 0x01
-	frame.Data[0] = 2
+	frame.Data[0] = 0
 	frame.Data[2] = 8
 
 	err = sparkusb.RunCommand(frame, spName, true)

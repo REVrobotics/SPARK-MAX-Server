@@ -120,7 +120,8 @@ func (s *sparkusbServer) GetParameter(ctx context.Context, command *ParameterReq
 
 	frame.Data[0] = uint8(command.Parameter)
 
-	fmt.Println("HERE1")
+	fmt.Print("Outgoing Frame: ")
+	fmt.Println(frame)
 
 	if err := sparkusb.Write(frame); err != nil {
 		//resp.Root.Error = err.Error()
@@ -128,21 +129,16 @@ func (s *sparkusbServer) GetParameter(ctx context.Context, command *ParameterReq
 		return &resp, err
 	}
 
-	fmt.Println("HERE2")
-
 	frameIn, err := sparkusb.Read()
-
-	fmt.Println("HERE3")
 
 	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
 		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
 	}
 
+	fmt.Print("Incoming Frame:")
 	fmt.Println(frameIn)
 
 	resp.Value = binary.LittleEndian.Uint32(frameIn.Data[:4])
-
-	fmt.Println(resp.Value)
 
 	//resp.Root.Error = err.Error()
 
