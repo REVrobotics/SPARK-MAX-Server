@@ -14,9 +14,9 @@ const (
 )
 
 const (
-	devBroadcast            = iota
+	DevBroadcast            = iota
 	devRobotController      = iota
-	devMotorController      = iota
+	DevMotorController      = iota
 	devRelayController      = iota
 	devGyroSensor           = iota
 	devAccelerometerSensor  = iota
@@ -29,15 +29,15 @@ const (
 )
 
 const (
-	manuBroadcast   = 0
-	manuNI          = 1
-	manuLM          = 2 //(TI)
-	manuDEKA        = 3
-	manuCTRE        = 4
-	manuREV         = 5
-	manuGrapple     = 6
-	manuMindSensors = 7
-	manuTeamUse     = 8
+	ManuBroadcast   = 0
+	ManuNI          = 1
+	ManuLM          = 2 //(TI)
+	ManuDEKA        = 3
+	ManuCTRE        = 4
+	ManuREV         = 5
+	ManuGrapple     = 6
+	ManuMindSensors = 7
+	ManuTeamUse     = 8
 )
 
 const (
@@ -58,6 +58,19 @@ const (
 	bitsDeviceID     = 0x3F
 )
 
+//This enum is unique to this controller
+const (
+	ApiDutyCycleControl = 0
+	ApiSpeedControl     = 1
+	ApiVoltageControl   = 2
+	ApiPositionControl  = 3
+	ApiCurrentControl   = 4
+	ApiStatus           = 5
+	ApiPeriodicStatus   = 6
+	ApiConfiguration    = 7
+	ApiAcknowledge      = 8
+)
+
 type UsbFrameHeader struct {
 	PacketNum    uint32
 	DeviceType   uint32
@@ -75,6 +88,9 @@ type UsbFrame struct {
 
 func DefaultFrame() UsbFrame {
 	var frame UsbFrame
+
+	frame.Header.DeviceType = DevMotorController
+	frame.Header.Manufacturer = ManuREV
 
 	return frame
 }

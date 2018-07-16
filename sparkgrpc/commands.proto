@@ -10,7 +10,7 @@ service sparkusb {
 
     rpc List(listRequest) returns (listResponse) {}
     //rpc Firmware(firmwareRequest) returns (firmwareResponse) {}
-    //rpc Heartbeat(heartbeat) returns (rootResponse) {}
+    rpc Heartbeat(heartbeat) returns (rootResponse) {}
     //rpc Address(addressRequest) returns (addressResponse) {}
     //rpc SetParameter(parameterRequest) returns (parameterResponse) {}
     //rpc GetParameter(parameterRequest) returns (parameterResponse) {}

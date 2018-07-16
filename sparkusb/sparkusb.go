@@ -48,7 +48,12 @@ func IsConnected() bool {
 }
 
 func GetDefaultDevice() (device string) {
-	return ListDevices(false)[0].Name
+	if devices := ListDevices(false); len(devices) > 0 {
+		return ListDevices(false)[0].Name
+	} else {
+		return ""
+	}
+
 }
 
 func RunCommand(frame UsbFrame, device string, persist bool) error {
@@ -71,19 +76,19 @@ func RunCommand(frame UsbFrame, device string, persist bool) error {
 		defer Disconnect()
 	}
 
-	fmt.Println(frame)
+	//fmt.Println(frame)
 
-	err := write(frame)
+	err := Write(frame)
 	if err != nil {
 		return err
 	}
 
-	out, err := read()
+	_, err = Read()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(out)
+	//fmt.Println(out)
 
 	return nil
 }
@@ -141,7 +146,7 @@ func Disconnect() error {
 	return err
 }
 
-func write(frame UsbFrame) error {
+func Write(frame UsbFrame) error {
 	if localPort == nil {
 		return fmt.Errorf("Attempted write to uninitialized serial port")
 	}
@@ -150,7 +155,7 @@ func write(frame UsbFrame) error {
 	return err
 }
 
-func read() (UsbFrame, error) {
+func Read() (UsbFrame, error) {
 	var frame UsbFrame
 	if localPort == nil {
 		return frame, fmt.Errorf("Attempted read to uninitialized serial port")

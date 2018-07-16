@@ -1,6 +1,7 @@
 package sparkgrpc
 
 import (
+	"encoding/binary"
 	"fmt"
 	"net"
 
@@ -46,10 +47,36 @@ func (s *sparkusbServer) List(ctx context.Context, command *ListRequest) (*ListR
 func (s *sparkusbServer) Firmware(ctx context.Context, command *FirmwareRequest) (*FirmwareResponse, error) {
 
 }
+*/
 
 func (s *sparkusbServer) Heartbeat(ctx context.Context, command *Heartbeat) (*RootResponse, error) {
+	var resp RootResponse
+	frame := sparkusb.DefaultFrame()
 
+	frame.Header.Manufacturer = sparkusb.ManuBroadcast
+	frame.Header.DeviceType = sparkusb.DevBroadcast
+	frame.Header.ApiClass = 0x00
+	frame.Header.ApiIndex = 0x01
+
+	if command.Enable {
+		frame.Data[0] = 1
+	}
+
+	if err := sparkusb.Write(frame); err != nil {
+		resp.Error = err.Error()
+		return &resp, err
+	}
+
+	frameIn, err := sparkusb.Read()
+
+	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
+		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
+	}
+
+	return &resp, err
 }
+
+/*
 
 func (s *sparkusbServer) Address(ctx context.Context, command *AddressRequest) (*AddressResponse, error) {
 
@@ -67,10 +94,47 @@ func (s *sparkusbServer) ListParameters(ctx context.Context, command *ParameterL
 
 }
 
-func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest) (*SetpointResponse, error) {
-
-}
 */
+
+func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest) (*SetpointResponse, error) {
+	var resp SetpointResponse
+	frame := sparkusb.DefaultFrame()
+
+	frame.Header.ApiClass = 0x00
+	frame.Header.ApiIndex = 0x02
+
+	if command.Setpoint < 0.001 && command.Setpoint > -0.001 {
+		frame.Data[0] = 0
+		frame.Data[1] = 0
+		frame.Data[2] = 0
+	} else {
+		if command.Setpoint > 1023 {
+			command.Setpoint = 1023
+		} else if command.Setpoint < -1024 {
+			command.Setpoint = 1024
+		}
+
+		tmparray := make([]byte, 4)
+		binary.BigEndian.PutUint32(tmparray[:], uint32(command.Setpoint))
+
+		//Copy 3 LSB of number (for some reason its way that CTRE does it)
+		//Implemented here (possible) for compatibility
+		copy(frame.Data[:3], tmparray[1:])
+	}
+
+	if err := sparkusb.Write(frame); err != nil {
+		resp.Root.Error = err.Error()
+		return &resp, err
+	}
+
+	frameIn, err := sparkusb.Read()
+
+	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
+		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
+	}
+
+	return &resp, err
+}
 
 func (s *sparkusbServer) CommandLine(ctx context.Context, command *CommandLineRequest) (*CommandLineResponse, error) {
 	if false {
