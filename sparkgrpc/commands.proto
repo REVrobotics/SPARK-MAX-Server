@@ -12,10 +12,10 @@ service sparkusb {
     //rpc Firmware(firmwareRequest) returns (firmwareResponse) {}
     rpc Heartbeat(heartbeat) returns (rootResponse) {}
     //rpc Address(addressRequest) returns (addressResponse) {}
-    //rpc SetParameter(parameterRequest) returns (parameterResponse) {}
-    //rpc GetParameter(parameterRequest) returns (parameterResponse) {}
+    rpc SetParameter(parameterRequest) returns (parameterResponse) {}
+    rpc GetParameter(parameterRequest) returns (parameterResponse) {}
     //rpc ListParameters(parameterListRequest) returns (parameterListResponse) {}
-    //rpc Setpoint(setpointRequest) returns (setpointResponse) {}
+    rpc Setpoint(setpointRequest) returns (setpointResponse) {}
 
     rpc CommandLine(commandLineRequest) returns (commandLineResponse) {}
 }
@@ -88,16 +88,30 @@ message addressResponse {
     rootResponse root = 3;
 }
 
+enum configParam {
+    CanID = 0;
+    InputMode = 1;
+    MotorType = 2;
+    CommAdv = 3;
+    SensorType = 4;
+    CtrlType = 5;
+    IdleMode = 6;
+    InputDeadband = 7;
+}
+  
+
 message parameterRequest { 
     rootCommand root = 1;
-    string parameter = 2;
-    bytes value = 3;
+    configParam parameter = 2;
+    fixed32 value = 3;
 }
 
+//Not fully yet implemented
 message parameterResponse {
-    string oldParameter = 1;
-    string newParameter = 2;
-    rootResponse root = 3;
+    fixed32 value = 1;
+    string oldParameter = 2;
+    string newParameter = 3;
+    rootResponse root = 4;
 }
 
 message parameterListRequest { 

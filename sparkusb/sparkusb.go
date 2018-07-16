@@ -76,19 +76,19 @@ func RunCommand(frame UsbFrame, device string, persist bool) error {
 		defer Disconnect()
 	}
 
-	//fmt.Println(frame)
+	fmt.Println(frame)
 
 	err := Write(frame)
 	if err != nil {
 		return err
 	}
 
-	_, err = Read()
+	out, err := Read()
 	if err != nil {
 		return err
 	}
 
-	//fmt.Println(out)
+	fmt.Println(out)
 
 	return nil
 }
