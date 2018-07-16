@@ -1,10 +1,12 @@
-const {app, BrowserWindow} = require("electron");
+const {app, BrowserWindow, ipcMain} = require("electron");
+
+require("electron-debug")({showDevTools: true, enabled: true});
 
 let win;
 
 function createWindow () {
     // Create the browser window.
-    win = new BrowserWindow({width: 320, height: 500, show: false});
+    win = new BrowserWindow({width: 480, height: 500, show: false});
 
     // and load the index.html of the app.
     win.loadURL("http://localhost:3000/");
@@ -13,10 +15,12 @@ function createWindow () {
        win.show();
     });
 
-    // Open the DevTools.
-    // win.webContents.openDevTools();
+    require("./main/sparkusb-communication");
 
     win.on('closed', () => {
+        setTimeout(() => {
+            ipcMain.send("kill-server");
+        }, 500);
         win = null;
     });
 }
