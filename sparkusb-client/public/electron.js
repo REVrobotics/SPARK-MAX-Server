@@ -21,7 +21,7 @@ function createWindow () {
       slashes: true
     }));
   } else {
-    win.loadURL("http://localhost:3000/");
+    win.loadURL("http://localhost:3001/");
   }
 
   win.webContents.on("did-finish-load", () => {

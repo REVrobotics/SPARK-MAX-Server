@@ -43,3 +43,13 @@
 .bp3-tab[aria-selected=true] {
   color: orange;
 }
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bp3-form-group {
+  width: 100%;
+}

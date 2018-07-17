@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Button, NumericInput} from "@blueprintjs/core";
+import {Button, FormGroup, NumericInput} from "@blueprintjs/core";
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 
@@ -22,6 +22,8 @@ class BasicTab extends Component {
 
   getCanID() {
     ipcRenderer.once("get-param-response", (event, error, response) => {
+      console.log("Response!");
+      console.log(error, response);
       if (!error) {
         this.setState({canID: response.value});
       }
@@ -44,9 +46,20 @@ class BasicTab extends Component {
   render() {
     const {canID} = this.state;
     return (
-      <div>
-        <NumericInput value={canID} onValueChange={this.changeCanID} min={0} max={24} disabled={!this.props.connected}/>
-        <span><Button onClick={this.setCanID} disabled={!this.props.connected}>Set CAN ID</Button></span>
+      <div className="form">
+        <FormGroup
+          label="Set Can ID"
+          labelFor="basic-can-id"
+        >
+          <NumericInput id="basic-can-id" value={canID} onValueChange={this.changeCanID} min={0} max={24} disabled={!this.props.connected}/>
+        </FormGroup>
+        <FormGroup
+          label="Get Can ID"
+          labelFor="basic-can-id-get"
+        >
+          <Button id="basic-can-id-get" disabled={!this.props.connected} onClick={this.getCanID}>Get CAN ID</Button>
+        </FormGroup>
+        {/*<span><Button onClick={this.setCanID} disabled={!this.props.connected}>Set CAN ID</Button></span>*/}
       </div>
     );
   }

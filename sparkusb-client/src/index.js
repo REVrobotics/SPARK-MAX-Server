@@ -9,10 +9,16 @@ window.eval = global.eval = () => {
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 
-ipcRenderer.once("start-server-success", () => {
+const headless = true;
+
+if (headless) {
+  ReactDOM.render(<App />, document.getElementById('root'));
+} else {
+  ipcRenderer.once("start-server-success", () => {
     ReactDOM.render(<App />, document.getElementById('root'));
-});
-ipcRenderer.once("start-server-error", (event, error) => {
-   console.log(error);
-});
-ipcRenderer.send("start-server");
+  });
+  ipcRenderer.once("start-server-error", (event, error) => {
+    console.log(error);
+  });
+  ipcRenderer.send("start-server");
+}

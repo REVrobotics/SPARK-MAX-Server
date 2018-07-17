@@ -15,7 +15,7 @@ ipcMain.on("start-server", (event) => {
         try {
             usbPID = execute(exePath, ["-r"], (error, data) => {
                 if (error) {
-                    event.sender.send("start-server-error", "There was en error while trying to start the sparkusb TCP/IP server: " + error);
+                    event.sender.send("start-server-error", "There was en error while running the sparkusb TCP/IP server: " + error);
                 } else {
                     event.sender.send("start-server-success");
                 }
@@ -29,13 +29,14 @@ ipcMain.on("start-server", (event) => {
     }
 });
 
-ipcMain.on("kill-server", (event) => {
+ipcMain.on("kill-server", () => {
     process.kill(usbPID);
 });
 
-ipcMain.on("test", (event) => {
-    client.connect({device: "COM5"}, (err, response) => {
-        event.sender.send("test-response", err, response);
+ipcMain.on("connect", (event, device) => {
+    console.log("Attempting to connect on " + device + "...");
+    client.connect({device: device}, (err, response) => {
+        event.sender.send("connect-response", err, response);
     });
 });
 

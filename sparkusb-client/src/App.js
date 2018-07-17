@@ -25,22 +25,42 @@ class App extends Component {
 
   retryConnection() {
     this.setState({connecting: true});
-    ipcRenderer.once("test-response", (event, error, response) => {
+    this.listDevices().then((deviceList) => {
+      if (deviceList.length > 0) {
+        ipcRenderer.once("connect-response", (event, error, response) => {
+          setTimeout(() => {
+            if (error) {
+              if (error.details === "Access is denied.") {
+                this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED"});
+              } else {
+                this.setState({connected: false, connecting: false, connectionStatus: "CONNECTION FAILED"});
+              }
+            } else {
+              this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED"});
+            }
+          }, 500);
+        });
+        ipcRenderer.send("connect", deviceList[0]);
+      } else {
+        this.setState({connected: false, connecting: false, connectionStatus: "CONNECTION FAILED"});
+      }
+    }).catch((error) => {
+      this.setState({connected: false, connecting: false, connectionStatus: "CONNECTION FAILED"});
       console.log(error);
-      console.log(response);
-      setTimeout(() => {
-        if (error) {
-          if (error.details === "Access is denied.") {
-            this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED"});
-          } else {
-            this.setState({connected: false, connecting: false, connectionStatus: "CONNECTION FAILED"});
-          }
-        } else {
-          this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED"});
-        }
-      }, 500);
     });
-    ipcRenderer.send("test");
+  }
+
+  listDevices() {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.once("list-devices-response", (event, error, response) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(response.deviceList);
+        }
+      });
+      ipcRenderer.send("list-devices");
+    });
   }
 
   render() {
@@ -52,21 +72,6 @@ class App extends Component {
           <Tab id="main-tab-basic" title="Basic" panel={<BasicTab connected={connected} />} />
           <Tab id="main-tab-advanced" title="Advanced" panel={<AdvancedTab/>} />
         </Tabs>
-        {/*<div>*/}
-        {/*<span>REVBLDC Connection Status: {connected ? "CONNECTED" : "NOT CONNECTED"}</span>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-        {/*<button onClick={this.retryConnection}>Retry Connection</button>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-        {/*<button onClick={this.listConnections}>List Devices</button>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-        {/*<span>Motor Controller Parameters</span>*/}
-        {/*<div>*/}
-        {/*<span>CanID: {canID}</span>*/}
-        {/*</div>*/}
-        {/*</div>*/}
       </div>
     );
   }
