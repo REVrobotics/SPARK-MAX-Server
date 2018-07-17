@@ -1,9 +1,12 @@
 {
   "name": "sparkusb-client",
+  "author": "REV Robotics",
+  "description": "Client for TNG",
   "version": "0.1.0",
   "private": true,
-  "main": "main.js",
+  "main": "public/electron.js",
   "dependencies": {
+    "@blueprintjs/core": "^3.0.1",
     "grpc": "^1.13.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
@@ -12,15 +15,34 @@
   "devDependencies": {
     "concurrently": "^3.6.0",
     "electron": "^2.0.5",
-    "electron-debug": "^2.0.0"
+    "electron-builder": "^20.22.0",
+    "electron-debug": "^2.0.0",
+    "gulp": "^3.9.1"
   },
   "scripts": {
     "start": "concurrently --kill-others \"npm run desktop\" \"npm run react\"",
     "desktop": "electron .",
     "react": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "gulp post-build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "postinstall": "npm rebuild --runtime=electron --target=2.0.5 --disturl=https://atom.io/download/atom-shell"
-  }
+    "postinstall": "npm rebuild --runtime=electron --target=2.0.5 --disturl=https://atom.io/download/atom-shell",
+    "dist": "build"
+  },
+  "build": {
+    "appId": "org.revrobotics.tng.client",
+    "productName": "TNG Client",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "NSIS"
+    }
+  },
+  "homepage": "./"
 }

@@ -3,7 +3,7 @@ const execute = require("child_process").execFile;
 const path = require("path");
 const fs = require("fs");
 const grpc = require("grpc");
-const PROTO_BUFFERS = path.join(__dirname, "../../sparkgrpc/commands.proto");
+const PROTO_BUFFERS = path.join(__dirname, "../sparkusb/commands.proto");
 const revCommands = grpc.load(PROTO_BUFFERS).sparkgrpc;
 const client = new revCommands.sparkusb('localhost:8001', grpc.credentials.createInsecure());
 

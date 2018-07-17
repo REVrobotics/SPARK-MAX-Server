@@ -1,5 +1,45 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+#main-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#status-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 7px 5px 7px;
+  background-color: orange;
+  color: #ffffff;
+}
+
+#status-bar-status {
+  height: 100%;
+  width: 75%;
+}
+
+#status-bar-button {
+  height: 100%;
+  width: 25%;
+}
+
+.bp3-tabs {
+  padding: 0 10px 0 10px;
+}
+
+.bp3-tab:focus {
+  outline: none;
+}
+
+.bp3-tab:hover {
+  color: orange !important;
+}
+
+.bp3-tab-indicator-wrapper .bp3-tab-indicator {
+  background-color: orange;
+}
+
+.bp3-tab[aria-selected=true] {
+  color: orange;
 }
