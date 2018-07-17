@@ -39,15 +39,15 @@ ipcMain.on("test", (event) => {
     });
 });
 
-ipcMain.on("set-can-id", (event, id) => {
-    client.setParameter({value : id, parameter: 0}, (err, response) => {
-        event.sender.send("set-can-id-response", err, response);
+ipcMain.on("set-param", (event, parameter, value) => {
+    client.setParameter({value: value, parameter: parameter}, (err, response) => {
+        event.sender.send("set-param-response", err, response);
     });
 });
 
-ipcMain.on("get-can-id", (event, parameter) => {
-    client.getParameter({value: parameter, parameter: 0}, (err, response) => {
-        event.sender.send("get-can-id-response", err, response);
+ipcMain.on("get-param", (event, parameter) => {
+    client.getParameter({parameter: parameter}, (err, response) => {
+        event.sender.send("get-param-response", err, response);
     });
 });
 

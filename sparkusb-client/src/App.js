@@ -17,8 +17,6 @@ class App extends Component {
       response: ""
     };
     this.retryConnection = this.retryConnection.bind(this);
-    this.getCanID = this.getCanID.bind(this);
-    this.listConnections = this.listConnections.bind(this);
   }
 
   componentDidMount() {
@@ -28,6 +26,8 @@ class App extends Component {
   retryConnection() {
     this.setState({connecting: true});
     ipcRenderer.once("test-response", (event, error, response) => {
+      console.log(error);
+      console.log(response);
       setTimeout(() => {
         if (error) {
           if (error.details === "Access is denied.") {
@@ -37,26 +37,10 @@ class App extends Component {
           }
         } else {
           this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED"});
-          this.getCanID();
         }
       }, 500);
     });
     ipcRenderer.send("test");
-  }
-
-  getCanID() {
-    ipcRenderer.once("get-can-id-response", (event, error, response) => {
-      console.log(error, response);
-    });
-    ipcRenderer.send("get-can-id", 0);
-  }
-
-  listConnections() {
-    ipcRenderer.once("list-devices-response", (event, error, response) => {
-      console.log(error);
-      console.log(response);
-    });
-    ipcRenderer.send("list-devices");
   }
 
   render() {
@@ -65,7 +49,7 @@ class App extends Component {
       <div id="main-container">
         <ConnectionStatusBar connected={connected} connecting={connecting} connectionStatus={connectionStatus} onConnect={this.retryConnection} />
         <Tabs id="main-tabs" defaultSelectedTabId="main-tab-basic">
-          <Tab id="main-tab-basic" title="Basic" panel={<BasicTab/>} />
+          <Tab id="main-tab-basic" title="Basic" panel={<BasicTab connected={connected} />} />
           <Tab id="main-tab-advanced" title="Advanced" panel={<AdvancedTab/>} />
         </Tabs>
         {/*<div>*/}
