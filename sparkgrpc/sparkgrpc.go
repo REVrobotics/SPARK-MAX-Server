@@ -63,7 +63,7 @@ func (s *sparkusbServer) Heartbeat(ctx context.Context, command *Heartbeat) (*Ro
 	}
 
 	if err := sparkusb.Write(frame); err != nil {
-		resp.Error = err.Error()
+		//resp.Error = err.Error()
 		return &resp, err
 	}
 
@@ -73,7 +73,11 @@ func (s *sparkusbServer) Heartbeat(ctx context.Context, command *Heartbeat) (*Ro
 		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
 	}
 
-	return &resp, err
+  //resp.Error = err.Error()
+  
+  fmt.Println(err)
+
+	return &resp, nil
 }
 
 /*
@@ -106,9 +110,10 @@ func (s *sparkusbServer) SetParameter(ctx context.Context, command *ParameterReq
 		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
 	}
 
-	//resp.Root.Error = err.Error()
+	//resp.Root.Error = err.Error()  
+  fmt.Println(err)
 
-	return &resp, err
+	return &resp, nil
 }
 
 func (s *sparkusbServer) GetParameter(ctx context.Context, command *ParameterRequest) (*ParameterResponse, error) {
@@ -141,8 +146,13 @@ func (s *sparkusbServer) GetParameter(ctx context.Context, command *ParameterReq
 	resp.Value = binary.LittleEndian.Uint32(frameIn.Data[:4])
 
 	//resp.Root.Error = err.Error()
+  
+  fmt.Println(resp)
+  
+  //resp.Root.Error = err.Error()
+  fmt.Println(err)
 
-	return &resp, err
+	return &resp, nil
 }
 
 /*
@@ -180,7 +190,7 @@ func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest)
 	}
 
 	if err := sparkusb.Write(frame); err != nil {
-		resp.Root.Error = err.Error()
+		//resp.Root.Error = err.Error()
 		return &resp, err
 	}
 
@@ -189,8 +199,11 @@ func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest)
 	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
 		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
 	}
+  
+  //resp.Root.Error = err.Error()
+  fmt.Println(err)
 
-	return &resp, err
+	return &resp, nil
 }
 
 func (s *sparkusbServer) CommandLine(ctx context.Context, command *CommandLineRequest) (*CommandLineResponse, error) {
