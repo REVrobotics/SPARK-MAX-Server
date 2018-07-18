@@ -85,7 +85,7 @@ func RunCommand(frame UsbFrame, device string, persist bool) error {
 		return err
 	}
   
-  time.Sleep(time.Millisecond * 1)
+  time.Sleep(time.Millisecond * 2)
 
 	out, err := Read()
 	if err != nil {
@@ -171,7 +171,7 @@ func Write(frame UsbFrame) error {
   //1 byte frames... Maybe reading the buffer when size = 1?
   //Maybe on the read side call read with size 1
   //in a loop of 12 with an overall timeout?
-  time.Sleep(time.Millisecond * 1)
+  time.Sleep(time.Millisecond * 2)
 	return err
 }
 
