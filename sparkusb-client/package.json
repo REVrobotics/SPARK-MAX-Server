@@ -2,7 +2,7 @@
   "name": "sparkusb-client",
   "author": "REV Robotics",
   "description": "Client for TNG",
-  "version": "0.1.0",
+  "version": "0.5.3",
   "private": true,
   "main": "public/electron.js",
   "dependencies": {
@@ -13,19 +13,22 @@
     "grpc": "^1.13.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "serialport": "^6.2.1"
   },
   "devDependencies": {
     "concurrently": "^3.6.0",
     "electron": "^2.0.5",
     "electron-builder": "^20.22.0",
     "electron-debug": "^2.0.0",
+    "electron-rebuild": "^1.8.1",
     "gulp": "^3.9.1"
   },
   "scripts": {
     "start": "concurrently --kill-others \"npm run desktop\" \"npm run react\"",
     "desktop": "electron .",
     "react": "react-scripts start",
+    "prebuild": "electron-rebuild",
     "build": "react-scripts build",
     "postbuild": "gulp post-build",
     "test": "react-scripts test --env=jsdom",
@@ -41,7 +44,8 @@
       "node_modules/**/*"
     ],
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "build/resources"
     },
     "win": {
       "target": "NSIS"

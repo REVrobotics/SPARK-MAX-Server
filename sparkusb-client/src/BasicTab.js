@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Alert, Button, FormGroup, NumericInput, Radio, RadioGroup, Switch} from "@blueprintjs/core";
 import {Select} from "@blueprintjs/select";
 import {MotorTypes, renderMotors} from "./data/MotorTypes";
+import {saveBasicConfig} from "./ConfigurationManager";
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 
@@ -11,11 +12,12 @@ class BasicTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeMotorType: MotorTypes[0],
-      canID: -1,
+      activeMotorType:  this.props.parameters[2] === 1 ? MotorTypes[0] : MotorTypes[1],
+      canID: this.props.parameters[0] || 0,
       currentLimit: 40,
-      isCoastMode: false,
-      updateRequested: false
+      isCoastMode: this.props.parameters[6] === 0 || false,
+      updateRequested: false,
+      savingConfig: false
     };
 
     /* Form control methods */
@@ -24,9 +26,6 @@ class BasicTab extends Component {
     this.changeIdleMode = this.changeIdleMode.bind(this);
     this.changeCurrentLimit = this.changeCurrentLimit.bind(this);
 
-    /* Parameter set methods */
-    this.setCanID = this.setCanID.bind(this);
-
     this.openConfirmModal = this.openConfirmModal.bind(this);
     this.closeConfirmModal = this.closeConfirmModal.bind(this);
     this.updateConfiguration = this.updateConfiguration.bind(this);
@@ -34,16 +33,16 @@ class BasicTab extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.connected !== this.props.connected && this.props.connected === true) {
-      // this.getCanID();
+      console.log("Pre-populating values...");
+      this.setState({
+        activeMotorType:  this.props.parameters[2] === 1 ? MotorTypes[0] : MotorTypes[1],
+        canID: this.props.parameters[0] || 0,
+        currentLimit: 40,
+        isCoastMode: this.props.parameters[6] === 0 || false,
+        updateRequested: false,
+        savingConfig: false
+      });
     }
-  }
-
-  setCanID() {
-    console.log(this.state.canID);
-    ipcRenderer.once("set-param-response", (event, error, response) => {
-      console.log(error, response);
-    });
-    ipcRenderer.send("set-param", 0, this.state.canID);
   }
 
   changeCanID(number) {
@@ -71,12 +70,20 @@ class BasicTab extends Component {
   }
 
   updateConfiguration() {
-    console.log(this.state);
-    this.setCanID();
+    this.setState({savingConfig: true});
+    const motorType = this.state.activeMotorType.kMotorType;
+    const idleMode = this.state.isCoastMode ? 0 : 1;
+    const canID = this.state.canID;
+    saveBasicConfig(this.props.connectedDevice, canID, motorType, idleMode).then((values) => {
+      this.setState({savingConfig: false});
+    }).catch((error) => {
+      this.setState({savingConfig: false});
+      console.log(error);
+    });
   }
 
   render() {
-    const {activeMotorType, isCoastMode, currentLimit, canID, updateRequested} = this.state;
+    const {activeMotorType, isCoastMode, currentLimit, canID, updateRequested, savingConfig} = this.state;
     return (
       <div>
         <Alert isOpen={updateRequested} cancelButtonText="Cancel" confirmButtonText="Yes, Update" intent="SUCCESS" onCancel={this.closeConfirmModal} onClose={this.closeConfirmModal} onConfirm={this.updateConfiguration}>
@@ -126,7 +133,7 @@ class BasicTab extends Component {
           </FormGroup>
         </div>
         <div className="form">
-          <Button className="rev-btn" disabled={!this.props.connected} onClick={this.openConfirmModal}>Update Configuration</Button>
+          <Button className="rev-btn" disabled={!this.props.connected} loading={savingConfig} onClick={this.openConfirmModal}>Update Configuration</Button>
         </div>
       </div>
     );

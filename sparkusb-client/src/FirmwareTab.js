@@ -27,7 +27,7 @@ class FirmwareTab extends Component {
       <div>
         <div id="firmware-console">
           {outputText.map(line => {
-            return <p>{line}</p>;
+            return <p key={line}>{line}</p>;
           })}
         </div>
         <div id="firmware-bar">

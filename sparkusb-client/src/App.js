@@ -6,7 +6,7 @@ import ConnectionStatusBar from "./ConnectionStatusBar";
 import RunTab from "./RunTab";
 import PIDTunerTab from "./PIDTunerTab";
 import FirmwareTab from "./FirmwareTab";
-import {getAllParameters} from "./ConfigurationManager";
+import {getAllParametersSequential} from "./ConfigurationManager";
 import HelpTab from "./HelpTab";
 
 const ipcRenderer = window.require("electron").ipcRenderer;
@@ -17,13 +17,23 @@ class App extends Component {
     this.state = {
       connected: false,
       connecting: false,
+      connectedDevice: "",
       connectionStatus: "CONNECTION FAILED",
       requestParam: 0,
       response: "",
-      appLogs: []
+      appLogs: [],
+      parameters: []
     };
     this.retryConnection = this.retryConnection.bind(this);
+    this.disconnect = this.disconnect.bind(this);
     this.pushAppLog = this.pushAppLog.bind(this);
+
+    ipcRenderer.on("disconnection", (event, device) => {
+      if (this.state.connected) {
+        console.log("USB unplugged. Forcing disconnection...");
+        this.disconnect();
+      }
+    });
   }
 
   pushAppLog(log) {
@@ -35,18 +45,27 @@ class App extends Component {
     this.retryConnection();
   }
 
+  disconnect() {
+    this.setState({connecting: true, connected: false, connectionStatus: "DISCONNECTING..."});
+    ipcRenderer.once("disconnect-response", (event, error, response) => {
+      console.log(error, response);
+      this.setState({connecting: false, connected: false, connectionStatus: "READY TO CONNECT"});
+    });
+    ipcRenderer.send("disconnect", this.state.connectedDevice);
+  }
+
   retryConnection() {
-    this.setState({connecting: true, connectionStatus: "CONNECTING..."});
+    this.setState({connecting: true, connectionStatus: "CONNECTING...", connectedDevice: "", parameters: []});
     this.listDevices().then((deviceList) => {
       if (deviceList.length > 0) {
         ipcRenderer.once("connect-response", (event, error, response) => {
           if (error) {
             this.pushAppLog("Error while connecting to device. " + error.details);
             if (error.details === "Access is denied.") {
-              getAllParameters().then((values) => {
+              getAllParametersSequential().then((values) => {
                 console.log(values);
                 this.pushAppLog("Successfully pulled device parameters.");
-                this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED"});
+                this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED", connectedDevice: deviceList[0], parameters: values});
               }).catch((error) => {
                 this.pushAppLog("Error while getting device parameters. " + error.details);
                 this.setState({connected: false, connecting: false, connectionStatus: "CONNECTION FAILED"});
@@ -55,12 +74,12 @@ class App extends Component {
               this.setState({connected: false, connecting: false, connectionStatus: "CONNECTION FAILED"});
             }
           } else {
-            getAllParameters().then((values) => {
+            getAllParametersSequential().then((values) => {
               console.log(values);
               this.pushAppLog("Successfully pulled device parameters.");
-              this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED"});
+              this.setState({connected: true, connecting: false, connectionStatus: "CONNECTED", connectedDevice: deviceList[0], parameters: values});
             }).catch((error) => {
-              this.pushAppLog("Error while getting device parameters. " + error.detail);
+              this.pushAppLog("Error while getting device parameters. " + error.details);
               this.setState({connected: false, connecting: false, connectionStatus: "CONNECTION FAILED"});
             });
           }
@@ -89,12 +108,12 @@ class App extends Component {
   }
 
   render() {
-    const {connected, connecting, connectionStatus, appLogs} = this.state;
+    const {connected, connecting, connectionStatus, connectedDevice, appLogs, parameters} = this.state;
     return (
       <div id="main-container">
-        <ConnectionStatusBar connected={connected} connecting={connecting} connectionStatus={connectionStatus} onConnect={this.retryConnection} onLog={this.pushAppLog} />
-        <Tabs id="main-tabs" defaultSelectedTabId="main-tab-basic">
-          <Tab id="main-tab-basic" title="Basic" panel={<BasicTab connected={connected} />} />
+        <ConnectionStatusBar connected={connected} connecting={connecting} connectionStatus={connectionStatus} onConnect={connected ? this.disconnect : this.retryConnection} onLog={this.pushAppLog} />
+        <Tabs id="main-tabs" defaultSelectedTabId="main-tab-basic" renderActiveTabPanelOnly={true}>
+          <Tab id="main-tab-basic" title="Basic" panel={<BasicTab connectedDevice={connectedDevice} connected={connected} parameters={parameters} />} />
           <Tab id="main-tab-advanced" title="Advanced" panel={<AdvancedTab connected={connected} />} />
           <Tab id="main-tab-run" title="Run" panel={<RunTab connected={connected} />} />
           <Tab id="main-tab-pid" title="PID Tuner" panel={<PIDTunerTab connected={connected} />} />

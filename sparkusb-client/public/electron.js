@@ -12,7 +12,7 @@ let win;
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 600, height: 550, show: false, resizable: false});
+  win = new BrowserWindow({width: 600, height: 550, show: false, resizable: false, icon: "./favicon.ico"});
 
   if (production) {
     win.loadURL(url.format({
@@ -21,7 +21,7 @@ function createWindow () {
       slashes: true
     }));
   } else {
-    win.loadURL("http://localhost:3001/");
+    win.loadURL("http://localhost:3000/");
   }
 
   win.webContents.on("did-finish-load", () => {

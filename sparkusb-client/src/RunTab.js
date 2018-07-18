@@ -1,6 +1,9 @@
 import React, {Component} from "react";
-import {FormGroup, Slider, Radio, RadioGroup} from "@blueprintjs/core";
+import {Button, FormGroup, Slider, Radio, RadioGroup} from "@blueprintjs/core";
 import ReactEcharts from "echarts-for-react";
+import {disableHeartbeat, enableHeartbeat, setSetpoint} from "./ConfigurationManager";
+
+const ipcRenderer = window.require("electron").ipcRenderer;
 
 class RunTab extends Component {
   constructor(props) {
@@ -13,19 +16,59 @@ class RunTab extends Component {
         },
         yAxis: {
           type: 'value',
-          name: "Voltage"
+          name: "Percent"
         },
         series: [{
-          data: [0.1, 0.25, 0.33, 0.5, 0.75, 0.8, 1.0],
+          data: [],
           type: 'line'
         }]
       },
       mode: "Percent",
       output: 0,
+      running: false
     };
 
     this.changeMode = this.changeMode.bind(this);
     this.changeOutput = this.changeOutput.bind(this);
+
+    this.run = this.run.bind(this);
+    this.stop = this.stop.bind(this);
+
+    this.updateGraph = this.updateGraph.bind(this);
+
+    ipcRenderer.on("enable-heartbeat-response", this.updateGraph);
+  }
+
+  componentWillUnmount() {
+    if (this.state.running) {
+      this.stop();
+    }
+    ipcRenderer.removeListener("enable-heartbeat-response", this.updateGraph);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.connected !== this.props.connected && this.props.connected === false) {
+      if (this.state.running) {
+        this.stop();
+      }
+    }
+  }
+
+  updateGraph(event, error, response) {
+    // this.state.option.series.data.push(0.1);
+    this.forceUpdate();
+  }
+
+  run() {
+    console.log("Starting heartbeat");
+    this.setState({running: true});
+    enableHeartbeat(20);
+  }
+
+  stop() {
+    console.log("Stopping heartbeat");
+    this.setState({running: false});
+    disableHeartbeat();
   }
 
   changeMode(value) {
@@ -40,7 +83,7 @@ class RunTab extends Component {
           name: value.currentTarget.value
         },
         series: [{
-          data: [0.1, 0.25, 0.33, 0.5, 0.75, 0.8, 1.0],
+          data: [],
           type: 'line'
         }]
       },
@@ -49,11 +92,23 @@ class RunTab extends Component {
   }
 
   changeOutput(value) {
+    if (Math.abs(this.state.output - value) > 0.1) {
+      if (this.state.output - value < 0) {
+        value = this.state.output + 0.1;
+      } else {
+        value = this.state.output - 0.1;
+      }
+    }
     this.setState({output: value});
+    if (value < 0) {
+      setSetpoint(value * 1024);
+    } else {
+      setSetpoint(value * 1023);
+    }
   }
 
   render() {
-    const {option, mode, output} = this.state;
+    const {option, mode, output, running} = this.state;
     return (
       <div>
         <ReactEcharts
@@ -83,7 +138,12 @@ class RunTab extends Component {
             label="Motor Output"
             className="form-group-half"
           >
-            <Slider disabled={!this.props.connected} initialValue={output} value={output} min={0} max={1.0} stepSize={0.01} onChange={this.changeOutput} />
+            <Slider initialValue={output} disabled={!this.props.connected} value={output} min={-1.0} max={1.0} stepSize={0.01} onChange={this.changeOutput} />
+          </FormGroup>
+          <FormGroup
+            className="form-group-quarter"
+          >
+            <Button className="rev-btn" disabled={!this.props.connected} onClick={running ? this.stop : this.run}>{running ? "Stop" : "Run"}</Button>
           </FormGroup>
         </div>
       </div>

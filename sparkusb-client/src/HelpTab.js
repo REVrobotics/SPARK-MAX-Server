@@ -12,7 +12,6 @@ class HelpTab extends Component {
   }
 
   viewLogs() {
-    console.log(this.props.logs);
     this.setState({viewingLogs: true});
   }
 
@@ -34,7 +33,7 @@ class HelpTab extends Component {
           <div className="bp3-dialog-body">
             {this.props.logs.length === 0 && <span><i>There are currently no application logs.</i></span>}
             {this.props.logs.map(log => {
-              return <p>{log}</p>
+              return <p key={log}>{log}</p>
             })}
           </div>
         </Dialog>
