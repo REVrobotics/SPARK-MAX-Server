@@ -1,4 +1,4 @@
-const {ipcMain} = require("electron");
+const {ipcMain, dialog, BrowserWindow} = require("electron");
 const execute = require("child_process").execFile;
 const path = require("path");
 const fs = require("fs");
@@ -41,7 +41,9 @@ ipcMain.on("connect", (event, device) => {
 });
 
 ipcMain.on("set-param", (event, parameter, value) => {
+    console.log("SET PARAM");
     client.setParameter({value: value, parameter: parameter}, (err, response) => {
+      console.log("SET PARAM RESPONSE");
         event.sender.send("set-param-response", err, response);
     });
 });
@@ -55,5 +57,17 @@ ipcMain.on("get-param", (event, parameter) => {
 ipcMain.on("list-devices", (event) => {
     client.list({all: true}, (err, response) => {
         event.sender.send("list-devices-response", err, response);
+    });
+});
+
+ipcMain.on("request-firmware", (event) => {
+    dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
+      title: "Firmware Loading",
+      filters: [{name: "Firmware Files (*.bin)", extensions: ["bin"]}],
+      properties: ["openFile"]
+    }, (filePaths) => {
+      if (filePaths && filePaths[0]) {
+        event.sender.send("request-firmware-response", filePaths[0]);
+      }
     });
 });

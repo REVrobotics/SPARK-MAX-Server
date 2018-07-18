@@ -12,7 +12,7 @@ let win;
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 580, height: 500, show: false, resizable: false});
+  win = new BrowserWindow({width: 600, height: 550, show: false, resizable: false});
 
   if (production) {
     win.loadURL(url.format({

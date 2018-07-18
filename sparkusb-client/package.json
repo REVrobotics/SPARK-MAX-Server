@@ -7,6 +7,9 @@
   "main": "public/electron.js",
   "dependencies": {
     "@blueprintjs/core": "^3.0.1",
+    "@blueprintjs/select": "^3.0.0",
+    "echarts": "^4.1.0",
+    "echarts-for-react": "^2.0.13",
     "grpc": "^1.13.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
