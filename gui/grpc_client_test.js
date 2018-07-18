@@ -14,7 +14,7 @@ client.connect({device:"/dev/ttyACM0"}, function(err, response) {
 
 
 
-  client.getParameter({value : 5, parameter:0}, function(err, response) {
+  client.getParameter({value : 8, parameter:0}, function(err, response) {
     console.log('Reponse:', response);
   });
 

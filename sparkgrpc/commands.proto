@@ -14,6 +14,7 @@ service sparkusb {
     //rpc Address(addressRequest) returns (addressResponse) {}
     rpc SetParameter(parameterRequest) returns (parameterResponse) {}
     rpc GetParameter(parameterRequest) returns (parameterResponse) {}
+    rpc BurnFlash(rootCommand) returns (rootResponse) {}
     //rpc ListParameters(parameterListRequest) returns (parameterListResponse) {}
     rpc Setpoint(setpointRequest) returns (setpointResponse) {}
 
