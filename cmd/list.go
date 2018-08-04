@@ -36,10 +36,13 @@ func listDevices(cmd *cobra.Command, args []string) {
 
 	spName := sparkusb.GetDefaultDevice()
 
+	fmt.Println(spName)
+
 	if spName == "" {
 		fmt.Println("No devices detected")
 		return
 	}
+
 	frame := sparkusb.DefaultFrame()
 
 	err := sparkusb.Connect(spName)
@@ -49,9 +52,19 @@ func listDevices(cmd *cobra.Command, args []string) {
 	}
 
 	frame.Header.ApiClass = sparkusb.ApiConfiguration
-	frame.Header.ApiIndex = 0x01
+	frame.Header.ApiIndex = 0x00
 	frame.Data[0] = 0
-	frame.Data[2] = 8
+	frame.Data[2] = 12
+
+	err = sparkusb.RunCommand(frame, spName, true)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	frame.Header.ApiClass = sparkusb.ApiConfiguration
+	frame.Header.ApiIndex = 0x02
+	frame.Data[0] = 0xA3
+	frame.Data[1] = 0x3A
 
 	err = sparkusb.RunCommand(frame, spName, true)
 	if err != nil {

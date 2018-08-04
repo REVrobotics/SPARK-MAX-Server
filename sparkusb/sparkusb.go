@@ -3,9 +3,11 @@ package sparkusb
 import (
 	"fmt"
 	"log"
+  "time"
 
-	serial "go.bug.st/serial.v1"
+	//serial "go.bug.st/serial.v1"
 	enumerator "go.bug.st/serial.v1/enumerator"
+  serial "github.com/tarm/serial"
 )
 
 const (
@@ -13,7 +15,7 @@ const (
 	sparkVID  = "0483"
 )
 
-var localPort serial.Port
+var localPort *serial.Port
 
 func isSparkPID(pid string) (isSpark bool) {
 	if spark2PID == pid {
@@ -82,6 +84,8 @@ func RunCommand(frame UsbFrame, device string, persist bool) error {
 	if err != nil {
 		return err
 	}
+  
+  time.Sleep(time.Millisecond * 2)
 
 	out, err := Read()
 	if err != nil {
@@ -120,18 +124,24 @@ func RunCommand(frame UsbFrame, device string, persist bool) error {
 */
 
 func Connect(com string) error {
+  if com == "" {
+    com = GetDefaultDevice()
+    if com == "" {
+      return fmt.Errorf("No default device found")
+    }
+  }
+  
 	//Dummy parameters when using USB CDC driver
-	mode := &serial.Mode{
-		BaudRate: 115200,
-		Parity:   serial.NoParity,
-		DataBits: 8,
-		StopBits: serial.OneStopBit,
+	mode := &serial.Config{
+		Baud: 115200,
+    Name: com,
+    ReadTimeout: time.Second,
 	}
-	port, err := serial.Open(com, mode)
+	port, err := serial.OpenPort(mode)
 
 	//Note: as of development, requires this patch:
 	//https://patch-diff.githubusercontent.com/raw/bugst/go-serial/pull/33.patch
-	port.SetReadTimeout(2000)
+	//port.SetReadTimeout(2000)
 
 	if err == nil {
 		localPort = port
@@ -156,6 +166,12 @@ func Write(frame UsbFrame) error {
 	}
 	writeData := SerializeUsbFrame(frame)
 	_, err := localPort.Write(writeData)
+  
+  //TODO: figure out why this is neccessary on WIN32 to avoid recieving 
+  //1 byte frames... Maybe reading the buffer when size = 1?
+  //Maybe on the read side call read with size 1
+  //in a loop of 12 with an overall timeout?
+  time.Sleep(time.Millisecond * 2)
 	return err
 }
 
@@ -172,6 +188,7 @@ func Read() (UsbFrame, error) {
 	}
 
 	if len%FrameSize != 0 {
+    fmt.Println(buf)
 		return frame, fmt.Errorf("Packet frame unaligned, size: %d", len)
 	}
 

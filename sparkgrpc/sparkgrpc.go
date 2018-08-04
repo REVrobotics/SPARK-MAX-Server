@@ -63,7 +63,7 @@ func (s *sparkusbServer) Heartbeat(ctx context.Context, command *Heartbeat) (*Ro
 	}
 
 	if err := sparkusb.Write(frame); err != nil {
-		resp.Error = err.Error()
+		//resp.Error = err.Error()
 		return &resp, err
 	}
 
@@ -73,7 +73,11 @@ func (s *sparkusbServer) Heartbeat(ctx context.Context, command *Heartbeat) (*Ro
 		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
 	}
 
-	return &resp, err
+	//resp.Error = err.Error()
+
+	fmt.Println(err)
+
+	return &resp, nil
 }
 
 /*
@@ -107,8 +111,9 @@ func (s *sparkusbServer) SetParameter(ctx context.Context, command *ParameterReq
 	}
 
 	//resp.Root.Error = err.Error()
+	fmt.Println(err)
 
-	return &resp, err
+	return &resp, nil
 }
 
 func (s *sparkusbServer) GetParameter(ctx context.Context, command *ParameterRequest) (*ParameterResponse, error) {
@@ -142,7 +147,47 @@ func (s *sparkusbServer) GetParameter(ctx context.Context, command *ParameterReq
 
 	//resp.Root.Error = err.Error()
 
-	return &resp, err
+	fmt.Println(resp)
+
+	//resp.Root.Error = err.Error()
+	fmt.Println(err)
+
+	return &resp, nil
+}
+
+func (s *sparkusbServer) BurnFlash(ctx context.Context, command *RootCommand) (*RootResponse, error) {
+	var resp RootResponse
+	frame := sparkusb.DefaultFrame()
+
+	frame.Header.ApiClass = sparkusb.ApiConfiguration
+	frame.Header.ApiIndex = 0x02
+
+	frame.Data[0] = 0xA3
+	frame.Data[1] = 0x3A
+
+	if err := sparkusb.Write(frame); err != nil {
+		//resp.Root.Error = err.Error()
+		fmt.Println(err.Error())
+		return &resp, err
+	}
+
+	frameIn, err := sparkusb.Read()
+
+	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
+		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
+	}
+
+	fmt.Print("Incoming Frame:")
+	fmt.Println(frameIn)
+
+	//resp.Root.Error = err.Error()
+
+	fmt.Println(resp)
+
+	//resp.Root.Error = err.Error()
+	fmt.Println(err)
+
+	return &resp, nil
 }
 
 /*
@@ -180,7 +225,7 @@ func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest)
 	}
 
 	if err := sparkusb.Write(frame); err != nil {
-		resp.Root.Error = err.Error()
+		//resp.Root.Error = err.Error()
 		return &resp, err
 	}
 
@@ -190,7 +235,10 @@ func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest)
 		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
 	}
 
-	return &resp, err
+	//resp.Root.Error = err.Error()
+	fmt.Println(err)
+
+	return &resp, nil
 }
 
 func (s *sparkusbServer) CommandLine(ctx context.Context, command *CommandLineRequest) (*CommandLineResponse, error) {
