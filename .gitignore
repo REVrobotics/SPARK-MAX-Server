@@ -18,3 +18,9 @@ build
 npm-debug.log
 .env
 .DS_Store
+
+# Build/Distribution
+dist/
+
+# IntelliJ
+.idea/

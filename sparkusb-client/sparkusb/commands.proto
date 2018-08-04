@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package sparkgrpc;
+
+// Interface exported by the server.
+service sparkusb {
+    
+    rpc Connect(rootCommand) returns (rootResponse) {}
+    rpc Disconnect(rootCommand) returns (rootResponse) {}
+
+    rpc List(listRequest) returns (listResponse) {}
+    //rpc Firmware(firmwareRequest) returns (firmwareResponse) {}
+    rpc Heartbeat(heartbeat) returns (rootResponse) {}
+    //rpc Address(addressRequest) returns (addressResponse) {}
+    rpc SetParameter(parameterRequest) returns (parameterResponse) {}
+    rpc GetParameter(parameterRequest) returns (parameterResponse) {}
+    //rpc ListParameters(parameterListRequest) returns (parameterListResponse) {}
+    rpc Setpoint(setpointRequest) returns (setpointResponse) {}
+
+    rpc CommandLine(commandLineRequest) returns (commandLineResponse) {}
+}
+
+message commandLineRequest {
+    string stdin = 1;
+}
+
+message commandLineResponse {
+    string stderr = 1;
+    string stdout = 2;
+}
+
+message rootCommand {
+    string device = 1;
+    bool keepalive = 2;
+    bool help = 3;
+}
+
+message rootResponse {
+    string helpString = 1;
+    string error = 2;
+}
+
+message listRequest {
+    rootCommand root = 1;
+    bool all = 2; 
+}
+
+message listResponse {
+    repeated string deviceList = 1;
+    repeated string deviceDetails = 2;
+    rootResponse root = 3;
+}
+
+message firmwareRequest {
+    rootCommand root = 1;
+    string filename = 2;
+}
+
+message firmwareResponse {
+    string version = 1;
+    rootResponse root = 3;
+}
+
+/* Future - stream firmware file
+message firmwareStreamRequest {
+    optional rootCommand root = 1;
+    uint32 length = 2;
+    uint32 sequence = 3;
+    bytes rawData = 4;
+}
+
+message firmwareStreamResponse
+*/
+
+message heartbeat {
+    rootCommand root = 1;
+    bool enable = 2;
+}
+
+message addressRequest {
+    rootCommand root = 1;
+    uint32 address = 2;
+}
+
+message addressResponse {
+    uint32 currentAddress = 1;
+    uint32 previousAddress = 2;
+    rootResponse root = 3;
+}
+
+enum configParam {
+    CanID = 0;
+    InputMode = 1;
+    MotorType = 2;
+    CommAdv = 3;
+    SensorType = 4;
+    CtrlType = 5;
+    IdleMode = 6;
+    InputDeadband = 7;
+}
+  
+
+message parameterRequest { 
+    rootCommand root = 1;
+    configParam parameter = 2;
+    fixed32 value = 3;
+}
+
+//Not fully yet implemented
+message parameterResponse {
+    fixed32 value = 1;
+    string oldParameter = 2;
+    string newParameter = 3;
+    rootResponse root = 4;
+}
+
+message parameterListRequest { 
+    rootCommand root = 1;  
+}
+
+message parameterListResponse {
+    repeated string parameter = 1;
+    rootResponse root = 3;
+}
+
+message setpointRequest {
+    rootCommand root = 1;  
+    float setpoint = 2;
+}
+
+message setpointResponse {
+    float setpoint = 1;
+    bool isRunning = 2;
+    rootResponse root = 3;
+}
