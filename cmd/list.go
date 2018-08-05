@@ -18,7 +18,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	sparkgrpc "github.com/willtoth/USB-BLDC-TOOL/sparkgrpc"
 	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
 
@@ -44,8 +43,18 @@ func listDevices(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	var cmd1 sparkgrpc.RootCommand
-	sparkgrpc.Connect(nil, cmd1)
+	err := sparkusb.Connect(spName)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	req := sparkusb.ParameterRequest{Parameter: 0}
+	param, err := sparkusb.GetParameter(&req)
+
+	fmt.Println(param.Value)
+
+	sparkusb.Disconnect()
 
 	/*
 

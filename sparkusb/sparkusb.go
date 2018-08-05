@@ -134,7 +134,7 @@ func Connect(com string) error {
 
 	//Note: as of development, requires this patch:
 	//https://patch-diff.githubusercontent.com/raw/bugst/go-serial/pull/33.patch
-	port.SetReadTimeout(2000)
+	//port.SetReadTimeout(2000)
 
 	if err == nil {
 		localPort = port

@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-package sparkgrpc;
+package sparkusb;
 
-// Interface exported by the server.
+// Interface functions
+/*
 service sparkusb {
     
     rpc Connect(rootCommand) returns (rootResponse) {}
@@ -20,6 +21,7 @@ service sparkusb {
 
     rpc CommandLine(commandLineRequest) returns (commandLineResponse) {}
 }
+*/
 
 message commandLineRequest {
     string stdin = 1;
@@ -73,7 +75,7 @@ message firmwareStreamRequest {
 message firmwareStreamResponse
 */
 
-message heartbeat {
+message heartbeatRequest {
     rootCommand root = 1;
     bool enable = 2;
 }
