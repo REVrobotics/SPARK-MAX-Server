@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	sparkgrpc "github.com/willtoth/USB-BLDC-TOOL/sparkgrpc"
 	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
 
@@ -43,79 +44,39 @@ func listDevices(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	frame := sparkusb.DefaultFrame()
+	var cmd1 sparkgrpc.RootCommand
+	sparkgrpc.Connect(nil, cmd1)
 
-	err := sparkusb.Connect(spName)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	/*
 
-	frame.Header.ApiClass = sparkusb.ApiConfiguration
-	frame.Header.ApiIndex = 0x00
-	frame.Data[0] = 0
-	frame.Data[2] = 12
+		frame := sparkusb.DefaultFrame()
 
-	err = sparkusb.RunCommand(frame, spName, true)
-	if err != nil {
-		fmt.Println(err)
-	}
+		err := sparkusb.Connect(spName)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-	frame.Header.ApiClass = sparkusb.ApiConfiguration
-	frame.Header.ApiIndex = 0x02
-	frame.Data[0] = 0xA3
-	frame.Data[1] = 0x3A
+		frame.Header.API = sparkusb.CmdApiSetCfg
+		frame.Data[0] = 0
+		frame.Data[2] = 12
 
-	err = sparkusb.RunCommand(frame, spName, true)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	sparkusb.Disconnect()
-
-	/* Testing Ground
-	spName := sparkusb.GetDefaultDevice()
-
-	if spName == "" {
-		fmt.Println("No devices detected")
-		return
-	}
-	frame := sparkusb.DefaultFrame()
-
-	err := sparkusb.Connect(spName)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	frame.Header.Manufacturer = sparkusb.ManuBroadcast
-	frame.Header.DeviceType = sparkusb.DevBroadcast
-	frame.Header.ApiIndex = 0x01
-
-	frame.Data[0] = 1
-	frame.Data[3] = 3
-	err = sparkusb.RunCommand(frame, spName, true)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	frame = sparkusb.DefaultFrame()
-
-	frame.Header.ApiClass = 0x00
-	frame.Header.ApiIndex = 0x02
-
-	frame.Data[0] = 0
-	frame.Data[1] = 0
-	frame.Data[2] = 0xFF
-
-	for i := 0; i < 100000; i++ {
-		err = sparkusb.Write(frame)
+		err = sparkusb.RunCommand(frame, spName, true)
 		if err != nil {
 			fmt.Println(err)
 		}
-	}
 
-	sparkusb.Disconnect()
+		frame.Header.API = sparkusb.CmdApiBurnFlash
+		frame.Data[0] = 0xA3
+		frame.Data[1] = 0x3A
+
+		err = sparkusb.RunCommand(frame, spName, true)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		sparkusb.Disconnect()
+
 	*/
 
 }

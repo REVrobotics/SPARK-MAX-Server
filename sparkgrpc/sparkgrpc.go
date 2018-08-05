@@ -49,29 +49,61 @@ func (s *sparkusbServer) Firmware(ctx context.Context, command *FirmwareRequest)
 }
 */
 
+type channelType struct {
+	frame sparkusb.UsbFrame
+	err   error
+}
+
+var sparkChannelIn chan channelType
+var sparkChannelOut chan channelType
+
+func sparkWriter() (err error) {
+	for true {
+		var resp channelType
+		data := <-sparkChannelIn
+
+		if err := sparkusb.Write(data.frame); err != nil {
+			resp.frame = sparkusb.DefaultFrame()
+		} else {
+			resp.frame, err = sparkusb.Read()
+
+			if resp.frame.Header.API != sparkusb.CmdApiAck {
+				err = fmt.Errorf("Expected ACK, recieved :%d", resp.frame.Header.API)
+			}
+		}
+		resp.err = err
+		sparkChannelOut <- resp
+	}
+
+	return
+}
+
+func sparkCommand(frame sparkusb.UsbFrame) (sparkusb.UsbFrame, error) {
+	if sparkChannelIn == nil || sparkChannelOut == nil {
+		sparkChannelIn = make(chan channelType)
+		sparkChannelOut = make(chan channelType)
+		go sparkWriter()
+	}
+
+	sparkChannelIn <- channelType{frame, nil}
+	resp := <-sparkChannelOut
+
+	return resp.frame, resp.err
+}
+
 func (s *sparkusbServer) Heartbeat(ctx context.Context, command *Heartbeat) (*RootResponse, error) {
 	var resp RootResponse
 	frame := sparkusb.DefaultFrame()
 
 	frame.Header.Manufacturer = sparkusb.ManuBroadcast
 	frame.Header.DeviceType = sparkusb.DevBroadcast
-	frame.Header.ApiClass = 0x00
-	frame.Header.ApiIndex = 0x01
+	frame.Header.API = sparkusb.CmdBcastHalt
 
 	if command.Enable {
 		frame.Data[0] = 1
 	}
 
-	if err := sparkusb.Write(frame); err != nil {
-		//resp.Error = err.Error()
-		return &resp, err
-	}
-
-	frameIn, err := sparkusb.Read()
-
-	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
-		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
-	}
+	_, err := sparkCommand(frame)
 
 	//resp.Error = err.Error()
 
@@ -92,23 +124,13 @@ func (s *sparkusbServer) SetParameter(ctx context.Context, command *ParameterReq
 	var resp ParameterResponse
 	frame := sparkusb.DefaultFrame()
 
-	frame.Header.ApiClass = sparkusb.ApiConfiguration
-	frame.Header.ApiIndex = 0x00
+	frame.Header.API = sparkusb.CmdApiSetCfg
 
 	frame.Data[0] = uint8(command.Parameter)
 
 	binary.LittleEndian.PutUint32(frame.Data[2:6], command.Value)
 
-	if err := sparkusb.Write(frame); err != nil {
-		//resp.Root.Error = err.Error()
-		return &resp, err
-	}
-
-	frameIn, err := sparkusb.Read()
-
-	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
-		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
-	}
+	_, err := sparkCommand(frame)
 
 	//resp.Root.Error = err.Error()
 	fmt.Println(err)
@@ -120,25 +142,14 @@ func (s *sparkusbServer) GetParameter(ctx context.Context, command *ParameterReq
 	var resp ParameterResponse
 	frame := sparkusb.DefaultFrame()
 
-	frame.Header.ApiClass = sparkusb.ApiConfiguration
-	frame.Header.ApiIndex = 0x01
+	frame.Header.API = sparkusb.CmdApiGetCfg
 
 	frame.Data[0] = uint8(command.Parameter)
 
 	fmt.Print("Outgoing Frame: ")
 	fmt.Println(frame)
 
-	if err := sparkusb.Write(frame); err != nil {
-		//resp.Root.Error = err.Error()
-		fmt.Println(err.Error())
-		return &resp, err
-	}
-
-	frameIn, err := sparkusb.Read()
-
-	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
-		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
-	}
+	frameIn, err := sparkCommand(frame)
 
 	fmt.Print("Incoming Frame:")
 	fmt.Println(frameIn)
@@ -159,23 +170,12 @@ func (s *sparkusbServer) BurnFlash(ctx context.Context, command *RootCommand) (*
 	var resp RootResponse
 	frame := sparkusb.DefaultFrame()
 
-	frame.Header.ApiClass = sparkusb.ApiConfiguration
-	frame.Header.ApiIndex = 0x02
+	frame.Header.API = sparkusb.CmdApiBurnFlash
 
 	frame.Data[0] = 0xA3
 	frame.Data[1] = 0x3A
 
-	if err := sparkusb.Write(frame); err != nil {
-		//resp.Root.Error = err.Error()
-		fmt.Println(err.Error())
-		return &resp, err
-	}
-
-	frameIn, err := sparkusb.Read()
-
-	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
-		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
-	}
+	frameIn, err := sparkCommand(frame)
 
 	fmt.Print("Incoming Frame:")
 	fmt.Println(frameIn)
@@ -202,8 +202,7 @@ func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest)
 	var resp SetpointResponse
 	frame := sparkusb.DefaultFrame()
 
-	frame.Header.ApiClass = 0x00
-	frame.Header.ApiIndex = 0x02
+	frame.Header.API = sparkusb.CmdApiDcSet
 
 	if command.Setpoint < 0.001 && command.Setpoint > -0.001 {
 		frame.Data[0] = 0
@@ -224,16 +223,7 @@ func (s *sparkusbServer) Setpoint(ctx context.Context, command *SetpointRequest)
 		copy(frame.Data[:3], tmparray[1:])
 	}
 
-	if err := sparkusb.Write(frame); err != nil {
-		//resp.Root.Error = err.Error()
-		return &resp, err
-	}
-
-	frameIn, err := sparkusb.Read()
-
-	if frameIn.Header.ApiClass != sparkusb.ApiAcknowledge {
-		err = fmt.Errorf("Expected ACK, recieved :%d", frameIn.Header.ApiClass)
-	}
+	_, err := sparkCommand(frame)
 
 	//resp.Root.Error = err.Error()
 	fmt.Println(err)
