@@ -15,23 +15,23 @@ const (
 
 const (
 	DevBroadcast            = iota
-	devRobotController      = iota
+	DevRobotController      = iota
 	DevMotorController      = iota
-	devRelayController      = iota
-	devGyroSensor           = iota
-	devAccelerometerSensor  = iota
-	devUltrasonicSensor     = iota
-	devGearToothSensor      = iota
-	devPowerDistribution    = iota
-	devPneumaticsController = iota
-	devMiscCANDevice        = iota
-	devIOBreakout           = iota
+	DevRelayController      = iota
+	DevGyroSensor           = iota
+	DevAccelerometerSensor  = iota
+	DevUltrasonicSensor     = iota
+	DevGearToothSensor      = iota
+	DevPowerDistribution    = iota
+	DevPneumaticsController = iota
+	DevMiscCANDevice        = iota
+	DevIOBreakout           = iota
 )
 
 const (
 	ManuBroadcast   = 0
 	ManuNI          = 1
-	ManuLM          = 2 //(TI)
+	ManuLM          = 2
 	ManuDEKA        = 3
 	ManuCTRE        = 4
 	ManuREV         = 5
@@ -46,6 +46,7 @@ const (
 	shiftManufacturer = 16
 	shiftAPIClass     = 10
 	shiftAPIIndex     = 6
+	shiftAPI          = shiftAPIIndex
 	shiftDeviceID     = 0
 )
 
@@ -55,28 +56,57 @@ const (
 	bitsManufacturer = 0xFF0000
 	bitsAPIClass     = 0xFC00
 	bitsAPIIndex     = 0x3C0
+	bitsAPI          = bitsAPIClass | bitsAPIIndex
 	bitsDeviceID     = 0x3F
 )
 
 //This enum is unique to this controller
 const (
-	ApiDutyCycleControl = 0
-	ApiSpeedControl     = 1
-	ApiVoltageControl   = 2
-	ApiPositionControl  = 3
-	ApiCurrentControl   = 4
-	ApiStatus           = 5
-	ApiPeriodicStatus   = 6
-	ApiConfiguration    = 7
-	ApiAcknowledge      = 8
+	CmdBcastDisable   = 0x000
+	CmdBcastHalt      = 0x001
+	CmdBcastReset     = 0x002
+	CmdBcastAssign    = 0x003
+	CmdBcastQuery     = 0x004
+	CmdBcastHeartbeat = 0x005
+	CmdBcastSync      = 0x006
+	CmdBcastUpdate    = 0x007
+	CmdBcastFirmware  = 0x008
+	CmdBcastEnum      = 0x009
+	CmdBcastResume    = 0x00A
+	CmdApiDcEnable    = 0x000
+	CmdApiDcDisable   = 0x001
+	CmdApiDcSet       = 0x002
+	CmdApiDcRamp      = 0x003
+	CmdApiDcSetNoack  = 0x008
+	CmdApiSpdEnable   = 0x010
+	CmdApiSpdDisable  = 0x011
+	CmdApiSpdSet      = 0x012
+	CmdApiSpdSlot     = 0x013
+	CmdApiSpdRef      = 0x016
+	CmdApiSpdSetNoack = 0x01B
+	CmdApiPosEnable   = 0x030
+	CmdApiPosDisable  = 0x031
+	CmdApiPosSet      = 0x032
+	CmdApiPosSlot     = 0x033
+	CmdApiPosRef      = 0x036
+	CmdApiPosSetNoack = 0x03B
+	CmdApiStat0       = 0x060
+	CmdApiStat1       = 0x061
+	CmdApiUsrStat0    = 0x062
+	CmdApiUsrStat1    = 0x063
+	CmdApiUsrStat2    = 0x064
+	CmdApiUsrStat3    = 0x065
+	CmdApiSetCfg      = 0x070
+	CmdApiGetCfg      = 0x071
+	CmdApiBurnFlash   = 0x072
+	CmdApiAck         = 0x081
 )
 
 type UsbFrameHeader struct {
 	PacketNum    uint32
 	DeviceType   uint32
 	Manufacturer uint32
-	ApiClass     uint32
-	ApiIndex     uint32
+	API          uint32
 	DeviceID     uint32
 }
 
@@ -123,8 +153,7 @@ func usbFrameHeaderToUint32(header UsbFrameHeader) (output uint32) {
 	output |= header.PacketNum << shiftPacketNum
 	output |= header.DeviceType << shiftDeviceType
 	output |= header.Manufacturer << shiftManufacturer
-	output |= header.ApiClass << shiftAPIClass
-	output |= header.ApiIndex << shiftAPIIndex
+	output |= header.API << shiftAPI
 	output |= header.DeviceID << shiftDeviceID
 	return
 }
@@ -133,8 +162,7 @@ func uint32ToUsbFrameHeader(input uint32) (header UsbFrameHeader) {
 	header.PacketNum = (input & bitsPacketNum) >> shiftPacketNum
 	header.DeviceType = (input & bitsDeviceType) >> shiftDeviceType
 	header.Manufacturer = (input & bitsManufacturer) >> shiftManufacturer
-	header.ApiClass = (input & bitsAPIClass) >> shiftAPIClass
-	header.ApiIndex = (input & bitsAPIIndex) >> shiftAPIIndex
+	header.API = (input & bitsAPI) >> shiftAPI
 	header.DeviceID = (input & bitsDeviceID) >> shiftDeviceID
 	return
 }
