@@ -8,6 +8,8 @@ It is generated from these files:
 	commands.proto
 
 It has these top-level messages:
+	RequestWire
+	ResponseWire
 	CommandLineRequest
 	CommandLineResponse
 	RootCommand
@@ -82,6 +84,647 @@ func (x ConfigParam) String() string {
 }
 func (ConfigParam) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
+type RequestWire struct {
+	// Types that are valid to be assigned to Req:
+	//	*RequestWire_R1
+	//	*RequestWire_R2
+	//	*RequestWire_R3
+	//	*RequestWire_R4
+	//	*RequestWire_R5
+	//	*RequestWire_R6
+	//	*RequestWire_R7
+	//	*RequestWire_R8
+	//	*RequestWire_R9
+	Req isRequestWire_Req `protobuf_oneof:"req"`
+}
+
+func (m *RequestWire) Reset()                    { *m = RequestWire{} }
+func (m *RequestWire) String() string            { return proto.CompactTextString(m) }
+func (*RequestWire) ProtoMessage()               {}
+func (*RequestWire) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+
+type isRequestWire_Req interface{ isRequestWire_Req() }
+
+type RequestWire_R1 struct {
+	R1 *RootCommand `protobuf:"bytes,1,opt,name=r1,oneof"`
+}
+type RequestWire_R2 struct {
+	R2 *CommandLineRequest `protobuf:"bytes,2,opt,name=r2,oneof"`
+}
+type RequestWire_R3 struct {
+	R3 *ListRequest `protobuf:"bytes,3,opt,name=r3,oneof"`
+}
+type RequestWire_R4 struct {
+	R4 *FirmwareRequest `protobuf:"bytes,4,opt,name=r4,oneof"`
+}
+type RequestWire_R5 struct {
+	R5 *HeartbeatRequest `protobuf:"bytes,5,opt,name=r5,oneof"`
+}
+type RequestWire_R6 struct {
+	R6 *AddressRequest `protobuf:"bytes,6,opt,name=r6,oneof"`
+}
+type RequestWire_R7 struct {
+	R7 *ParameterRequest `protobuf:"bytes,7,opt,name=r7,oneof"`
+}
+type RequestWire_R8 struct {
+	R8 *ParameterListRequest `protobuf:"bytes,8,opt,name=r8,oneof"`
+}
+type RequestWire_R9 struct {
+	R9 *SetpointRequest `protobuf:"bytes,9,opt,name=r9,oneof"`
+}
+
+func (*RequestWire_R1) isRequestWire_Req() {}
+func (*RequestWire_R2) isRequestWire_Req() {}
+func (*RequestWire_R3) isRequestWire_Req() {}
+func (*RequestWire_R4) isRequestWire_Req() {}
+func (*RequestWire_R5) isRequestWire_Req() {}
+func (*RequestWire_R6) isRequestWire_Req() {}
+func (*RequestWire_R7) isRequestWire_Req() {}
+func (*RequestWire_R8) isRequestWire_Req() {}
+func (*RequestWire_R9) isRequestWire_Req() {}
+
+func (m *RequestWire) GetReq() isRequestWire_Req {
+	if m != nil {
+		return m.Req
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR1() *RootCommand {
+	if x, ok := m.GetReq().(*RequestWire_R1); ok {
+		return x.R1
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR2() *CommandLineRequest {
+	if x, ok := m.GetReq().(*RequestWire_R2); ok {
+		return x.R2
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR3() *ListRequest {
+	if x, ok := m.GetReq().(*RequestWire_R3); ok {
+		return x.R3
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR4() *FirmwareRequest {
+	if x, ok := m.GetReq().(*RequestWire_R4); ok {
+		return x.R4
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR5() *HeartbeatRequest {
+	if x, ok := m.GetReq().(*RequestWire_R5); ok {
+		return x.R5
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR6() *AddressRequest {
+	if x, ok := m.GetReq().(*RequestWire_R6); ok {
+		return x.R6
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR7() *ParameterRequest {
+	if x, ok := m.GetReq().(*RequestWire_R7); ok {
+		return x.R7
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR8() *ParameterListRequest {
+	if x, ok := m.GetReq().(*RequestWire_R8); ok {
+		return x.R8
+	}
+	return nil
+}
+
+func (m *RequestWire) GetR9() *SetpointRequest {
+	if x, ok := m.GetReq().(*RequestWire_R9); ok {
+		return x.R9
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*RequestWire) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _RequestWire_OneofMarshaler, _RequestWire_OneofUnmarshaler, _RequestWire_OneofSizer, []interface{}{
+		(*RequestWire_R1)(nil),
+		(*RequestWire_R2)(nil),
+		(*RequestWire_R3)(nil),
+		(*RequestWire_R4)(nil),
+		(*RequestWire_R5)(nil),
+		(*RequestWire_R6)(nil),
+		(*RequestWire_R7)(nil),
+		(*RequestWire_R8)(nil),
+		(*RequestWire_R9)(nil),
+	}
+}
+
+func _RequestWire_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*RequestWire)
+	// req
+	switch x := m.Req.(type) {
+	case *RequestWire_R1:
+		b.EncodeVarint(1<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R1); err != nil {
+			return err
+		}
+	case *RequestWire_R2:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R2); err != nil {
+			return err
+		}
+	case *RequestWire_R3:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R3); err != nil {
+			return err
+		}
+	case *RequestWire_R4:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R4); err != nil {
+			return err
+		}
+	case *RequestWire_R5:
+		b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R5); err != nil {
+			return err
+		}
+	case *RequestWire_R6:
+		b.EncodeVarint(6<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R6); err != nil {
+			return err
+		}
+	case *RequestWire_R7:
+		b.EncodeVarint(7<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R7); err != nil {
+			return err
+		}
+	case *RequestWire_R8:
+		b.EncodeVarint(8<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R8); err != nil {
+			return err
+		}
+	case *RequestWire_R9:
+		b.EncodeVarint(9<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R9); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("RequestWire.Req has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _RequestWire_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*RequestWire)
+	switch tag {
+	case 1: // req.r1
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(RootCommand)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R1{msg}
+		return true, err
+	case 2: // req.r2
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(CommandLineRequest)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R2{msg}
+		return true, err
+	case 3: // req.r3
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ListRequest)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R3{msg}
+		return true, err
+	case 4: // req.r4
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(FirmwareRequest)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R4{msg}
+		return true, err
+	case 5: // req.r5
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(HeartbeatRequest)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R5{msg}
+		return true, err
+	case 6: // req.r6
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(AddressRequest)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R6{msg}
+		return true, err
+	case 7: // req.r7
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ParameterRequest)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R7{msg}
+		return true, err
+	case 8: // req.r8
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ParameterListRequest)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R8{msg}
+		return true, err
+	case 9: // req.r9
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetpointRequest)
+		err := b.DecodeMessage(msg)
+		m.Req = &RequestWire_R9{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _RequestWire_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*RequestWire)
+	// req
+	switch x := m.Req.(type) {
+	case *RequestWire_R1:
+		s := proto.Size(x.R1)
+		n += proto.SizeVarint(1<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *RequestWire_R2:
+		s := proto.Size(x.R2)
+		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *RequestWire_R3:
+		s := proto.Size(x.R3)
+		n += proto.SizeVarint(3<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *RequestWire_R4:
+		s := proto.Size(x.R4)
+		n += proto.SizeVarint(4<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *RequestWire_R5:
+		s := proto.Size(x.R5)
+		n += proto.SizeVarint(5<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *RequestWire_R6:
+		s := proto.Size(x.R6)
+		n += proto.SizeVarint(6<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *RequestWire_R7:
+		s := proto.Size(x.R7)
+		n += proto.SizeVarint(7<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *RequestWire_R8:
+		s := proto.Size(x.R8)
+		n += proto.SizeVarint(8<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *RequestWire_R9:
+		s := proto.Size(x.R9)
+		n += proto.SizeVarint(9<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
+type ResponseWire struct {
+	// Types that are valid to be assigned to Resp:
+	//	*ResponseWire_R1
+	//	*ResponseWire_R2
+	//	*ResponseWire_R3
+	//	*ResponseWire_R4
+	//	*ResponseWire_R6
+	//	*ResponseWire_R7
+	//	*ResponseWire_R8
+	//	*ResponseWire_R9
+	Resp isResponseWire_Resp `protobuf_oneof:"resp"`
+}
+
+func (m *ResponseWire) Reset()                    { *m = ResponseWire{} }
+func (m *ResponseWire) String() string            { return proto.CompactTextString(m) }
+func (*ResponseWire) ProtoMessage()               {}
+func (*ResponseWire) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+
+type isResponseWire_Resp interface{ isResponseWire_Resp() }
+
+type ResponseWire_R1 struct {
+	R1 *RootResponse `protobuf:"bytes,1,opt,name=r1,oneof"`
+}
+type ResponseWire_R2 struct {
+	R2 *CommandLineResponse `protobuf:"bytes,2,opt,name=r2,oneof"`
+}
+type ResponseWire_R3 struct {
+	R3 *ListResponse `protobuf:"bytes,3,opt,name=r3,oneof"`
+}
+type ResponseWire_R4 struct {
+	R4 *FirmwareResponse `protobuf:"bytes,4,opt,name=r4,oneof"`
+}
+type ResponseWire_R6 struct {
+	R6 *AddressResponse `protobuf:"bytes,6,opt,name=r6,oneof"`
+}
+type ResponseWire_R7 struct {
+	R7 *ParameterResponse `protobuf:"bytes,7,opt,name=r7,oneof"`
+}
+type ResponseWire_R8 struct {
+	R8 *ParameterListResponse `protobuf:"bytes,8,opt,name=r8,oneof"`
+}
+type ResponseWire_R9 struct {
+	R9 *SetpointResponse `protobuf:"bytes,9,opt,name=r9,oneof"`
+}
+
+func (*ResponseWire_R1) isResponseWire_Resp() {}
+func (*ResponseWire_R2) isResponseWire_Resp() {}
+func (*ResponseWire_R3) isResponseWire_Resp() {}
+func (*ResponseWire_R4) isResponseWire_Resp() {}
+func (*ResponseWire_R6) isResponseWire_Resp() {}
+func (*ResponseWire_R7) isResponseWire_Resp() {}
+func (*ResponseWire_R8) isResponseWire_Resp() {}
+func (*ResponseWire_R9) isResponseWire_Resp() {}
+
+func (m *ResponseWire) GetResp() isResponseWire_Resp {
+	if m != nil {
+		return m.Resp
+	}
+	return nil
+}
+
+func (m *ResponseWire) GetR1() *RootResponse {
+	if x, ok := m.GetResp().(*ResponseWire_R1); ok {
+		return x.R1
+	}
+	return nil
+}
+
+func (m *ResponseWire) GetR2() *CommandLineResponse {
+	if x, ok := m.GetResp().(*ResponseWire_R2); ok {
+		return x.R2
+	}
+	return nil
+}
+
+func (m *ResponseWire) GetR3() *ListResponse {
+	if x, ok := m.GetResp().(*ResponseWire_R3); ok {
+		return x.R3
+	}
+	return nil
+}
+
+func (m *ResponseWire) GetR4() *FirmwareResponse {
+	if x, ok := m.GetResp().(*ResponseWire_R4); ok {
+		return x.R4
+	}
+	return nil
+}
+
+func (m *ResponseWire) GetR6() *AddressResponse {
+	if x, ok := m.GetResp().(*ResponseWire_R6); ok {
+		return x.R6
+	}
+	return nil
+}
+
+func (m *ResponseWire) GetR7() *ParameterResponse {
+	if x, ok := m.GetResp().(*ResponseWire_R7); ok {
+		return x.R7
+	}
+	return nil
+}
+
+func (m *ResponseWire) GetR8() *ParameterListResponse {
+	if x, ok := m.GetResp().(*ResponseWire_R8); ok {
+		return x.R8
+	}
+	return nil
+}
+
+func (m *ResponseWire) GetR9() *SetpointResponse {
+	if x, ok := m.GetResp().(*ResponseWire_R9); ok {
+		return x.R9
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*ResponseWire) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _ResponseWire_OneofMarshaler, _ResponseWire_OneofUnmarshaler, _ResponseWire_OneofSizer, []interface{}{
+		(*ResponseWire_R1)(nil),
+		(*ResponseWire_R2)(nil),
+		(*ResponseWire_R3)(nil),
+		(*ResponseWire_R4)(nil),
+		(*ResponseWire_R6)(nil),
+		(*ResponseWire_R7)(nil),
+		(*ResponseWire_R8)(nil),
+		(*ResponseWire_R9)(nil),
+	}
+}
+
+func _ResponseWire_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*ResponseWire)
+	// resp
+	switch x := m.Resp.(type) {
+	case *ResponseWire_R1:
+		b.EncodeVarint(1<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R1); err != nil {
+			return err
+		}
+	case *ResponseWire_R2:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R2); err != nil {
+			return err
+		}
+	case *ResponseWire_R3:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R3); err != nil {
+			return err
+		}
+	case *ResponseWire_R4:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R4); err != nil {
+			return err
+		}
+	case *ResponseWire_R6:
+		b.EncodeVarint(6<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R6); err != nil {
+			return err
+		}
+	case *ResponseWire_R7:
+		b.EncodeVarint(7<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R7); err != nil {
+			return err
+		}
+	case *ResponseWire_R8:
+		b.EncodeVarint(8<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R8); err != nil {
+			return err
+		}
+	case *ResponseWire_R9:
+		b.EncodeVarint(9<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.R9); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("ResponseWire.Resp has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _ResponseWire_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*ResponseWire)
+	switch tag {
+	case 1: // resp.r1
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(RootResponse)
+		err := b.DecodeMessage(msg)
+		m.Resp = &ResponseWire_R1{msg}
+		return true, err
+	case 2: // resp.r2
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(CommandLineResponse)
+		err := b.DecodeMessage(msg)
+		m.Resp = &ResponseWire_R2{msg}
+		return true, err
+	case 3: // resp.r3
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ListResponse)
+		err := b.DecodeMessage(msg)
+		m.Resp = &ResponseWire_R3{msg}
+		return true, err
+	case 4: // resp.r4
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(FirmwareResponse)
+		err := b.DecodeMessage(msg)
+		m.Resp = &ResponseWire_R4{msg}
+		return true, err
+	case 6: // resp.r6
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(AddressResponse)
+		err := b.DecodeMessage(msg)
+		m.Resp = &ResponseWire_R6{msg}
+		return true, err
+	case 7: // resp.r7
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ParameterResponse)
+		err := b.DecodeMessage(msg)
+		m.Resp = &ResponseWire_R7{msg}
+		return true, err
+	case 8: // resp.r8
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ParameterListResponse)
+		err := b.DecodeMessage(msg)
+		m.Resp = &ResponseWire_R8{msg}
+		return true, err
+	case 9: // resp.r9
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetpointResponse)
+		err := b.DecodeMessage(msg)
+		m.Resp = &ResponseWire_R9{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _ResponseWire_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*ResponseWire)
+	// resp
+	switch x := m.Resp.(type) {
+	case *ResponseWire_R1:
+		s := proto.Size(x.R1)
+		n += proto.SizeVarint(1<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *ResponseWire_R2:
+		s := proto.Size(x.R2)
+		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *ResponseWire_R3:
+		s := proto.Size(x.R3)
+		n += proto.SizeVarint(3<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *ResponseWire_R4:
+		s := proto.Size(x.R4)
+		n += proto.SizeVarint(4<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *ResponseWire_R6:
+		s := proto.Size(x.R6)
+		n += proto.SizeVarint(6<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *ResponseWire_R7:
+		s := proto.Size(x.R7)
+		n += proto.SizeVarint(7<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *ResponseWire_R8:
+		s := proto.Size(x.R8)
+		n += proto.SizeVarint(8<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *ResponseWire_R9:
+		s := proto.Size(x.R9)
+		n += proto.SizeVarint(9<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
 type CommandLineRequest struct {
 	Stdin string `protobuf:"bytes,1,opt,name=stdin" json:"stdin,omitempty"`
 }
@@ -89,7 +732,7 @@ type CommandLineRequest struct {
 func (m *CommandLineRequest) Reset()                    { *m = CommandLineRequest{} }
 func (m *CommandLineRequest) String() string            { return proto.CompactTextString(m) }
 func (*CommandLineRequest) ProtoMessage()               {}
-func (*CommandLineRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*CommandLineRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
 func (m *CommandLineRequest) GetStdin() string {
 	if m != nil {
@@ -106,7 +749,7 @@ type CommandLineResponse struct {
 func (m *CommandLineResponse) Reset()                    { *m = CommandLineResponse{} }
 func (m *CommandLineResponse) String() string            { return proto.CompactTextString(m) }
 func (*CommandLineResponse) ProtoMessage()               {}
-func (*CommandLineResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (*CommandLineResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
 func (m *CommandLineResponse) GetStderr() string {
 	if m != nil {
@@ -131,7 +774,7 @@ type RootCommand struct {
 func (m *RootCommand) Reset()                    { *m = RootCommand{} }
 func (m *RootCommand) String() string            { return proto.CompactTextString(m) }
 func (*RootCommand) ProtoMessage()               {}
-func (*RootCommand) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (*RootCommand) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
 
 func (m *RootCommand) GetDevice() string {
 	if m != nil {
@@ -162,7 +805,7 @@ type RootResponse struct {
 func (m *RootResponse) Reset()                    { *m = RootResponse{} }
 func (m *RootResponse) String() string            { return proto.CompactTextString(m) }
 func (*RootResponse) ProtoMessage()               {}
-func (*RootResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+func (*RootResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
 func (m *RootResponse) GetHelpString() string {
 	if m != nil {
@@ -186,7 +829,7 @@ type ListRequest struct {
 func (m *ListRequest) Reset()                    { *m = ListRequest{} }
 func (m *ListRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListRequest) ProtoMessage()               {}
-func (*ListRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+func (*ListRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
 
 func (m *ListRequest) GetRoot() *RootCommand {
 	if m != nil {
@@ -211,7 +854,7 @@ type ListResponse struct {
 func (m *ListResponse) Reset()                    { *m = ListResponse{} }
 func (m *ListResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListResponse) ProtoMessage()               {}
-func (*ListResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+func (*ListResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
 
 func (m *ListResponse) GetDeviceList() []string {
 	if m != nil {
@@ -242,7 +885,7 @@ type FirmwareRequest struct {
 func (m *FirmwareRequest) Reset()                    { *m = FirmwareRequest{} }
 func (m *FirmwareRequest) String() string            { return proto.CompactTextString(m) }
 func (*FirmwareRequest) ProtoMessage()               {}
-func (*FirmwareRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+func (*FirmwareRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
 
 func (m *FirmwareRequest) GetRoot() *RootCommand {
 	if m != nil {
@@ -266,7 +909,7 @@ type FirmwareResponse struct {
 func (m *FirmwareResponse) Reset()                    { *m = FirmwareResponse{} }
 func (m *FirmwareResponse) String() string            { return proto.CompactTextString(m) }
 func (*FirmwareResponse) ProtoMessage()               {}
-func (*FirmwareResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+func (*FirmwareResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
 
 func (m *FirmwareResponse) GetVersion() string {
 	if m != nil {
@@ -290,7 +933,7 @@ type HeartbeatRequest struct {
 func (m *HeartbeatRequest) Reset()                    { *m = HeartbeatRequest{} }
 func (m *HeartbeatRequest) String() string            { return proto.CompactTextString(m) }
 func (*HeartbeatRequest) ProtoMessage()               {}
-func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
 
 func (m *HeartbeatRequest) GetRoot() *RootCommand {
 	if m != nil {
@@ -314,7 +957,7 @@ type AddressRequest struct {
 func (m *AddressRequest) Reset()                    { *m = AddressRequest{} }
 func (m *AddressRequest) String() string            { return proto.CompactTextString(m) }
 func (*AddressRequest) ProtoMessage()               {}
-func (*AddressRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
+func (*AddressRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
 
 func (m *AddressRequest) GetRoot() *RootCommand {
 	if m != nil {
@@ -339,7 +982,7 @@ type AddressResponse struct {
 func (m *AddressResponse) Reset()                    { *m = AddressResponse{} }
 func (m *AddressResponse) String() string            { return proto.CompactTextString(m) }
 func (*AddressResponse) ProtoMessage()               {}
-func (*AddressResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
+func (*AddressResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
 
 func (m *AddressResponse) GetCurrentAddress() uint32 {
 	if m != nil {
@@ -371,7 +1014,7 @@ type ParameterRequest struct {
 func (m *ParameterRequest) Reset()                    { *m = ParameterRequest{} }
 func (m *ParameterRequest) String() string            { return proto.CompactTextString(m) }
 func (*ParameterRequest) ProtoMessage()               {}
-func (*ParameterRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
+func (*ParameterRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
 
 func (m *ParameterRequest) GetRoot() *RootCommand {
 	if m != nil {
@@ -405,7 +1048,7 @@ type ParameterResponse struct {
 func (m *ParameterResponse) Reset()                    { *m = ParameterResponse{} }
 func (m *ParameterResponse) String() string            { return proto.CompactTextString(m) }
 func (*ParameterResponse) ProtoMessage()               {}
-func (*ParameterResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
+func (*ParameterResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
 
 func (m *ParameterResponse) GetValue() uint32 {
 	if m != nil {
@@ -442,7 +1085,7 @@ type ParameterListRequest struct {
 func (m *ParameterListRequest) Reset()                    { *m = ParameterListRequest{} }
 func (m *ParameterListRequest) String() string            { return proto.CompactTextString(m) }
 func (*ParameterListRequest) ProtoMessage()               {}
-func (*ParameterListRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
+func (*ParameterListRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{15} }
 
 func (m *ParameterListRequest) GetRoot() *RootCommand {
 	if m != nil {
@@ -459,7 +1102,7 @@ type ParameterListResponse struct {
 func (m *ParameterListResponse) Reset()                    { *m = ParameterListResponse{} }
 func (m *ParameterListResponse) String() string            { return proto.CompactTextString(m) }
 func (*ParameterListResponse) ProtoMessage()               {}
-func (*ParameterListResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
+func (*ParameterListResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{16} }
 
 func (m *ParameterListResponse) GetParameter() []string {
 	if m != nil {
@@ -483,7 +1126,7 @@ type SetpointRequest struct {
 func (m *SetpointRequest) Reset()                    { *m = SetpointRequest{} }
 func (m *SetpointRequest) String() string            { return proto.CompactTextString(m) }
 func (*SetpointRequest) ProtoMessage()               {}
-func (*SetpointRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{15} }
+func (*SetpointRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{17} }
 
 func (m *SetpointRequest) GetRoot() *RootCommand {
 	if m != nil {
@@ -508,7 +1151,7 @@ type SetpointResponse struct {
 func (m *SetpointResponse) Reset()                    { *m = SetpointResponse{} }
 func (m *SetpointResponse) String() string            { return proto.CompactTextString(m) }
 func (*SetpointResponse) ProtoMessage()               {}
-func (*SetpointResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{16} }
+func (*SetpointResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{18} }
 
 func (m *SetpointResponse) GetSetpoint() float32 {
 	if m != nil {
@@ -532,6 +1175,8 @@ func (m *SetpointResponse) GetRoot() *RootResponse {
 }
 
 func init() {
+	proto.RegisterType((*RequestWire)(nil), "sparkusb.RequestWire")
+	proto.RegisterType((*ResponseWire)(nil), "sparkusb.ResponseWire")
 	proto.RegisterType((*CommandLineRequest)(nil), "sparkusb.commandLineRequest")
 	proto.RegisterType((*CommandLineResponse)(nil), "sparkusb.commandLineResponse")
 	proto.RegisterType((*RootCommand)(nil), "sparkusb.rootCommand")
@@ -555,47 +1200,62 @@ func init() {
 func init() { proto.RegisterFile("commands.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 657 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x55, 0xcd, 0x4e, 0xdb, 0x4c,
-	0x14, 0xfd, 0x9c, 0x84, 0xfc, 0xdc, 0xfc, 0x60, 0xe6, 0x03, 0x14, 0x55, 0xa8, 0xaa, 0x46, 0x55,
-	0x45, 0x59, 0xb0, 0x28, 0x4f, 0x10, 0x91, 0x2e, 0xa8, 0x40, 0x42, 0xa6, 0xa8, 0x6c, 0x27, 0xf1,
-	0x05, 0x46, 0x38, 0x33, 0xee, 0xcc, 0x38, 0xb4, 0xbb, 0xaa, 0xab, 0xee, 0xfa, 0x04, 0x7d, 0xd7,
-	0x6a, 0xc6, 0xe3, 0x3f, 0x56, 0x4d, 0x76, 0x3e, 0xc7, 0xe7, 0x1e, 0x9f, 0x7b, 0xe2, 0x71, 0x60,
-	0xb2, 0x94, 0xab, 0x15, 0x13, 0xb1, 0x3e, 0x4d, 0x95, 0x34, 0x92, 0xf4, 0x75, 0xca, 0xd4, 0x53,
-	0xa6, 0x17, 0xf4, 0x04, 0x88, 0xbf, 0x77, 0xc9, 0x05, 0x46, 0xf8, 0x35, 0x43, 0x6d, 0xc8, 0x3e,
-	0xec, 0x68, 0x13, 0x73, 0x31, 0x0d, 0xde, 0x04, 0xc7, 0x83, 0x28, 0x07, 0xf4, 0x23, 0xfc, 0xdf,
-	0xd0, 0xea, 0x54, 0x0a, 0x8d, 0xe4, 0x10, 0xba, 0xda, 0xc4, 0xa8, 0x94, 0x57, 0x7b, 0xe4, 0x79,
-	0x99, 0x99, 0x69, 0xab, 0xe4, 0x65, 0x66, 0xe8, 0x17, 0x18, 0x2a, 0x29, 0xcd, 0x79, 0x6e, 0x65,
-	0x65, 0x31, 0xae, 0xf9, 0x12, 0x8b, 0xf1, 0x1c, 0x91, 0x23, 0x18, 0x3c, 0x21, 0xa6, 0x2c, 0xe1,
-	0x6b, 0x74, 0x0e, 0xfd, 0xa8, 0x22, 0x08, 0x81, 0xce, 0x23, 0x26, 0xe9, 0xb4, 0xed, 0x6e, 0xb8,
-	0x6b, 0x3a, 0x87, 0x91, 0x35, 0x2e, 0x83, 0xbd, 0x06, 0xb0, 0xfc, 0x8d, 0x51, 0x5c, 0x3c, 0x78,
-	0xf7, 0x1a, 0x63, 0xb7, 0x44, 0xa5, 0xa4, 0xf2, 0xf9, 0x72, 0x40, 0x3f, 0xc1, 0x30, 0xe1, 0xda,
-	0x14, 0x55, 0xbc, 0x87, 0x8e, 0x35, 0x75, 0xe3, 0xc3, 0x0f, 0x07, 0xa7, 0x45, 0x73, 0xa7, 0xb5,
-	0x1d, 0x22, 0x27, 0x21, 0x21, 0xb4, 0x59, 0x92, 0xf8, 0xac, 0xf6, 0x92, 0xfe, 0x08, 0x60, 0x94,
-	0x9b, 0x55, 0x91, 0xf2, 0xf5, 0x2e, 0xb9, 0xb6, 0x9e, 0x6d, 0x1b, 0xa9, 0x62, 0xc8, 0x5b, 0x18,
-	0xe7, 0x68, 0x8e, 0x86, 0xf1, 0x44, 0x4f, 0x5b, 0x4e, 0xd2, 0x24, 0xc9, 0x89, 0xcf, 0xd4, 0x76,
-	0x99, 0x0e, 0x9b, 0x99, 0x8a, 0x67, 0xe5, 0xa1, 0xe8, 0x1d, 0xec, 0xde, 0x73, 0xb5, 0x7a, 0x66,
-	0x0a, 0xb7, 0x58, 0xe9, 0x15, 0xf4, 0xef, 0x79, 0x82, 0x82, 0xad, 0xd0, 0xb7, 0x54, 0x62, 0x7a,
-	0x07, 0x61, 0xe5, 0xec, 0xf7, 0x9b, 0x42, 0x6f, 0x8d, 0x4a, 0x73, 0x59, 0xbc, 0x3a, 0x05, 0xdc,
-	0x28, 0xf3, 0x2d, 0x84, 0x8f, 0xc8, 0x94, 0x59, 0x20, 0xdb, 0xe6, 0x77, 0x38, 0x84, 0x2e, 0x0a,
-	0xb6, 0x48, 0x8a, 0xd7, 0xc6, 0x23, 0x7a, 0x0b, 0x13, 0x16, 0xc7, 0x0a, 0xb5, 0xde, 0xc2, 0x74,
-	0x0a, 0x3d, 0x3f, 0xec, 0x5c, 0xc7, 0x51, 0x01, 0xe9, 0xef, 0x00, 0x76, 0x4b, 0x5f, 0xdf, 0xc3,
-	0x3b, 0x98, 0x2c, 0x33, 0xa5, 0x50, 0x98, 0x99, 0x1f, 0x0a, 0xdc, 0xd0, 0x0b, 0x96, 0x1c, 0xc3,
-	0x6e, 0xaa, 0x70, 0xcd, 0x65, 0xa6, 0x67, 0x0d, 0xf7, 0x97, 0xf4, 0x46, 0xfd, 0xfd, 0x0a, 0x20,
-	0x4c, 0x99, 0x62, 0x2b, 0x34, 0xa8, 0xb6, 0xd8, 0xf5, 0x0c, 0x06, 0xe5, 0xb8, 0xcb, 0x33, 0xa9,
-	0xeb, 0x97, 0x52, 0xdc, 0xf3, 0x87, 0x6b, 0x2b, 0x88, 0x2a, 0x9d, 0x3d, 0x4d, 0x6b, 0x96, 0x64,
-	0xe8, 0x12, 0xf6, 0xa2, 0x1c, 0xd0, 0x3f, 0x01, 0xec, 0xd5, 0xa2, 0xf8, 0x7a, 0x4a, 0x6d, 0x50,
-	0xd3, 0x12, 0x0a, 0x23, 0x99, 0xc4, 0xd7, 0x8d, 0x27, 0x0f, 0xa2, 0x06, 0x67, 0x35, 0x02, 0x9f,
-	0x2b, 0x4d, 0x3b, 0xd7, 0xd4, 0xb9, 0xb2, 0xaa, 0xce, 0x3f, 0x54, 0x35, 0x83, 0xfd, 0x32, 0xde,
-	0xe5, 0x56, 0xc7, 0x9e, 0x32, 0x38, 0x78, 0x61, 0xe1, 0xb7, 0x3c, 0xaa, 0xd7, 0x98, 0x9f, 0xf5,
-	0x5a, 0x5f, 0x1b, 0x1e, 0x62, 0x8d, 0x26, 0x95, 0x5c, 0x98, 0xed, 0x0e, 0x71, 0x31, 0xed, 0x3a,
-	0x6d, 0x45, 0x25, 0xa6, 0xdf, 0x20, 0xac, 0x9c, 0x7d, 0xee, 0xba, 0x3e, 0x68, 0xea, 0xed, 0x4e,
-	0x5c, 0x47, 0x99, 0x10, 0xf6, 0x93, 0xea, 0xbf, 0xca, 0x25, 0xb1, 0xc9, 0x4e, 0x27, 0x3f, 0x03,
-	0x18, 0xd6, 0x5e, 0x25, 0x32, 0x80, 0x9d, 0x73, 0x26, 0x2e, 0xe6, 0xe1, 0x7f, 0x64, 0x0c, 0x83,
-	0x0b, 0x91, 0x66, 0xe6, 0x4a, 0xc6, 0x18, 0x06, 0x16, 0x5e, 0x49, 0x23, 0xd5, 0xe7, 0xef, 0x29,
-	0x86, 0x2d, 0x32, 0x84, 0x9e, 0xdd, 0x6f, 0x16, 0xaf, 0xc3, 0x36, 0x99, 0x00, 0xdc, 0xa0, 0xd0,
-	0xfe, 0x66, 0x87, 0x8c, 0xa0, 0x7f, 0x6e, 0x54, 0xe2, 0xd0, 0x8e, 0x45, 0x17, 0x71, 0x82, 0xce,
-	0xa7, 0x4b, 0xf6, 0x60, 0xec, 0x6c, 0xe7, 0xc8, 0xe2, 0x05, 0x13, 0x71, 0xd8, 0x5b, 0x74, 0xdd,
-	0xff, 0xe1, 0xd9, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x86, 0x9d, 0x97, 0x14, 0x21, 0x07, 0x00,
-	0x00,
+	// 900 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x96, 0xdf, 0x6f, 0xdc, 0x44,
+	0x10, 0xc7, 0x6b, 0xdf, 0xef, 0xb9, 0xcb, 0xc5, 0x5d, 0xda, 0xc8, 0x0d, 0xa5, 0x54, 0x16, 0x82,
+	0x10, 0x20, 0x90, 0x5c, 0x9a, 0x1f, 0x8f, 0x69, 0x82, 0x44, 0x50, 0x2b, 0x55, 0x2e, 0x55, 0xfb,
+	0xba, 0x17, 0x4f, 0x5a, 0xab, 0xbe, 0x5d, 0x77, 0x77, 0x7d, 0x85, 0x37, 0xc4, 0x03, 0xe2, 0x8d,
+	0xbf, 0x80, 0x7f, 0x80, 0xbf, 0x12, 0xed, 0xda, 0x3e, 0xaf, 0xdd, 0x6b, 0x84, 0xdf, 0x3c, 0x73,
+	0x9f, 0x1d, 0xcf, 0xcc, 0x77, 0x67, 0x7c, 0x30, 0xbd, 0xe2, 0x8b, 0x05, 0x65, 0x91, 0xdc, 0x4b,
+	0x05, 0x57, 0x9c, 0x0c, 0x65, 0x4a, 0xc5, 0xdb, 0x4c, 0xce, 0x83, 0x7f, 0x3b, 0x30, 0x0e, 0xf1,
+	0x5d, 0x86, 0x52, 0xbd, 0x8c, 0x05, 0x92, 0xaf, 0xc0, 0x15, 0xfb, 0xbe, 0xf3, 0xd0, 0xd9, 0x19,
+	0x1f, 0xdc, 0xdd, 0x2b, 0xb1, 0x3d, 0xc1, 0xb9, 0x3a, 0xcf, 0x63, 0xfc, 0x74, 0x2b, 0x74, 0xc5,
+	0x3e, 0xd9, 0x03, 0x57, 0x1c, 0xf8, 0xae, 0x01, 0xef, 0x57, 0x60, 0xf1, 0xa2, 0x27, 0x31, 0xc3,
+	0x22, 0xac, 0xe1, 0x0f, 0x4c, 0xe0, 0x99, 0xdf, 0x69, 0x06, 0x4e, 0x62, 0xa9, 0x6c, 0x70, 0x46,
+	0xbe, 0x01, 0x57, 0x1c, 0xfa, 0x5d, 0x03, 0xde, 0xab, 0xc0, 0xeb, 0x58, 0x2c, 0xde, 0x53, 0x51,
+	0x8b, 0x7a, 0x48, 0xbe, 0x05, 0x57, 0x3c, 0xf2, 0x7b, 0x06, 0xde, 0xae, 0xe0, 0x37, 0x48, 0x85,
+	0x9a, 0x23, 0xad, 0x85, 0x7e, 0x44, 0x76, 0xc1, 0x15, 0x47, 0x7e, 0xdf, 0xd0, 0x7e, 0x45, 0xd3,
+	0x28, 0x12, 0x28, 0xa5, 0xcd, 0x1e, 0x99, 0xc8, 0xc7, 0xfe, 0xa0, 0x19, 0x39, 0xa5, 0x82, 0x2e,
+	0x50, 0xa1, 0xb0, 0xe9, 0x63, 0xf2, 0x03, 0xb8, 0xe2, 0xc4, 0x1f, 0x1a, 0xfa, 0xc1, 0x1a, 0xfa,
+	0x49, 0xa3, 0xcc, 0x13, 0x53, 0xe6, 0xa9, 0x3f, 0x6a, 0x96, 0x29, 0x51, 0xa5, 0x3c, 0x66, 0x35,
+	0xf8, 0xf4, 0x71, 0x0f, 0x3a, 0x02, 0xdf, 0x05, 0x7f, 0x76, 0x60, 0x12, 0xa2, 0x4c, 0x39, 0x93,
+	0x68, 0xd4, 0xda, 0xb1, 0xd4, 0xda, 0xaa, 0xab, 0x55, 0x72, 0x85, 0x5c, 0xdf, 0x5b, 0x72, 0x7d,
+	0xf6, 0x11, 0xb9, 0xac, 0x03, 0x07, 0x26, 0x74, 0xa9, 0xd7, 0x56, 0x53, 0x2f, 0x8b, 0x9c, 0x99,
+	0x4e, 0x95, 0x82, 0x6d, 0xaf, 0x13, 0xcc, 0xa2, 0x0f, 0x4d, 0xdd, 0xa5, 0x06, 0xf7, 0xd6, 0x68,
+	0x60, 0xc1, 0x47, 0xe4, 0x3b, 0x4b, 0x84, 0x4f, 0xd7, 0x8a, 0x60, 0xe1, 0xc7, 0x64, 0xdf, 0x52,
+	0xe1, 0xf3, 0x8f, 0xaa, 0x60, 0x1d, 0x39, 0x31, 0xc9, 0x97, 0x32, 0x6c, 0xaf, 0x93, 0xc1, 0xa2,
+	0x4f, 0x1f, 0xf7, 0xa1, 0x2b, 0x50, 0xa6, 0xc1, 0x2e, 0x90, 0x0f, 0x2f, 0x3a, 0xb9, 0x03, 0x3d,
+	0xa9, 0xa2, 0x98, 0x19, 0x41, 0x46, 0x61, 0x6e, 0x04, 0x3f, 0xc2, 0x27, 0x6b, 0xba, 0x4c, 0xb6,
+	0xa0, 0x2f, 0x55, 0x84, 0x42, 0x14, 0x74, 0x61, 0x15, 0x7e, 0x9e, 0x29, 0x23, 0x56, 0xee, 0xe7,
+	0x99, 0x0a, 0x5e, 0xc2, 0xd8, 0x1a, 0x42, 0x8d, 0x45, 0xb8, 0x8c, 0xaf, 0xb0, 0x3c, 0x9e, 0x5b,
+	0xe4, 0x3e, 0x8c, 0xde, 0x22, 0xa6, 0x34, 0x89, 0x97, 0x68, 0x22, 0x0c, 0xc3, 0xca, 0x41, 0x08,
+	0x74, 0xdf, 0x60, 0x92, 0x1a, 0x59, 0x87, 0xa1, 0x79, 0x0e, 0x2e, 0x60, 0x62, 0xdf, 0x17, 0xf2,
+	0x00, 0x40, 0xfb, 0x9f, 0x2b, 0x11, 0xb3, 0xd7, 0x45, 0x74, 0xcb, 0xa3, 0xab, 0x44, 0x21, 0xb8,
+	0x28, 0xf2, 0xcb, 0x8d, 0xe0, 0x67, 0x18, 0x5b, 0xa3, 0x4c, 0xbe, 0x86, 0xae, 0x0e, 0x7a, 0xe3,
+	0x22, 0x09, 0x0d, 0x42, 0x3c, 0xe8, 0xd0, 0x24, 0x29, 0x72, 0xd5, 0x8f, 0xc1, 0xef, 0x0e, 0x4c,
+	0xec, 0x7b, 0xa6, 0x53, 0xca, 0xcb, 0xd3, 0x02, 0xfa, 0xce, 0xc3, 0x8e, 0x4e, 0xa9, 0xf2, 0x90,
+	0x2f, 0x60, 0x23, 0xb7, 0x2e, 0x50, 0xd1, 0x38, 0x91, 0xbe, 0x6b, 0x90, 0xba, 0x93, 0xec, 0x16,
+	0x39, 0x75, 0x6e, 0x1a, 0x97, 0x3c, 0xa9, 0xe0, 0x15, 0x6c, 0x36, 0x16, 0x4e, 0x9b, 0x92, 0xb6,
+	0x61, 0x78, 0x1d, 0x27, 0xc8, 0xe8, 0x02, 0x8b, 0x2e, 0xad, 0xec, 0xe0, 0x15, 0x78, 0xcd, 0xc9,
+	0x20, 0x3e, 0x0c, 0x96, 0x28, 0x64, 0xcc, 0xcb, 0xab, 0x53, 0x9a, 0xad, 0x72, 0x7e, 0x01, 0x5e,
+	0x73, 0xef, 0xb5, 0x49, 0x7a, 0x0b, 0xfa, 0xc8, 0xe8, 0x3c, 0x29, 0xaf, 0x4d, 0x61, 0x05, 0x2f,
+	0x60, 0x5a, 0x5f, 0x90, 0x6d, 0x82, 0xfa, 0x30, 0x28, 0x0e, 0x9b, 0xa8, 0x1b, 0x61, 0x69, 0x06,
+	0x7f, 0x3b, 0xb0, 0xd9, 0x18, 0x7a, 0xf2, 0x25, 0x4c, 0xaf, 0x32, 0x21, 0x90, 0xa9, 0xb3, 0xe2,
+	0x90, 0x63, 0x0e, 0x35, 0xbc, 0x64, 0x07, 0x36, 0x53, 0x81, 0xcb, 0x98, 0x67, 0xf2, 0xac, 0x16,
+	0xbd, 0xe9, 0x6e, 0xd5, 0xbf, 0xbf, 0x1c, 0xf0, 0x9a, 0xeb, 0xbd, 0x4d, 0xad, 0x33, 0x18, 0xad,
+	0x8e, 0x9b, 0x7c, 0xa6, 0x36, 0x7f, 0xc5, 0xd9, 0x75, 0xfc, 0xfa, 0x99, 0x06, 0xc2, 0x8a, 0xd3,
+	0xd3, 0xb4, 0xa4, 0x49, 0x86, 0x26, 0xc3, 0x41, 0x98, 0x1b, 0xc1, 0x3f, 0x0e, 0xdc, 0xfe, 0x60,
+	0xc9, 0x55, 0xac, 0x63, 0xb1, 0x24, 0x80, 0x09, 0x4f, 0xa2, 0x67, 0xb5, 0x37, 0x8f, 0xc2, 0x9a,
+	0x4f, 0x33, 0x0c, 0xdf, 0x57, 0x4c, 0x27, 0x67, 0x6c, 0xdf, 0xaa, 0x55, 0xdd, 0xff, 0xd1, 0xaa,
+	0x33, 0xb8, 0xb3, 0xee, 0xd3, 0xd6, 0xa2, 0x5b, 0x01, 0x85, 0xbb, 0x6b, 0xf7, 0xb2, 0xde, 0x60,
+	0x55, 0x1b, 0xf3, 0x59, 0xb7, 0xfa, 0xd5, 0x72, 0x88, 0x1b, 0x9f, 0xd3, 0x96, 0x43, 0x5c, 0x9e,
+	0x36, 0x3d, 0x75, 0xc3, 0x95, 0x1d, 0xfc, 0x0a, 0x5e, 0xf3, 0x0b, 0x51, 0xe3, 0x9d, 0x3a, 0xaf,
+	0x6b, 0x8a, 0x65, 0x98, 0x31, 0xa6, 0x57, 0x6a, 0xb1, 0x95, 0x57, 0x8e, 0x36, 0x35, 0xed, 0xfe,
+	0xe1, 0xc0, 0xd8, 0xba, 0x4a, 0x64, 0x04, 0xbd, 0x73, 0xca, 0x2e, 0x2f, 0xbc, 0x5b, 0x64, 0x03,
+	0x46, 0x97, 0x2c, 0xcd, 0xd4, 0x53, 0x1e, 0xa1, 0xe7, 0x68, 0xf3, 0x29, 0x57, 0x5c, 0xfc, 0xf2,
+	0x5b, 0x8a, 0x9e, 0x4b, 0xc6, 0x30, 0xd0, 0xf5, 0x9d, 0x45, 0x4b, 0xaf, 0x43, 0xa6, 0x00, 0xcf,
+	0x91, 0xc9, 0xe2, 0xc7, 0x2e, 0x99, 0xc0, 0xf0, 0x5c, 0x89, 0xc4, 0x58, 0x3d, 0x6d, 0x5d, 0x46,
+	0x09, 0x9a, 0x38, 0x7d, 0x72, 0x1b, 0x36, 0x4c, 0xd8, 0x0b, 0xa4, 0xd1, 0x9c, 0xb2, 0xc8, 0x1b,
+	0xcc, 0xfb, 0xe6, 0x5f, 0xe4, 0xec, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x48, 0xdf, 0x38, 0xae,
+	0x57, 0x0a, 0x00, 0x00,
 }

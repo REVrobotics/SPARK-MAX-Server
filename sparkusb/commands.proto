@@ -23,6 +23,33 @@ service sparkusb {
 }
 */
 
+message RequestWire {
+    oneof req {
+        rootCommand             r1 = 1;
+        commandLineRequest      r2 = 2;
+        listRequest             r3 = 3;
+        firmwareRequest         r4 = 4;
+        heartbeatRequest        r5 = 5;
+        addressRequest          r6 = 6;
+        parameterRequest        r7 = 7;
+        parameterListRequest    r8 = 8;
+        setpointRequest         r9 = 9;
+    }
+}
+
+message ResponseWire {
+    oneof resp {
+        rootResponse            r1 = 1;
+        commandLineResponse     r2 = 2;
+        listResponse            r3 = 3;
+        firmwareResponse        r4 = 4;
+        addressResponse         r6 = 6;
+        parameterResponse       r7 = 7;
+        parameterListResponse   r8 = 8;
+        setpointResponse        r9 = 9;
+    }
+}
+
 message commandLineRequest {
     string stdin = 1;
 }

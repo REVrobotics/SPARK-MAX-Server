@@ -76,13 +76,13 @@ func GetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 
 	frame.Data[0] = uint8(command.Parameter)
 
-	//fmt.Print("Outgoing Frame: ")
-	//fmt.Println(frame)
+	fmt.Print("Outgoing Frame: ")
+	fmt.Println(frame)
 
 	frameIn, err := sparkCommand(frame)
 
-	//fmt.Print("Incoming Frame:")
-	//fmt.Println(frameIn)
+	fmt.Print("Incoming Frame:")
+	fmt.Println(frameIn)
 
 	resp.Value = binary.LittleEndian.Uint32(frameIn.Data[:4])
 
