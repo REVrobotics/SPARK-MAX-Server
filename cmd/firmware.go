@@ -15,32 +15,48 @@
 package cmd
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/spf13/cobra"
+	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
 
-var version bool
+var update bool
 
 // firmwareCmd represents the firmware command
 var firmwareCmd = &cobra.Command{
 	Use:   "firmware",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Get firmware version or update",
+	Long: `Get the firmware version or program new firmware
+	into the device. To get the firmware pass the -u flag.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+The command will block until the firmware is updated. Be sure that
+the device is plugged in and power is not removed during the entire
+update.`,
 	Run: firmware,
 }
 
 func init() {
 	rootCmd.AddCommand(firmwareCmd)
 
-	firmwareCmd.Flags().BoolVar(&version, "version", false, "Get current firmware version from device")
+	firmwareCmd.Flags().BoolVarP(&update, "update", "u", false, "Get current firmware version from device")
 }
 
 func firmware(cmd *cobra.Command, args []string) {
-	if version == true {
+	if update == true {
+		log.Println("Firmware update is not implemented at this time")
 		return
+	} else {
+		//Return the firmware version
+		req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_CanID}
+		resp, err := sparkusb.GetParameter(&req)
+		if err != nil {
+			log.Fatalf("Failed to get firmware: %s\r\n", err.Error())
+		}
+		versionMajor := resp.Value & 0xFFFFFF00
+		versionMinor := (resp.Value & 0xFFFF00FF) >> 8
+		versionBuild := (resp.Value & 0xFFFF) >> 16
+		fmt.Printf("Firmware Version: v%d.%d.%d", versionMajor, versionMinor, versionBuild)
 	}
 }

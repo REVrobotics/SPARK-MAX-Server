@@ -15,12 +15,16 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"log"
 	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	spark0mq "github.com/willtoth/USB-BLDC-TOOL/spark0mq"
+	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
 
 var cfgFile string
@@ -37,10 +41,16 @@ var Remote bool
 // port for grpc server
 var port uint
 
+// Version of application
+const (
+	AppVersion = "0.1.1"
+)
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "revbldc",
-	Short: "configure and control REV CAN BLDC controller",
+	Version: AppVersion,
+	Use:     "revbldc",
+	Short:   "configure and control REV CAN BLDC controller",
 	Long: `Use this tool to configure and command the REV CAN BLDC
 controller over USB, either by CLI interface or GUI:
 
@@ -50,11 +60,26 @@ externally. It can update firmware, set and get parameters
 and save/load configurations.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if Remote == true {
-			//if err := sparkgrpc.RunServer(port); err != nil {
-			//	log.Fatalf("Failed to start server %v", err)
-			//}
+			server, err := spark0mq.Spark0mqStart(int(port))
+			if err != nil {
+				log.Fatalf("Failed to start server %v", err)
+			}
+			//Press enter to kill server
+			reader := bufio.NewReader(os.Stdin)
+			reader.ReadString('\n')
+			server.Stop()
 		} else {
 			cmd.Usage()
+		}
+	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if Remote == false {
+			sparkusb.Connect(Device)
+		}
+	},
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		if Remote == false && Persist == false {
+			sparkusb.Disconnect()
 		}
 	},
 }
@@ -81,8 +106,8 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.PersistentFlags().StringVarP(&Device, "device", "d", "", "Set the device COM port")
 	rootCmd.PersistentFlags().BoolVarP(&Persist, "interactive", "i", false, "Keep connection alive between commands")
-	rootCmd.PersistentFlags().BoolVarP(&Remote, "remote", "r", false, "Run a TCP/IP server to stream command line")
-	rootCmd.PersistentFlags().UintVarP(&port, "port", "p", 8001, "Set port for grpc server")
+	rootCmd.PersistentFlags().BoolVarP(&Remote, "remote", "r", false, "Run a TCP/IP server to stream commands")
+	rootCmd.PersistentFlags().UintVarP(&port, "port", "p", 8001, "Set port for 0mq server")
 }
 
 // initConfig reads in config file and ENV variables if set.
