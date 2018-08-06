@@ -25,29 +25,34 @@ service sparkusb {
 
 message RequestWire {
     oneof req {
-        rootCommand             r1 = 1;
-        commandLineRequest      r2 = 2;
-        listRequest             r3 = 3;
-        firmwareRequest         r4 = 4;
-        heartbeatRequest        r5 = 5;
-        addressRequest          r6 = 6;
-        parameterRequest        r7 = 7;
-        parameterListRequest    r8 = 8;
-        setpointRequest         r9 = 9;
+        rootCommand             root = 10;
+        commandLineRequest      cmdLine = 11;
+        listRequest             list = 12;
+        firmwareRequest         firmware = 13;
+        heartbeatRequest        heartbeat = 14;
+        addressRequest          address = 15;
+        parameterRequest        parameter = 16;
+        parameterListRequest    parameterList = 17;
+        setpointRequest         setpoint = 18;
+        controlRequest          control = 19;
     }
 }
 
 message ResponseWire {
     oneof resp {
-        rootResponse            r1 = 1;
-        commandLineResponse     r2 = 2;
-        listResponse            r3 = 3;
-        firmwareResponse        r4 = 4;
-        addressResponse         r6 = 6;
-        parameterResponse       r7 = 7;
-        parameterListResponse   r8 = 8;
-        setpointResponse        r9 = 9;
+        rootResponse            r1 = 10;
+        commandLineResponse     r2 = 11;
+        listResponse            r3 = 12;
+        firmwareResponse        r4 = 13;
+        addressResponse         r6 = 14;
+        parameterResponse       r7 = 15;
+        parameterListResponse   r8 = 16;
+        setpointResponse        r9 = 17;
     }
+}
+
+message controlRequest {
+    string req = 1;
 }
 
 message commandLineRequest {

@@ -34,31 +34,18 @@ func listDevices(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	spName := sparkusb.GetDefaultDevice()
-
-	fmt.Println(spName)
-
-	if spName == "" {
-		fmt.Println("No devices detected")
-		return
-	}
-
-	err := sparkusb.Connect(spName)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	req := sparkusb.ParameterRequest{Parameter: 0}
-	param, err := sparkusb.GetParameter(&req)
-
-	fmt.Println(param.Value)
-
-	sparkusb.Disconnect()
-
 	/*
 
-		frame := sparkusb.DefaultFrame()
+		spName := sparkusb.GetDefaultDevice()
+
+		fmt.Println(spName)
+
+		if spName == "" {
+			fmt.Println("No devices detected")
+			//return
+		}
+
+
 
 		err := sparkusb.Connect(spName)
 		if err != nil {
@@ -66,23 +53,10 @@ func listDevices(cmd *cobra.Command, args []string) {
 			return
 		}
 
-		frame.Header.API = sparkusb.CmdApiSetCfg
-		frame.Data[0] = 0
-		frame.Data[2] = 12
+		req := sparkusb.ParameterRequest{Parameter: 0}
+		param, err := sparkusb.GetParameter(&req)
 
-		err = sparkusb.RunCommand(frame, spName, true)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		frame.Header.API = sparkusb.CmdApiBurnFlash
-		frame.Data[0] = 0xA3
-		frame.Data[1] = 0x3A
-
-		err = sparkusb.RunCommand(frame, spName, true)
-		if err != nil {
-			fmt.Println(err)
-		}
+		fmt.Println(param.Value)
 
 		sparkusb.Disconnect()
 
