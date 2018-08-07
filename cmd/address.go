@@ -23,13 +23,10 @@ import (
 // addressCmd represents the address command
 var addressCmd = &cobra.Command{
 	Use:   "address",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Get or set device CAN ID",
+	Long: `Get or set the device CAN ID. Run with 
+no arguments to get the CAN ID. Run with a valid ID to 
+set the CAN ID. The CAN ID must be a number between 1 - 62.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("address called")
 	},
@@ -37,14 +34,4 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(addressCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// addressCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// addressCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

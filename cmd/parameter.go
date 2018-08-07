@@ -16,35 +16,61 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
+	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
 
 // parameterCmd represents the parameter command
 var parameterCmd = &cobra.Command{
 	Use:   "parameter",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Args:  cobra.RangeArgs(1, 2),
+	Short: "Get or set parameter",
+	Run:   runParameter,
+}
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("parameter called")
-	},
+const (
+	longPrefix = `The first argument is <parameter ID>, the second
+optional parameter is the value for that parameter. 
+
+Parameter ID list is as follows:
+
+`
+)
+
+func buildLongStr() string {
+	val := longPrefix
+	for key := range sparkusb.ConfigParam_value {
+		val += key
+		val += "\n"
+	}
+	return val
 }
 
 func init() {
+	parameterCmd.Long = buildLongStr()
 	rootCmd.AddCommand(parameterCmd)
+}
 
-	// Here you will define your flags and configuration settings.
+func runParameter(cmd *cobra.Command, args []string) {
+	if val, ok := sparkusb.ConfigParam_value[args[0]]; ok {
+		req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam(val)}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// parameterCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// parameterCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+		if len(args) == 1 {
+			resp, err := sparkusb.GetParameter(&req)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Failed to get parameter %s: %s\r\n", val, err.Error())
+			}
+			fmt.Println(resp.Value)
+		} else {
+			req.Value = args[1]
+			_, err := sparkusb.SetParameter(&req)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Set parameter failed for %s: %s\r\n", val, err.Error())
+			}
+		}
+	} else {
+		fmt.Fprintf(os.Stderr, "Invalid parameter: %s", args[0])
+	}
 }

@@ -68,13 +68,19 @@ and save/load configurations.`,
 			reader := bufio.NewReader(os.Stdin)
 			reader.ReadString('\n')
 			server.Stop()
+		} else if Persist == true {
+			fmt.Println("Interactive feature not yet implmeneted")
 		} else {
 			cmd.Usage()
 		}
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if Remote == false {
-			sparkusb.Connect(Device)
+			err := sparkusb.Connect(Device)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
 		}
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {

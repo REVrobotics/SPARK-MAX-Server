@@ -3,6 +3,8 @@ package sparkusb
 import (
 	"encoding/binary"
 	"fmt"
+	"math"
+	"strconv"
 )
 
 func sparkCommand(frame UsbFrame) (UsbFrame, error) {
@@ -50,6 +52,22 @@ func Address(command *AddressRequest) (*AddressResponse, error) {
 
 */
 
+func getParameterType(paramID ConfigParam) string {
+	var paramTypeList = map[int32]string{
+		int32(ConfigParam_CanID):           "uint",
+		int32(ConfigParam_InputMode):       "uint",
+		int32(ConfigParam_MotorType):       "uint",
+		int32(ConfigParam_CommAdv):         "float",
+		int32(ConfigParam_SensorType):      "uint",
+		int32(ConfigParam_CtrlType):        "uint",
+		int32(ConfigParam_IdleMode):        "uint",
+		int32(ConfigParam_InputDeadband):   "float",
+		int32(ConfigParam_FirmwareVersion): "uint",
+	}
+
+	return paramTypeList[int32(paramID)]
+}
+
 func SetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 	var resp ParameterResponse
 	frame := DefaultFrame()
@@ -58,14 +76,39 @@ func SetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 
 	frame.Data[0] = uint8(command.Parameter)
 
-	binary.LittleEndian.PutUint32(frame.Data[2:6], command.Value)
+	//rawMsg := frame.Data[2:6]
+	var rawMsg uint32
+	var err error
 
-	_, err := sparkCommand(frame)
+	//Parse string param to raw bytes of the appropriate type
+	switch getParameterType(command.Parameter) {
+	case "uint":
+		tmp, err := strconv.ParseUint(command.Value, 10, 32)
+		if err != nil {
+			return &resp, err
+		}
+		rawMsg = uint32(tmp)
+	case "int":
+		tmp, err := strconv.ParseInt(command.Value, 10, 32)
+		if err != nil {
+			return &resp, err
+		}
+		rawMsg = uint32(tmp)
+	case "float":
+		tmp, err := strconv.ParseFloat(command.Value, 32)
+		if err != nil {
+			return &resp, err
+		}
+		rawMsg = math.Float32bits(float32(tmp))
+	}
+	binary.LittleEndian.PutUint32(frame.Data[2:6], rawMsg)
+
+	_, err = sparkCommand(frame)
 
 	//resp.Root.Error = err.Error()
 	fmt.Println(err)
 
-	return &resp, nil
+	return &resp, err
 }
 
 func GetParameter(command *ParameterRequest) (*ParameterResponse, error) {
@@ -84,7 +127,18 @@ func GetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 	fmt.Print("Incoming Frame:")
 	fmt.Println(frameIn)
 
-	resp.Value = binary.LittleEndian.Uint32(frameIn.Data[:4])
+	rawMsg := binary.LittleEndian.Uint32(frameIn.Data[:4])
+
+	//Parse to string from raw bytes of the appropriate type
+	switch getParameterType(command.Parameter) {
+	case "int":
+		resp.Value = strconv.FormatInt(int64(rawMsg), 10)
+	case "uint":
+		resp.Value = strconv.FormatUint(uint64(rawMsg), 10)
+	case "float":
+		rawMsgFloat := math.Float32frombits(rawMsg)
+		resp.Value = strconv.FormatFloat(float64(rawMsgFloat), 'f', 6, 32)
+	}
 
 	//resp.Root.Error = err.Error()
 

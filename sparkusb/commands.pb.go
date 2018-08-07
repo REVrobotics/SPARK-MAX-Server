@@ -21,14 +21,15 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 type ConfigParam int32
 
 const (
-	ConfigParam_CanID         ConfigParam = 0
-	ConfigParam_InputMode     ConfigParam = 1
-	ConfigParam_MotorType     ConfigParam = 2
-	ConfigParam_CommAdv       ConfigParam = 3
-	ConfigParam_SensorType    ConfigParam = 4
-	ConfigParam_CtrlType      ConfigParam = 5
-	ConfigParam_IdleMode      ConfigParam = 6
-	ConfigParam_InputDeadband ConfigParam = 7
+	ConfigParam_CanID           ConfigParam = 0
+	ConfigParam_InputMode       ConfigParam = 1
+	ConfigParam_MotorType       ConfigParam = 2
+	ConfigParam_CommAdv         ConfigParam = 3
+	ConfigParam_SensorType      ConfigParam = 4
+	ConfigParam_CtrlType        ConfigParam = 5
+	ConfigParam_IdleMode        ConfigParam = 6
+	ConfigParam_InputDeadband   ConfigParam = 7
+	ConfigParam_FirmwareVersion ConfigParam = 8
 )
 
 var ConfigParam_name = map[int32]string{
@@ -40,23 +41,196 @@ var ConfigParam_name = map[int32]string{
 	5: "CtrlType",
 	6: "IdleMode",
 	7: "InputDeadband",
+	8: "FirmwareVersion",
 }
 var ConfigParam_value = map[string]int32{
-	"CanID":         0,
-	"InputMode":     1,
-	"MotorType":     2,
-	"CommAdv":       3,
-	"SensorType":    4,
-	"CtrlType":      5,
-	"IdleMode":      6,
-	"InputDeadband": 7,
+	"CanID":           0,
+	"InputMode":       1,
+	"MotorType":       2,
+	"CommAdv":         3,
+	"SensorType":      4,
+	"CtrlType":        5,
+	"IdleMode":        6,
+	"InputDeadband":   7,
+	"FirmwareVersion": 8,
 }
 
 func (x ConfigParam) String() string {
 	return proto.EnumName(ConfigParam_name, int32(x))
 }
 func (ConfigParam) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{0}
+	return fileDescriptor_commands_5c04a10db3505173, []int{0}
+}
+
+type MotorType int32
+
+const (
+	MotorType_Brushed   MotorType = 0
+	MotorType_Brushless MotorType = 1
+)
+
+var MotorType_name = map[int32]string{
+	0: "Brushed",
+	1: "Brushless",
+}
+var MotorType_value = map[string]int32{
+	"Brushed":   0,
+	"Brushless": 1,
+}
+
+func (x MotorType) String() string {
+	return proto.EnumName(MotorType_name, int32(x))
+}
+func (MotorType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_commands_5c04a10db3505173, []int{1}
+}
+
+type SensorType int32
+
+const (
+	SensorType_HallSensor SensorType = 0
+	SensorType_Encoder    SensorType = 1
+	SensorType_Sensorless SensorType = 2
+)
+
+var SensorType_name = map[int32]string{
+	0: "HallSensor",
+	1: "Encoder",
+	2: "Sensorless",
+}
+var SensorType_value = map[string]int32{
+	"HallSensor": 0,
+	"Encoder":    1,
+	"Sensorless": 2,
+}
+
+func (x SensorType) String() string {
+	return proto.EnumName(SensorType_name, int32(x))
+}
+func (SensorType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_commands_5c04a10db3505173, []int{2}
+}
+
+type CtrlType int32
+
+const (
+	CtrlType_DutyCycle CtrlType = 0
+	CtrlType_Velocity  CtrlType = 1
+)
+
+var CtrlType_name = map[int32]string{
+	0: "DutyCycle",
+	1: "Velocity",
+}
+var CtrlType_value = map[string]int32{
+	"DutyCycle": 0,
+	"Velocity":  1,
+}
+
+func (x CtrlType) String() string {
+	return proto.EnumName(CtrlType_name, int32(x))
+}
+func (CtrlType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_commands_5c04a10db3505173, []int{3}
+}
+
+type IdleMode int32
+
+const (
+	IdleMode_Coast IdleMode = 0
+	IdleMode_Brake IdleMode = 1
+)
+
+var IdleMode_name = map[int32]string{
+	0: "Coast",
+	1: "Brake",
+}
+var IdleMode_value = map[string]int32{
+	"Coast": 0,
+	"Brake": 1,
+}
+
+func (x IdleMode) String() string {
+	return proto.EnumName(IdleMode_name, int32(x))
+}
+func (IdleMode) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_commands_5c04a10db3505173, []int{4}
+}
+
+type Faults int32
+
+const (
+	Faults_Brownout    Faults = 0
+	Faults_Overcurrent Faults = 1
+	Faults_Overvoltage Faults = 2
+	Faults_MotorFault  Faults = 3
+	Faults_SensorFault Faults = 4
+	Faults_Stall       Faults = 5
+	Faults_EEPROMCRC   Faults = 6
+)
+
+var Faults_name = map[int32]string{
+	0: "Brownout",
+	1: "Overcurrent",
+	2: "Overvoltage",
+	3: "MotorFault",
+	4: "SensorFault",
+	5: "Stall",
+	6: "EEPROMCRC",
+}
+var Faults_value = map[string]int32{
+	"Brownout":    0,
+	"Overcurrent": 1,
+	"Overvoltage": 2,
+	"MotorFault":  3,
+	"SensorFault": 4,
+	"Stall":       5,
+	"EEPROMCRC":   6,
+}
+
+func (x Faults) String() string {
+	return proto.EnumName(Faults_name, int32(x))
+}
+func (Faults) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_commands_5c04a10db3505173, []int{5}
+}
+
+type StickyFaults int32
+
+const (
+	StickyFaults_BrownoutSticky    StickyFaults = 0
+	StickyFaults_OvercurrentSticky StickyFaults = 1
+	StickyFaults_OvervoltageSticky StickyFaults = 2
+	StickyFaults_MotorFaultSticky  StickyFaults = 3
+	StickyFaults_SensorFaultSticky StickyFaults = 4
+	StickyFaults_StallSticky       StickyFaults = 5
+	StickyFaults_EEPROMCRCSticky   StickyFaults = 6
+)
+
+var StickyFaults_name = map[int32]string{
+	0: "BrownoutSticky",
+	1: "OvercurrentSticky",
+	2: "OvervoltageSticky",
+	3: "MotorFaultSticky",
+	4: "SensorFaultSticky",
+	5: "StallSticky",
+	6: "EEPROMCRCSticky",
+}
+var StickyFaults_value = map[string]int32{
+	"BrownoutSticky":    0,
+	"OvercurrentSticky": 1,
+	"OvervoltageSticky": 2,
+	"MotorFaultSticky":  3,
+	"SensorFaultSticky": 4,
+	"StallSticky":       5,
+	"EEPROMCRCSticky":   6,
+}
+
+func (x StickyFaults) String() string {
+	return proto.EnumName(StickyFaults_name, int32(x))
+}
+func (StickyFaults) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_commands_5c04a10db3505173, []int{6}
 }
 
 type RequestWire struct {
@@ -81,7 +255,7 @@ func (m *RequestWire) Reset()         { *m = RequestWire{} }
 func (m *RequestWire) String() string { return proto.CompactTextString(m) }
 func (*RequestWire) ProtoMessage()    {}
 func (*RequestWire) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{0}
+	return fileDescriptor_commands_5c04a10db3505173, []int{0}
 }
 func (m *RequestWire) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RequestWire.Unmarshal(m, b)
@@ -470,14 +644,14 @@ func _RequestWire_OneofSizer(msg proto.Message) (n int) {
 
 type ResponseWire struct {
 	// Types that are valid to be assigned to Resp:
-	//	*ResponseWire_R1
-	//	*ResponseWire_R2
-	//	*ResponseWire_R3
-	//	*ResponseWire_R4
-	//	*ResponseWire_R6
-	//	*ResponseWire_R7
-	//	*ResponseWire_R8
-	//	*ResponseWire_R9
+	//	*ResponseWire_Root
+	//	*ResponseWire_CmdLine
+	//	*ResponseWire_List
+	//	*ResponseWire_Firmware
+	//	*ResponseWire_Address
+	//	*ResponseWire_Parameter
+	//	*ResponseWire_Parameterlist
+	//	*ResponseWire_Setpoint
 	Resp                 isResponseWire_Resp `protobuf_oneof:"resp"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
@@ -488,7 +662,7 @@ func (m *ResponseWire) Reset()         { *m = ResponseWire{} }
 func (m *ResponseWire) String() string { return proto.CompactTextString(m) }
 func (*ResponseWire) ProtoMessage()    {}
 func (*ResponseWire) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{1}
+	return fileDescriptor_commands_5c04a10db3505173, []int{1}
 }
 func (m *ResponseWire) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ResponseWire.Unmarshal(m, b)
@@ -512,53 +686,53 @@ type isResponseWire_Resp interface {
 	isResponseWire_Resp()
 }
 
-type ResponseWire_R1 struct {
-	R1 *RootResponse `protobuf:"bytes,10,opt,name=r1,proto3,oneof"`
+type ResponseWire_Root struct {
+	Root *RootResponse `protobuf:"bytes,10,opt,name=root,proto3,oneof"`
 }
 
-type ResponseWire_R2 struct {
-	R2 *CommandLineResponse `protobuf:"bytes,11,opt,name=r2,proto3,oneof"`
+type ResponseWire_CmdLine struct {
+	CmdLine *CommandLineResponse `protobuf:"bytes,11,opt,name=cmdLine,proto3,oneof"`
 }
 
-type ResponseWire_R3 struct {
-	R3 *ListResponse `protobuf:"bytes,12,opt,name=r3,proto3,oneof"`
+type ResponseWire_List struct {
+	List *ListResponse `protobuf:"bytes,12,opt,name=list,proto3,oneof"`
 }
 
-type ResponseWire_R4 struct {
-	R4 *FirmwareResponse `protobuf:"bytes,13,opt,name=r4,proto3,oneof"`
+type ResponseWire_Firmware struct {
+	Firmware *FirmwareResponse `protobuf:"bytes,13,opt,name=firmware,proto3,oneof"`
 }
 
-type ResponseWire_R6 struct {
-	R6 *AddressResponse `protobuf:"bytes,14,opt,name=r6,proto3,oneof"`
+type ResponseWire_Address struct {
+	Address *AddressResponse `protobuf:"bytes,14,opt,name=address,proto3,oneof"`
 }
 
-type ResponseWire_R7 struct {
-	R7 *ParameterResponse `protobuf:"bytes,15,opt,name=r7,proto3,oneof"`
+type ResponseWire_Parameter struct {
+	Parameter *ParameterResponse `protobuf:"bytes,15,opt,name=parameter,proto3,oneof"`
 }
 
-type ResponseWire_R8 struct {
-	R8 *ParameterListResponse `protobuf:"bytes,16,opt,name=r8,proto3,oneof"`
+type ResponseWire_Parameterlist struct {
+	Parameterlist *ParameterListResponse `protobuf:"bytes,16,opt,name=parameterlist,proto3,oneof"`
 }
 
-type ResponseWire_R9 struct {
-	R9 *SetpointResponse `protobuf:"bytes,17,opt,name=r9,proto3,oneof"`
+type ResponseWire_Setpoint struct {
+	Setpoint *SetpointResponse `protobuf:"bytes,17,opt,name=setpoint,proto3,oneof"`
 }
 
-func (*ResponseWire_R1) isResponseWire_Resp() {}
+func (*ResponseWire_Root) isResponseWire_Resp() {}
 
-func (*ResponseWire_R2) isResponseWire_Resp() {}
+func (*ResponseWire_CmdLine) isResponseWire_Resp() {}
 
-func (*ResponseWire_R3) isResponseWire_Resp() {}
+func (*ResponseWire_List) isResponseWire_Resp() {}
 
-func (*ResponseWire_R4) isResponseWire_Resp() {}
+func (*ResponseWire_Firmware) isResponseWire_Resp() {}
 
-func (*ResponseWire_R6) isResponseWire_Resp() {}
+func (*ResponseWire_Address) isResponseWire_Resp() {}
 
-func (*ResponseWire_R7) isResponseWire_Resp() {}
+func (*ResponseWire_Parameter) isResponseWire_Resp() {}
 
-func (*ResponseWire_R8) isResponseWire_Resp() {}
+func (*ResponseWire_Parameterlist) isResponseWire_Resp() {}
 
-func (*ResponseWire_R9) isResponseWire_Resp() {}
+func (*ResponseWire_Setpoint) isResponseWire_Resp() {}
 
 func (m *ResponseWire) GetResp() isResponseWire_Resp {
 	if m != nil {
@@ -567,58 +741,58 @@ func (m *ResponseWire) GetResp() isResponseWire_Resp {
 	return nil
 }
 
-func (m *ResponseWire) GetR1() *RootResponse {
-	if x, ok := m.GetResp().(*ResponseWire_R1); ok {
-		return x.R1
+func (m *ResponseWire) GetRoot() *RootResponse {
+	if x, ok := m.GetResp().(*ResponseWire_Root); ok {
+		return x.Root
 	}
 	return nil
 }
 
-func (m *ResponseWire) GetR2() *CommandLineResponse {
-	if x, ok := m.GetResp().(*ResponseWire_R2); ok {
-		return x.R2
+func (m *ResponseWire) GetCmdLine() *CommandLineResponse {
+	if x, ok := m.GetResp().(*ResponseWire_CmdLine); ok {
+		return x.CmdLine
 	}
 	return nil
 }
 
-func (m *ResponseWire) GetR3() *ListResponse {
-	if x, ok := m.GetResp().(*ResponseWire_R3); ok {
-		return x.R3
+func (m *ResponseWire) GetList() *ListResponse {
+	if x, ok := m.GetResp().(*ResponseWire_List); ok {
+		return x.List
 	}
 	return nil
 }
 
-func (m *ResponseWire) GetR4() *FirmwareResponse {
-	if x, ok := m.GetResp().(*ResponseWire_R4); ok {
-		return x.R4
+func (m *ResponseWire) GetFirmware() *FirmwareResponse {
+	if x, ok := m.GetResp().(*ResponseWire_Firmware); ok {
+		return x.Firmware
 	}
 	return nil
 }
 
-func (m *ResponseWire) GetR6() *AddressResponse {
-	if x, ok := m.GetResp().(*ResponseWire_R6); ok {
-		return x.R6
+func (m *ResponseWire) GetAddress() *AddressResponse {
+	if x, ok := m.GetResp().(*ResponseWire_Address); ok {
+		return x.Address
 	}
 	return nil
 }
 
-func (m *ResponseWire) GetR7() *ParameterResponse {
-	if x, ok := m.GetResp().(*ResponseWire_R7); ok {
-		return x.R7
+func (m *ResponseWire) GetParameter() *ParameterResponse {
+	if x, ok := m.GetResp().(*ResponseWire_Parameter); ok {
+		return x.Parameter
 	}
 	return nil
 }
 
-func (m *ResponseWire) GetR8() *ParameterListResponse {
-	if x, ok := m.GetResp().(*ResponseWire_R8); ok {
-		return x.R8
+func (m *ResponseWire) GetParameterlist() *ParameterListResponse {
+	if x, ok := m.GetResp().(*ResponseWire_Parameterlist); ok {
+		return x.Parameterlist
 	}
 	return nil
 }
 
-func (m *ResponseWire) GetR9() *SetpointResponse {
-	if x, ok := m.GetResp().(*ResponseWire_R9); ok {
-		return x.R9
+func (m *ResponseWire) GetSetpoint() *SetpointResponse {
+	if x, ok := m.GetResp().(*ResponseWire_Setpoint); ok {
+		return x.Setpoint
 	}
 	return nil
 }
@@ -626,14 +800,14 @@ func (m *ResponseWire) GetR9() *SetpointResponse {
 // XXX_OneofFuncs is for the internal use of the proto package.
 func (*ResponseWire) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
 	return _ResponseWire_OneofMarshaler, _ResponseWire_OneofUnmarshaler, _ResponseWire_OneofSizer, []interface{}{
-		(*ResponseWire_R1)(nil),
-		(*ResponseWire_R2)(nil),
-		(*ResponseWire_R3)(nil),
-		(*ResponseWire_R4)(nil),
-		(*ResponseWire_R6)(nil),
-		(*ResponseWire_R7)(nil),
-		(*ResponseWire_R8)(nil),
-		(*ResponseWire_R9)(nil),
+		(*ResponseWire_Root)(nil),
+		(*ResponseWire_CmdLine)(nil),
+		(*ResponseWire_List)(nil),
+		(*ResponseWire_Firmware)(nil),
+		(*ResponseWire_Address)(nil),
+		(*ResponseWire_Parameter)(nil),
+		(*ResponseWire_Parameterlist)(nil),
+		(*ResponseWire_Setpoint)(nil),
 	}
 }
 
@@ -641,44 +815,44 @@ func _ResponseWire_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
 	m := msg.(*ResponseWire)
 	// resp
 	switch x := m.Resp.(type) {
-	case *ResponseWire_R1:
+	case *ResponseWire_Root:
 		b.EncodeVarint(10<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.R1); err != nil {
+		if err := b.EncodeMessage(x.Root); err != nil {
 			return err
 		}
-	case *ResponseWire_R2:
+	case *ResponseWire_CmdLine:
 		b.EncodeVarint(11<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.R2); err != nil {
+		if err := b.EncodeMessage(x.CmdLine); err != nil {
 			return err
 		}
-	case *ResponseWire_R3:
+	case *ResponseWire_List:
 		b.EncodeVarint(12<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.R3); err != nil {
+		if err := b.EncodeMessage(x.List); err != nil {
 			return err
 		}
-	case *ResponseWire_R4:
+	case *ResponseWire_Firmware:
 		b.EncodeVarint(13<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.R4); err != nil {
+		if err := b.EncodeMessage(x.Firmware); err != nil {
 			return err
 		}
-	case *ResponseWire_R6:
+	case *ResponseWire_Address:
 		b.EncodeVarint(14<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.R6); err != nil {
+		if err := b.EncodeMessage(x.Address); err != nil {
 			return err
 		}
-	case *ResponseWire_R7:
+	case *ResponseWire_Parameter:
 		b.EncodeVarint(15<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.R7); err != nil {
+		if err := b.EncodeMessage(x.Parameter); err != nil {
 			return err
 		}
-	case *ResponseWire_R8:
+	case *ResponseWire_Parameterlist:
 		b.EncodeVarint(16<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.R8); err != nil {
+		if err := b.EncodeMessage(x.Parameterlist); err != nil {
 			return err
 		}
-	case *ResponseWire_R9:
+	case *ResponseWire_Setpoint:
 		b.EncodeVarint(17<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.R9); err != nil {
+		if err := b.EncodeMessage(x.Setpoint); err != nil {
 			return err
 		}
 	case nil:
@@ -691,69 +865,69 @@ func _ResponseWire_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
 func _ResponseWire_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
 	m := msg.(*ResponseWire)
 	switch tag {
-	case 10: // resp.r1
+	case 10: // resp.root
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
 		msg := new(RootResponse)
 		err := b.DecodeMessage(msg)
-		m.Resp = &ResponseWire_R1{msg}
+		m.Resp = &ResponseWire_Root{msg}
 		return true, err
-	case 11: // resp.r2
+	case 11: // resp.cmdLine
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
 		msg := new(CommandLineResponse)
 		err := b.DecodeMessage(msg)
-		m.Resp = &ResponseWire_R2{msg}
+		m.Resp = &ResponseWire_CmdLine{msg}
 		return true, err
-	case 12: // resp.r3
+	case 12: // resp.list
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
 		msg := new(ListResponse)
 		err := b.DecodeMessage(msg)
-		m.Resp = &ResponseWire_R3{msg}
+		m.Resp = &ResponseWire_List{msg}
 		return true, err
-	case 13: // resp.r4
+	case 13: // resp.firmware
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
 		msg := new(FirmwareResponse)
 		err := b.DecodeMessage(msg)
-		m.Resp = &ResponseWire_R4{msg}
+		m.Resp = &ResponseWire_Firmware{msg}
 		return true, err
-	case 14: // resp.r6
+	case 14: // resp.address
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
 		msg := new(AddressResponse)
 		err := b.DecodeMessage(msg)
-		m.Resp = &ResponseWire_R6{msg}
+		m.Resp = &ResponseWire_Address{msg}
 		return true, err
-	case 15: // resp.r7
+	case 15: // resp.parameter
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
 		msg := new(ParameterResponse)
 		err := b.DecodeMessage(msg)
-		m.Resp = &ResponseWire_R7{msg}
+		m.Resp = &ResponseWire_Parameter{msg}
 		return true, err
-	case 16: // resp.r8
+	case 16: // resp.parameterlist
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
 		msg := new(ParameterListResponse)
 		err := b.DecodeMessage(msg)
-		m.Resp = &ResponseWire_R8{msg}
+		m.Resp = &ResponseWire_Parameterlist{msg}
 		return true, err
-	case 17: // resp.r9
+	case 17: // resp.setpoint
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
 		msg := new(SetpointResponse)
 		err := b.DecodeMessage(msg)
-		m.Resp = &ResponseWire_R9{msg}
+		m.Resp = &ResponseWire_Setpoint{msg}
 		return true, err
 	default:
 		return false, nil
@@ -764,43 +938,43 @@ func _ResponseWire_OneofSizer(msg proto.Message) (n int) {
 	m := msg.(*ResponseWire)
 	// resp
 	switch x := m.Resp.(type) {
-	case *ResponseWire_R1:
-		s := proto.Size(x.R1)
+	case *ResponseWire_Root:
+		s := proto.Size(x.Root)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *ResponseWire_R2:
-		s := proto.Size(x.R2)
+	case *ResponseWire_CmdLine:
+		s := proto.Size(x.CmdLine)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *ResponseWire_R3:
-		s := proto.Size(x.R3)
+	case *ResponseWire_List:
+		s := proto.Size(x.List)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *ResponseWire_R4:
-		s := proto.Size(x.R4)
+	case *ResponseWire_Firmware:
+		s := proto.Size(x.Firmware)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *ResponseWire_R6:
-		s := proto.Size(x.R6)
+	case *ResponseWire_Address:
+		s := proto.Size(x.Address)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *ResponseWire_R7:
-		s := proto.Size(x.R7)
+	case *ResponseWire_Parameter:
+		s := proto.Size(x.Parameter)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *ResponseWire_R8:
-		s := proto.Size(x.R8)
+	case *ResponseWire_Parameterlist:
+		s := proto.Size(x.Parameterlist)
 		n += 2 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *ResponseWire_R9:
-		s := proto.Size(x.R9)
+	case *ResponseWire_Setpoint:
+		s := proto.Size(x.Setpoint)
 		n += 2 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
@@ -822,7 +996,7 @@ func (m *ControlRequest) Reset()         { *m = ControlRequest{} }
 func (m *ControlRequest) String() string { return proto.CompactTextString(m) }
 func (*ControlRequest) ProtoMessage()    {}
 func (*ControlRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{2}
+	return fileDescriptor_commands_5c04a10db3505173, []int{2}
 }
 func (m *ControlRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ControlRequest.Unmarshal(m, b)
@@ -860,7 +1034,7 @@ func (m *CommandLineRequest) Reset()         { *m = CommandLineRequest{} }
 func (m *CommandLineRequest) String() string { return proto.CompactTextString(m) }
 func (*CommandLineRequest) ProtoMessage()    {}
 func (*CommandLineRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{3}
+	return fileDescriptor_commands_5c04a10db3505173, []int{3}
 }
 func (m *CommandLineRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CommandLineRequest.Unmarshal(m, b)
@@ -899,7 +1073,7 @@ func (m *CommandLineResponse) Reset()         { *m = CommandLineResponse{} }
 func (m *CommandLineResponse) String() string { return proto.CompactTextString(m) }
 func (*CommandLineResponse) ProtoMessage()    {}
 func (*CommandLineResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{4}
+	return fileDescriptor_commands_5c04a10db3505173, []int{4}
 }
 func (m *CommandLineResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CommandLineResponse.Unmarshal(m, b)
@@ -946,7 +1120,7 @@ func (m *RootCommand) Reset()         { *m = RootCommand{} }
 func (m *RootCommand) String() string { return proto.CompactTextString(m) }
 func (*RootCommand) ProtoMessage()    {}
 func (*RootCommand) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{5}
+	return fileDescriptor_commands_5c04a10db3505173, []int{5}
 }
 func (m *RootCommand) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RootCommand.Unmarshal(m, b)
@@ -999,7 +1173,7 @@ func (m *RootResponse) Reset()         { *m = RootResponse{} }
 func (m *RootResponse) String() string { return proto.CompactTextString(m) }
 func (*RootResponse) ProtoMessage()    {}
 func (*RootResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{6}
+	return fileDescriptor_commands_5c04a10db3505173, []int{6}
 }
 func (m *RootResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RootResponse.Unmarshal(m, b)
@@ -1045,7 +1219,7 @@ func (m *ListRequest) Reset()         { *m = ListRequest{} }
 func (m *ListRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRequest) ProtoMessage()    {}
 func (*ListRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{7}
+	return fileDescriptor_commands_5c04a10db3505173, []int{7}
 }
 func (m *ListRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRequest.Unmarshal(m, b)
@@ -1092,7 +1266,7 @@ func (m *ListResponse) Reset()         { *m = ListResponse{} }
 func (m *ListResponse) String() string { return proto.CompactTextString(m) }
 func (*ListResponse) ProtoMessage()    {}
 func (*ListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{8}
+	return fileDescriptor_commands_5c04a10db3505173, []int{8}
 }
 func (m *ListResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListResponse.Unmarshal(m, b)
@@ -1145,7 +1319,7 @@ func (m *FirmwareRequest) Reset()         { *m = FirmwareRequest{} }
 func (m *FirmwareRequest) String() string { return proto.CompactTextString(m) }
 func (*FirmwareRequest) ProtoMessage()    {}
 func (*FirmwareRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{9}
+	return fileDescriptor_commands_5c04a10db3505173, []int{9}
 }
 func (m *FirmwareRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_FirmwareRequest.Unmarshal(m, b)
@@ -1191,7 +1365,7 @@ func (m *FirmwareResponse) Reset()         { *m = FirmwareResponse{} }
 func (m *FirmwareResponse) String() string { return proto.CompactTextString(m) }
 func (*FirmwareResponse) ProtoMessage()    {}
 func (*FirmwareResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{10}
+	return fileDescriptor_commands_5c04a10db3505173, []int{10}
 }
 func (m *FirmwareResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_FirmwareResponse.Unmarshal(m, b)
@@ -1237,7 +1411,7 @@ func (m *HeartbeatRequest) Reset()         { *m = HeartbeatRequest{} }
 func (m *HeartbeatRequest) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatRequest) ProtoMessage()    {}
 func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{11}
+	return fileDescriptor_commands_5c04a10db3505173, []int{11}
 }
 func (m *HeartbeatRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_HeartbeatRequest.Unmarshal(m, b)
@@ -1283,7 +1457,7 @@ func (m *AddressRequest) Reset()         { *m = AddressRequest{} }
 func (m *AddressRequest) String() string { return proto.CompactTextString(m) }
 func (*AddressRequest) ProtoMessage()    {}
 func (*AddressRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{12}
+	return fileDescriptor_commands_5c04a10db3505173, []int{12}
 }
 func (m *AddressRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddressRequest.Unmarshal(m, b)
@@ -1330,7 +1504,7 @@ func (m *AddressResponse) Reset()         { *m = AddressResponse{} }
 func (m *AddressResponse) String() string { return proto.CompactTextString(m) }
 func (*AddressResponse) ProtoMessage()    {}
 func (*AddressResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{13}
+	return fileDescriptor_commands_5c04a10db3505173, []int{13}
 }
 func (m *AddressResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddressResponse.Unmarshal(m, b)
@@ -1374,7 +1548,7 @@ func (m *AddressResponse) GetRoot() *RootResponse {
 type ParameterRequest struct {
 	Root                 *RootCommand `protobuf:"bytes,1,opt,name=root,proto3" json:"root,omitempty"`
 	Parameter            ConfigParam  `protobuf:"varint,2,opt,name=parameter,proto3,enum=sparkusb.ConfigParam" json:"parameter,omitempty"`
-	Value                uint32       `protobuf:"fixed32,3,opt,name=value,proto3" json:"value,omitempty"`
+	Value                string       `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
 	XXX_sizecache        int32        `json:"-"`
@@ -1384,7 +1558,7 @@ func (m *ParameterRequest) Reset()         { *m = ParameterRequest{} }
 func (m *ParameterRequest) String() string { return proto.CompactTextString(m) }
 func (*ParameterRequest) ProtoMessage()    {}
 func (*ParameterRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{14}
+	return fileDescriptor_commands_5c04a10db3505173, []int{14}
 }
 func (m *ParameterRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ParameterRequest.Unmarshal(m, b)
@@ -1418,16 +1592,16 @@ func (m *ParameterRequest) GetParameter() ConfigParam {
 	return ConfigParam_CanID
 }
 
-func (m *ParameterRequest) GetValue() uint32 {
+func (m *ParameterRequest) GetValue() string {
 	if m != nil {
 		return m.Value
 	}
-	return 0
+	return ""
 }
 
 // Not fully yet implemented
 type ParameterResponse struct {
-	Value                uint32        `protobuf:"fixed32,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value                string        `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 	OldParameter         string        `protobuf:"bytes,2,opt,name=oldParameter,proto3" json:"oldParameter,omitempty"`
 	NewParameter         string        `protobuf:"bytes,3,opt,name=newParameter,proto3" json:"newParameter,omitempty"`
 	Root                 *RootResponse `protobuf:"bytes,4,opt,name=root,proto3" json:"root,omitempty"`
@@ -1440,7 +1614,7 @@ func (m *ParameterResponse) Reset()         { *m = ParameterResponse{} }
 func (m *ParameterResponse) String() string { return proto.CompactTextString(m) }
 func (*ParameterResponse) ProtoMessage()    {}
 func (*ParameterResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{15}
+	return fileDescriptor_commands_5c04a10db3505173, []int{15}
 }
 func (m *ParameterResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ParameterResponse.Unmarshal(m, b)
@@ -1460,11 +1634,11 @@ func (m *ParameterResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ParameterResponse proto.InternalMessageInfo
 
-func (m *ParameterResponse) GetValue() uint32 {
+func (m *ParameterResponse) GetValue() string {
 	if m != nil {
 		return m.Value
 	}
-	return 0
+	return ""
 }
 
 func (m *ParameterResponse) GetOldParameter() string {
@@ -1499,7 +1673,7 @@ func (m *ParameterListRequest) Reset()         { *m = ParameterListRequest{} }
 func (m *ParameterListRequest) String() string { return proto.CompactTextString(m) }
 func (*ParameterListRequest) ProtoMessage()    {}
 func (*ParameterListRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{16}
+	return fileDescriptor_commands_5c04a10db3505173, []int{16}
 }
 func (m *ParameterListRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ParameterListRequest.Unmarshal(m, b)
@@ -1538,7 +1712,7 @@ func (m *ParameterListResponse) Reset()         { *m = ParameterListResponse{} }
 func (m *ParameterListResponse) String() string { return proto.CompactTextString(m) }
 func (*ParameterListResponse) ProtoMessage()    {}
 func (*ParameterListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{17}
+	return fileDescriptor_commands_5c04a10db3505173, []int{17}
 }
 func (m *ParameterListResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ParameterListResponse.Unmarshal(m, b)
@@ -1584,7 +1758,7 @@ func (m *SetpointRequest) Reset()         { *m = SetpointRequest{} }
 func (m *SetpointRequest) String() string { return proto.CompactTextString(m) }
 func (*SetpointRequest) ProtoMessage()    {}
 func (*SetpointRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{18}
+	return fileDescriptor_commands_5c04a10db3505173, []int{18}
 }
 func (m *SetpointRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SetpointRequest.Unmarshal(m, b)
@@ -1631,7 +1805,7 @@ func (m *SetpointResponse) Reset()         { *m = SetpointResponse{} }
 func (m *SetpointResponse) String() string { return proto.CompactTextString(m) }
 func (*SetpointResponse) ProtoMessage()    {}
 func (*SetpointResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_commands_e9b28b1bee559940, []int{19}
+	return fileDescriptor_commands_5c04a10db3505173, []int{19}
 }
 func (m *SetpointResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SetpointResponse.Unmarshal(m, b)
@@ -1694,71 +1868,91 @@ func init() {
 	proto.RegisterType((*SetpointRequest)(nil), "sparkusb.setpointRequest")
 	proto.RegisterType((*SetpointResponse)(nil), "sparkusb.setpointResponse")
 	proto.RegisterEnum("sparkusb.ConfigParam", ConfigParam_name, ConfigParam_value)
+	proto.RegisterEnum("sparkusb.MotorType", MotorType_name, MotorType_value)
+	proto.RegisterEnum("sparkusb.SensorType", SensorType_name, SensorType_value)
+	proto.RegisterEnum("sparkusb.CtrlType", CtrlType_name, CtrlType_value)
+	proto.RegisterEnum("sparkusb.IdleMode", IdleMode_name, IdleMode_value)
+	proto.RegisterEnum("sparkusb.Faults", Faults_name, Faults_value)
+	proto.RegisterEnum("sparkusb.StickyFaults", StickyFaults_name, StickyFaults_value)
 }
 
-func init() { proto.RegisterFile("commands.proto", fileDescriptor_commands_e9b28b1bee559940) }
+func init() { proto.RegisterFile("commands.proto", fileDescriptor_commands_5c04a10db3505173) }
 
-var fileDescriptor_commands_e9b28b1bee559940 = []byte{
-	// 971 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0xcd, 0x6e, 0xdc, 0x36,
-	0x10, 0xb6, 0xb4, 0x7f, 0xde, 0xd9, 0x1f, 0xcb, 0x8c, 0x63, 0x28, 0x6e, 0x9a, 0x1a, 0x42, 0x51,
-	0xb8, 0x4e, 0xeb, 0xc2, 0x3f, 0x88, 0x9d, 0xde, 0x1c, 0xbb, 0x85, 0x5d, 0x38, 0x40, 0xa0, 0x34,
-	0x48, 0xae, 0xda, 0xd5, 0x24, 0x11, 0xa2, 0x15, 0x15, 0x92, 0xda, 0xb4, 0xb7, 0xa2, 0x87, 0xa2,
-	0xb7, 0x3e, 0x41, 0x5f, 0xa7, 0xcf, 0x55, 0x90, 0xa2, 0x24, 0x4a, 0xd9, 0x18, 0xd1, 0x4d, 0xf3,
-	0xf1, 0x9b, 0xe1, 0xcc, 0xf0, 0xe3, 0x50, 0x30, 0x9d, 0xd3, 0xc5, 0x22, 0x48, 0x42, 0x7e, 0x90,
-	0x32, 0x2a, 0x28, 0x59, 0xe7, 0x69, 0xc0, 0xde, 0x65, 0x7c, 0xe6, 0xfd, 0xd7, 0x85, 0x91, 0x8f,
-	0xef, 0x33, 0xe4, 0xe2, 0x65, 0xc4, 0x90, 0x3c, 0x84, 0x2e, 0xa3, 0x54, 0xb8, 0xb0, 0x6b, 0xed,
-	0x8d, 0x8e, 0xee, 0x1e, 0x14, 0xc4, 0x03, 0x89, 0x5e, 0xe4, 0x51, 0xae, 0xd6, 0x7c, 0x45, 0x22,
-	0x67, 0x30, 0x98, 0x2f, 0xc2, 0x9b, 0x28, 0x41, 0x77, 0xa4, 0xf8, 0xf7, 0x2b, 0xbe, 0xde, 0x51,
-	0x2e, 0xea, 0xf8, 0x57, 0x6b, 0x7e, 0x41, 0x97, 0xdb, 0xc4, 0x11, 0x17, 0xee, 0xb8, 0xb9, 0x8d,
-	0x44, 0x2b, 0xbe, 0x22, 0x91, 0x53, 0x58, 0x7f, 0x1d, 0xb1, 0xc5, 0x87, 0x80, 0xa1, 0x3b, 0x51,
-	0x0e, 0xf7, 0x2a, 0x87, 0x62, 0xa5, 0x72, 0x2a, 0xc9, 0xe4, 0x47, 0x18, 0xbe, 0xc5, 0x80, 0x89,
-	0x19, 0x06, 0xc2, 0x9d, 0x2a, 0xcf, 0x9d, 0xca, 0xb3, 0x5c, 0xaa, 0x5c, 0x2b, 0x3a, 0x39, 0x81,
-	0x41, 0x10, 0x86, 0x0c, 0x39, 0x77, 0x37, 0x94, 0xa7, 0x5b, 0x79, 0xea, 0x05, 0xa3, 0x2e, 0x8d,
-	0xc8, 0x1d, 0xd3, 0x80, 0x05, 0x0b, 0x14, 0xc8, 0x5c, 0xa7, 0xb9, 0x63, 0xb9, 0x64, 0xec, 0x58,
-	0x62, 0xe4, 0x67, 0x98, 0x94, 0xc6, 0x8d, 0x6c, 0xce, 0xa6, 0xf2, 0x7f, 0xb0, 0xc2, 0xff, 0xa6,
-	0xd6, 0xa5, 0xba, 0x9b, 0x6c, 0x17, 0x47, 0x91, 0xd2, 0x28, 0x11, 0x2e, 0x69, 0xb6, 0xab, 0x58,
-	0x31, 0xda, 0x55, 0x40, 0xb2, 0xe4, 0x39, 0x4d, 0x04, 0xa3, 0xb1, 0x7b, 0xa7, 0x59, 0xb2, 0x5e,
-	0x30, 0x8f, 0x32, 0x47, 0x9e, 0xf4, 0xa0, 0xc3, 0xf0, 0xbd, 0xf7, 0x57, 0x07, 0xc6, 0x3e, 0xf2,
-	0x94, 0x26, 0x1c, 0x95, 0x92, 0xf6, 0xc0, 0x66, 0x87, 0x5a, 0x47, 0xdb, 0x75, 0x1d, 0x15, 0xbc,
-	0xab, 0x35, 0xdf, 0x66, 0x87, 0xe4, 0x07, 0xb0, 0xd9, 0x91, 0x56, 0xd0, 0x97, 0x9f, 0x50, 0x90,
-	0xe1, 0x70, 0xa4, 0x42, 0x1f, 0x6b, 0xed, 0x6c, 0x37, 0xb5, 0x63, 0x30, 0x8f, 0xc9, 0x77, 0x60,
-	0xb3, 0x13, 0x2d, 0x9a, 0x9d, 0x55, 0xa2, 0x31, 0xd8, 0x27, 0xe4, 0x21, 0xd8, 0xec, 0x91, 0x16,
-	0xca, 0xbd, 0x15, 0xc7, 0x6d, 0x90, 0x1f, 0x91, 0xef, 0xc1, 0x66, 0xa7, 0x5a, 0x1b, 0x5f, 0xac,
-	0x3c, 0x63, 0x83, 0x7e, 0x4a, 0x0e, 0xc1, 0x66, 0x67, 0x5a, 0x12, 0x5f, 0x7d, 0xf2, 0x48, 0x0d,
-	0x97, 0x33, 0x95, 0xfc, 0x63, 0xad, 0x82, 0x9d, 0x55, 0x47, 0x68, 0xb0, 0x1f, 0x3f, 0xe9, 0x43,
-	0x97, 0x21, 0x4f, 0x3d, 0x4f, 0xde, 0x76, 0xf3, 0xb0, 0x88, 0xa3, 0x4e, 0xc8, 0xb5, 0x76, 0xad,
-	0xbd, 0xa1, 0xaf, 0x0e, 0x6b, 0x1f, 0xc8, 0xc7, 0xf7, 0x93, 0x6c, 0x41, 0x8f, 0x8b, 0x30, 0x4a,
-	0x34, 0x33, 0x37, 0xbc, 0x9f, 0xe0, 0xce, 0x8a, 0x93, 0x20, 0xdb, 0xd0, 0xe7, 0x22, 0x44, 0xc6,
-	0x34, 0x5b, 0x5b, 0x1a, 0xa7, 0x99, 0x70, 0xed, 0x12, 0xa7, 0x99, 0xf0, 0x5e, 0xc2, 0xc8, 0x18,
-	0x21, 0x92, 0x16, 0xe2, 0x32, 0x9a, 0x63, 0xe1, 0x9e, 0x5b, 0xe4, 0x3e, 0x0c, 0xdf, 0x21, 0xa6,
-	0x41, 0x1c, 0x2d, 0x51, 0x45, 0x58, 0xf7, 0x2b, 0x80, 0x10, 0xe8, 0xbe, 0xc5, 0x38, 0x75, 0x3b,
-	0x6a, 0x41, 0x7d, 0x7b, 0x97, 0x30, 0x36, 0x35, 0x45, 0x1e, 0x00, 0x48, 0xfc, 0xb9, 0x60, 0x51,
-	0xf2, 0x46, 0x47, 0x37, 0x10, 0x59, 0x25, 0x32, 0x46, 0x99, 0xce, 0x2f, 0x37, 0xbc, 0x5f, 0x60,
-	0x64, 0x8c, 0x1e, 0xf2, 0xad, 0x1e, 0x83, 0xd6, 0x2d, 0x63, 0x50, 0x0f, 0x41, 0x07, 0x3a, 0x41,
-	0x1c, 0xeb, 0x5c, 0xe5, 0xa7, 0xf7, 0x87, 0x05, 0x63, 0x53, 0x8b, 0x32, 0xa5, 0xbc, 0x3c, 0x75,
-	0xad, 0xad, 0xdd, 0x8e, 0x4c, 0xa9, 0x42, 0xc8, 0xd7, 0x30, 0xc9, 0xad, 0x4b, 0x14, 0x41, 0x14,
-	0x73, 0xd7, 0x56, 0x94, 0x3a, 0x48, 0xf6, 0x75, 0x4e, 0x9d, 0xdb, 0xae, 0x54, 0x9e, 0x94, 0xf7,
-	0x0a, 0x36, 0x1a, 0x83, 0xb1, 0x4d, 0x49, 0x3b, 0x72, 0xe0, 0xc6, 0x98, 0x04, 0x0b, 0xd4, 0x5d,
-	0x2a, 0x6d, 0xef, 0x15, 0x38, 0xcd, 0xdb, 0x43, 0x5c, 0x18, 0x2c, 0x91, 0xf1, 0x88, 0x16, 0xd2,
-	0x29, 0xcc, 0x56, 0x39, 0xbf, 0x00, 0xa7, 0x39, 0x92, 0xdb, 0x24, 0xbd, 0x0d, 0x7d, 0x4c, 0x82,
-	0x59, 0x5c, 0xc8, 0x46, 0x5b, 0xde, 0x0b, 0x98, 0xd6, 0xe7, 0x75, 0x9b, 0xa0, 0x6e, 0xf5, 0x0a,
-	0xc8, 0xa8, 0x93, 0x72, 0xd2, 0x7b, 0xff, 0x58, 0xb0, 0xd1, 0x18, 0x0c, 0xe4, 0x1b, 0x98, 0xce,
-	0x33, 0xc6, 0x30, 0x11, 0xe7, 0xda, 0xc9, 0x52, 0x4e, 0x0d, 0x94, 0xec, 0xc1, 0x46, 0xca, 0x70,
-	0x19, 0xd1, 0x8c, 0x9f, 0xd7, 0xa2, 0x37, 0xe1, 0x56, 0xfd, 0xfb, 0xdb, 0x02, 0xa7, 0xf9, 0xc2,
-	0xb4, 0xa9, 0xf5, 0xd8, 0x7c, 0xbb, 0x64, 0x3e, 0x53, 0x93, 0x3f, 0xa7, 0xc9, 0xeb, 0xe8, 0xcd,
-	0x33, 0x49, 0x30, 0x1f, 0xad, 0x2d, 0xe8, 0x2d, 0x83, 0x38, 0x43, 0x95, 0xe1, 0xc0, 0xcf, 0x0d,
-	0xef, 0x5f, 0x0b, 0x36, 0x3f, 0x1a, 0x84, 0x15, 0xd7, 0x32, 0xb8, 0xc4, 0x83, 0x31, 0x8d, 0xc3,
-	0x67, 0xb5, 0x9d, 0x87, 0x7e, 0x0d, 0x93, 0x9c, 0x04, 0x3f, 0x54, 0x9c, 0x4e, 0xce, 0x31, 0xb1,
-	0xb2, 0x55, 0xdd, 0xcf, 0x68, 0xd5, 0x39, 0x6c, 0xad, 0x7a, 0x4b, 0x5b, 0x74, 0xcb, 0x0b, 0xe0,
-	0xee, 0xca, 0xd9, 0x2d, 0x27, 0x58, 0xd5, 0xc6, 0xfc, 0xae, 0x1b, 0xfd, 0x6a, 0x79, 0x89, 0x1b,
-	0xcf, 0x75, 0xcb, 0x4b, 0x5c, 0xfe, 0x06, 0xc8, 0x9e, 0xda, 0xd5, 0x4b, 0xef, 0xfd, 0x06, 0x4e,
-	0xf3, 0x15, 0xa9, 0xf1, 0xad, 0x3a, 0x5f, 0xd6, 0x14, 0x71, 0x3f, 0x4b, 0x12, 0x39, 0x52, 0xf5,
-	0x54, 0x2e, 0x81, 0x36, 0x35, 0xed, 0xff, 0x69, 0xc1, 0xc8, 0x90, 0x12, 0x19, 0x42, 0xef, 0x22,
-	0x48, 0xae, 0x2f, 0x9d, 0x35, 0x32, 0x81, 0xe1, 0x75, 0x92, 0x66, 0xe2, 0x29, 0x0d, 0xd1, 0xb1,
-	0xa4, 0xf9, 0x94, 0x0a, 0xca, 0x7e, 0xfd, 0x3d, 0x45, 0xc7, 0x26, 0x23, 0x18, 0xc8, 0xfa, 0xce,
-	0xc3, 0xa5, 0xd3, 0x21, 0x53, 0x80, 0xe7, 0x98, 0x70, 0xbd, 0xd8, 0x25, 0x63, 0x58, 0xbf, 0x10,
-	0x2c, 0x56, 0x56, 0x4f, 0x5a, 0xd7, 0x61, 0x8c, 0x2a, 0x4e, 0x9f, 0x6c, 0xc2, 0x44, 0x85, 0xbd,
-	0xc4, 0x20, 0x9c, 0x05, 0x49, 0xe8, 0x0c, 0x66, 0x7d, 0xf5, 0x17, 0x7c, 0xfc, 0x7f, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0x68, 0xdd, 0x7b, 0x1d, 0x17, 0x0b, 0x00, 0x00,
+var fileDescriptor_commands_5c04a10db3505173 = []byte{
+	// 1195 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x57, 0x4d, 0x73, 0xdb, 0x36,
+	0x10, 0x15, 0xf5, 0x65, 0x69, 0xf5, 0x05, 0x23, 0x8e, 0x87, 0x4d, 0xd3, 0xd4, 0xc3, 0xe9, 0x34,
+	0xae, 0x9a, 0xf1, 0xa1, 0x69, 0xa7, 0x49, 0x7b, 0xb2, 0x65, 0xbb, 0x76, 0xc7, 0x9e, 0x78, 0xe4,
+	0xe6, 0xe3, 0x0a, 0x8b, 0xb0, 0xcd, 0x31, 0x45, 0x30, 0x00, 0x28, 0xd7, 0xb7, 0x1e, 0x7b, 0xeb,
+	0xb1, 0xa7, 0x9e, 0xfa, 0x5f, 0xfa, 0x33, 0xfa, 0x5b, 0x3a, 0x00, 0x41, 0x82, 0xa4, 0x95, 0x4c,
+	0x75, 0x13, 0x1e, 0xde, 0x62, 0xdf, 0x2e, 0x1f, 0x16, 0x36, 0x0c, 0x67, 0x6c, 0x3e, 0x27, 0x91,
+	0x2f, 0x76, 0x62, 0xce, 0x24, 0xc3, 0x1d, 0x11, 0x13, 0x7e, 0x93, 0x88, 0x0b, 0xef, 0x9f, 0x26,
+	0xf4, 0xa6, 0xf4, 0x7d, 0x42, 0x85, 0x7c, 0x1b, 0x70, 0x8a, 0xbf, 0x86, 0x26, 0x67, 0x4c, 0xba,
+	0xb0, 0xe5, 0x6c, 0xf7, 0xbe, 0x79, 0xb8, 0x93, 0x11, 0x77, 0x14, 0x3a, 0x49, 0x4f, 0x39, 0xaa,
+	0x4d, 0x35, 0x09, 0xbf, 0x80, 0xb5, 0xd9, 0xdc, 0x3f, 0x09, 0x22, 0xea, 0xf6, 0x34, 0xff, 0xb1,
+	0xe5, 0x9b, 0x8c, 0x6a, 0xd3, 0x9c, 0x7f, 0x54, 0x9b, 0x66, 0x74, 0x95, 0x26, 0x0c, 0x84, 0x74,
+	0xfb, 0xd5, 0x34, 0x0a, 0xb5, 0x7c, 0x4d, 0xc2, 0xdf, 0x43, 0xe7, 0x32, 0xe0, 0xf3, 0x5b, 0xc2,
+	0xa9, 0x3b, 0xd0, 0x01, 0x9f, 0xd8, 0x80, 0x6c, 0xc7, 0x06, 0xe5, 0x64, 0xfc, 0x03, 0x74, 0xaf,
+	0x29, 0xe1, 0xf2, 0x82, 0x12, 0xe9, 0x0e, 0x75, 0xe4, 0x23, 0x1b, 0x99, 0x6f, 0xd9, 0x50, 0x4b,
+	0xc7, 0xdf, 0xc2, 0x1a, 0xf1, 0x7d, 0x4e, 0x85, 0x70, 0x47, 0x3a, 0xd2, 0xb5, 0x91, 0x66, 0xa3,
+	0x50, 0x97, 0x41, 0x54, 0xc6, 0x98, 0x70, 0x32, 0xa7, 0x92, 0x72, 0x17, 0x55, 0x33, 0xe6, 0x5b,
+	0x85, 0x8c, 0x39, 0x86, 0x0f, 0x61, 0x90, 0x2f, 0x4e, 0x54, 0x73, 0xd6, 0x75, 0xfc, 0x93, 0x25,
+	0xf1, 0x27, 0xa5, 0x2e, 0x95, 0xc3, 0x54, 0xbb, 0x04, 0x95, 0x31, 0x0b, 0x22, 0xe9, 0xe2, 0x6a,
+	0xbb, 0xb2, 0x9d, 0x42, 0xbb, 0x32, 0x48, 0x95, 0x3c, 0x63, 0x91, 0xe4, 0x2c, 0x74, 0x1f, 0x54,
+	0x4b, 0x36, 0x1b, 0xc5, 0x4f, 0x99, 0x22, 0x7b, 0x2d, 0x68, 0x70, 0xfa, 0xde, 0xfb, 0xb7, 0x01,
+	0xfd, 0x29, 0x15, 0x31, 0x8b, 0x04, 0xd5, 0x4e, 0x7a, 0x56, 0x72, 0xd2, 0x66, 0xd9, 0x49, 0x19,
+	0x33, 0xb7, 0xd2, 0xcb, 0xaa, 0x95, 0x3e, 0xfb, 0x80, 0x95, 0xf2, 0xb8, 0xdc, 0x4b, 0xcf, 0x4a,
+	0x5e, 0xda, 0xac, 0x7a, 0xc9, 0x26, 0xd2, 0x66, 0x7a, 0x71, 0xcf, 0x4c, 0x8f, 0x96, 0x99, 0x29,
+	0x8f, 0xb2, 0x6e, 0xfa, 0xce, 0x3a, 0x62, 0x58, 0x6d, 0x6b, 0xee, 0x08, 0x2b, 0x2f, 0xb3, 0xc4,
+	0x8f, 0x45, 0x4b, 0xa4, 0x56, 0xfa, 0x74, 0xa9, 0x25, 0xf2, 0xd0, 0x82, 0x27, 0x7e, 0x2a, 0x78,
+	0x42, 0x17, 0x99, 0x7a, 0xea, 0xf3, 0x0f, 0x7a, 0x22, 0x3f, 0xa4, 0x1c, 0xa7, 0xca, 0xce, 0x4d,
+	0xb1, 0x5e, 0x2d, 0xdb, 0x9a, 0xc2, 0x96, 0x9d, 0x61, 0x7b, 0x6d, 0x68, 0x72, 0x2a, 0x62, 0xcf,
+	0x53, 0x53, 0xa4, 0x68, 0x02, 0x8c, 0xf4, 0x97, 0x77, 0x9d, 0x2d, 0x67, 0xbb, 0x3b, 0xd5, 0x26,
+	0x18, 0x03, 0xbe, 0x7f, 0xef, 0xf1, 0x06, 0xb4, 0x84, 0xf4, 0x83, 0xc8, 0x30, 0xd3, 0x85, 0x77,
+	0x00, 0x0f, 0x96, 0x7c, 0x58, 0xbc, 0x09, 0x6d, 0x21, 0x7d, 0xca, 0xb9, 0x61, 0x9b, 0x95, 0xc1,
+	0x59, 0x22, 0xdd, 0x7a, 0x8e, 0xb3, 0x44, 0x7a, 0x6f, 0xa1, 0x57, 0x18, 0x4d, 0x8a, 0xe6, 0xd3,
+	0x45, 0x30, 0xa3, 0x59, 0x78, 0xba, 0xc2, 0x8f, 0xa1, 0x7b, 0x43, 0x69, 0x4c, 0xc2, 0x60, 0x41,
+	0xf5, 0x09, 0x9d, 0xa9, 0x05, 0x30, 0x86, 0xe6, 0x35, 0x0d, 0x63, 0xb7, 0xa1, 0x37, 0xf4, 0x6f,
+	0x6f, 0x1f, 0xfa, 0x45, 0xa7, 0xe2, 0x27, 0x00, 0x0a, 0x3f, 0x97, 0x3c, 0x88, 0xae, 0xcc, 0xe9,
+	0x05, 0x44, 0x55, 0x49, 0x39, 0x67, 0xdc, 0xe8, 0x4b, 0x17, 0xde, 0xcf, 0xd0, 0x2b, 0x8c, 0x34,
+	0xfc, 0x95, 0xb9, 0x14, 0xce, 0x47, 0xc6, 0xab, 0xb9, 0x11, 0x08, 0x1a, 0x24, 0x0c, 0x8d, 0x56,
+	0xf5, 0xd3, 0xfb, 0xcd, 0x81, 0x7e, 0xd1, 0xd3, 0x4a, 0x52, 0x5a, 0x9e, 0x1e, 0x17, 0xce, 0x56,
+	0x43, 0x49, 0xb2, 0x08, 0xfe, 0x02, 0x06, 0xe9, 0x6a, 0x9f, 0x4a, 0x12, 0x84, 0xc2, 0xad, 0x6b,
+	0x4a, 0x19, 0xc4, 0x63, 0xa3, 0xa9, 0xf1, 0xb1, 0x8b, 0x9a, 0x8a, 0xf2, 0xde, 0xc1, 0xa8, 0x32,
+	0x70, 0x57, 0x29, 0xe9, 0x91, 0xba, 0x7b, 0x21, 0x8d, 0xc8, 0x9c, 0x9a, 0x2e, 0xe5, 0x6b, 0xef,
+	0x1d, 0xa0, 0xea, 0xed, 0xc3, 0x2e, 0xac, 0x2d, 0x28, 0x17, 0x01, 0xcb, 0xac, 0x93, 0x2d, 0x57,
+	0xd2, 0xfc, 0x1a, 0x50, 0x75, 0xd4, 0xaf, 0x22, 0x7a, 0x13, 0xda, 0x34, 0x22, 0x17, 0x61, 0x66,
+	0x1b, 0xb3, 0xf2, 0x5e, 0xc3, 0xb0, 0xfc, 0x0e, 0xac, 0x72, 0xa8, 0x6b, 0x67, 0x89, 0x3a, 0x75,
+	0x90, 0x8f, 0x0b, 0xef, 0x0f, 0x07, 0x46, 0x95, 0x69, 0x82, 0xbf, 0x84, 0xe1, 0x2c, 0xe1, 0x9c,
+	0x46, 0x72, 0xd7, 0x04, 0x39, 0x3a, 0xa8, 0x82, 0xe2, 0x6d, 0x18, 0xc5, 0x9c, 0x2e, 0x02, 0x96,
+	0x88, 0xdd, 0xd2, 0xe9, 0x55, 0x78, 0xa5, 0xfe, 0xfd, 0xee, 0x00, 0xaa, 0xbe, 0x5c, 0xab, 0xd4,
+	0xfa, 0xbc, 0x38, 0x00, 0x95, 0x9e, 0x61, 0x91, 0x3f, 0x63, 0xd1, 0x65, 0x70, 0x75, 0xa6, 0x08,
+	0xc5, 0xc1, 0xb7, 0x01, 0xad, 0x05, 0x09, 0x13, 0xaa, 0x15, 0x76, 0xa7, 0xe9, 0xc2, 0xfb, 0xcb,
+	0x81, 0xf5, 0x7b, 0x13, 0xd3, 0x72, 0x9d, 0x02, 0x17, 0x7b, 0xd0, 0x67, 0xa1, 0x7f, 0x56, 0xca,
+	0xdc, 0x9d, 0x96, 0x30, 0xc5, 0x89, 0xe8, 0xad, 0xe5, 0xa4, 0xc9, 0x4a, 0x58, 0xde, 0xaa, 0xe6,
+	0xff, 0x68, 0xd5, 0x2e, 0x6c, 0x2c, 0x7b, 0xa3, 0x57, 0xe8, 0x96, 0x47, 0xe0, 0xe1, 0xd2, 0x91,
+	0xae, 0x26, 0x98, 0x6d, 0x63, 0x7a, 0xd7, 0x0b, 0xfd, 0x5a, 0xf1, 0x12, 0x57, 0xfe, 0x0c, 0x58,
+	0xf1, 0x12, 0xe7, 0x2f, 0x89, 0xea, 0x69, 0xdd, 0xbe, 0x15, 0xde, 0xaf, 0x80, 0xaa, 0x6f, 0x49,
+	0x89, 0xef, 0x94, 0xf9, 0xaa, 0xa6, 0x40, 0x4c, 0x93, 0x28, 0x52, 0x23, 0xd5, 0x4c, 0xe5, 0x1c,
+	0x58, 0xa5, 0xa6, 0xf1, 0x9f, 0x0e, 0xf4, 0x0a, 0x56, 0xc2, 0x5d, 0x68, 0x4d, 0x48, 0x74, 0xbc,
+	0x8f, 0x6a, 0x78, 0x00, 0xdd, 0xe3, 0x28, 0x4e, 0xe4, 0x29, 0xf3, 0x29, 0x72, 0xd4, 0xf2, 0x94,
+	0x49, 0xc6, 0x7f, 0xb9, 0x8b, 0x29, 0xaa, 0xe3, 0x1e, 0xac, 0xa9, 0xfa, 0x76, 0xfd, 0x05, 0x6a,
+	0xe0, 0x21, 0xc0, 0x39, 0x8d, 0x84, 0xd9, 0x6c, 0xe2, 0x3e, 0x74, 0x26, 0x92, 0x87, 0x7a, 0xd5,
+	0x52, 0xab, 0x63, 0x3f, 0xa4, 0xfa, 0x9c, 0x36, 0x5e, 0x87, 0x81, 0x3e, 0x76, 0x9f, 0x12, 0xff,
+	0x82, 0x44, 0x3e, 0x5a, 0xc3, 0x0f, 0x60, 0x74, 0x68, 0x66, 0xd8, 0x9b, 0x74, 0x50, 0xa1, 0xce,
+	0xf8, 0x29, 0x74, 0xe7, 0x59, 0x3e, 0x95, 0x6d, 0x8f, 0x27, 0xe2, 0x9a, 0xfa, 0xa9, 0x30, 0xbd,
+	0x08, 0xa9, 0x10, 0xc8, 0x19, 0xbf, 0x04, 0x10, 0x79, 0x72, 0x25, 0xe5, 0x88, 0x84, 0x61, 0x2a,
+	0x07, 0xd5, 0x54, 0xe4, 0x41, 0x34, 0x63, 0x3e, 0xe5, 0xc8, 0xb1, 0x3a, 0x75, 0x68, 0x7d, 0xfc,
+	0x14, 0x3a, 0x33, 0xa3, 0x53, 0x9d, 0xba, 0x9f, 0xc8, 0xbb, 0xc9, 0xdd, 0x2c, 0xa4, 0xa8, 0xa6,
+	0x44, 0xbf, 0xa1, 0x21, 0x9b, 0x05, 0xf2, 0x0e, 0x39, 0xe3, 0x2d, 0xe8, 0x04, 0xa6, 0x04, 0xdd,
+	0x22, 0x46, 0x84, 0x44, 0x35, 0xf5, 0x73, 0x8f, 0x93, 0x1b, 0x8a, 0x9c, 0xb1, 0x80, 0xf6, 0x25,
+	0x49, 0x42, 0x29, 0x54, 0xe4, 0x1e, 0x67, 0xb7, 0x11, 0x4b, 0x14, 0x65, 0x04, 0xbd, 0x57, 0x0b,
+	0xca, 0xcd, 0xc4, 0x41, 0x4e, 0x06, 0x2c, 0x58, 0x28, 0xc9, 0x95, 0xea, 0xe4, 0x10, 0x40, 0x37,
+	0xf6, 0x50, 0x85, 0xa3, 0x86, 0x22, 0xa4, 0x22, 0x53, 0xa0, 0xa9, 0xb2, 0x9c, 0x4b, 0x12, 0x86,
+	0xa8, 0xa5, 0x44, 0x1e, 0x1c, 0x9c, 0x4d, 0x5f, 0x9d, 0x4e, 0xa6, 0x13, 0xd4, 0x1e, 0xff, 0xed,
+	0x40, 0x5f, 0xc8, 0x60, 0x76, 0x73, 0x77, 0x98, 0xe6, 0xc6, 0x30, 0xcc, 0x72, 0x9f, 0x6b, 0x1c,
+	0xd5, 0xf0, 0x43, 0x58, 0x2f, 0x28, 0x30, 0xb0, 0x93, 0xc1, 0x46, 0x87, 0x81, 0xeb, 0x78, 0x03,
+	0x90, 0x55, 0x63, 0xd0, 0x86, 0x22, 0x17, 0x34, 0x19, 0xb8, 0xa9, 0xa5, 0x2a, 0x65, 0x06, 0x68,
+	0xa9, 0x2f, 0x99, 0xeb, 0x33, 0x60, 0xfb, 0xa2, 0xad, 0xff, 0x79, 0x7a, 0xfe, 0x5f, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0x99, 0x64, 0x7d, 0x4c, 0x4e, 0x0d, 0x00, 0x00,
 }

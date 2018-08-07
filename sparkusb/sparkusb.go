@@ -126,7 +126,7 @@ func Connect(com string) error {
 	if com == "" {
 		com = GetDefaultDevice()
 		if com == "" {
-			return fmt.Errorf("No default device found")
+			return fmt.Errorf("No device found")
 		}
 	}
 
