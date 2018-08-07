@@ -2,7 +2,6 @@ package sparkusb
 
 import (
 	"encoding/binary"
-	"fmt"
 	"math"
 	"strconv"
 )
@@ -14,10 +13,6 @@ func sparkCommand(frame UsbFrame) (UsbFrame, error) {
 		resp = DefaultFrame()
 	} else {
 		resp, err = Read()
-
-		//if resp.Header.API != CmdApiAck {
-		//	err = fmt.Errorf("Expected ACK, recieved :%d", resp.Header.API)
-		//}
 	}
 
 	return resp, err
@@ -133,13 +128,6 @@ func GetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 		resp.Value = strconv.FormatFloat(float64(rawMsgFloat), 'f', 6, 32)
 	}
 
-	//resp.Root.Error = err.Error()
-
-	//fmt.Println(resp)
-
-	//resp.Root.Error = err.Error()
-	//fmt.Println(err)
-
 	return &resp, err
 }
 
@@ -153,16 +141,6 @@ func BurnFlash(command *RootCommand) (*RootResponse, error) {
 	frame.Data[1] = 0x3A
 
 	_, err := sparkCommand(frame)
-
-	//fmt.Print("Incoming Frame:")
-	//fmt.Println(frameIn)
-
-	//resp.Root.Error = err.Error()
-
-	//fmt.Println(resp)
-
-	//resp.Root.Error = err.Error()
-	//fmt.Println(err)
 
 	return &resp, err
 }
@@ -202,8 +180,5 @@ func Setpoint(command *SetpointRequest) (*SetpointResponse, error) {
 
 	_, err := sparkCommand(frame)
 
-	//resp.Root.Error = err.Error()
-	fmt.Println(err)
-
-	return &resp, nil
+	return &resp, err
 }

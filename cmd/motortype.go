@@ -38,36 +38,39 @@ brushed
 This is the same as calling the command:
 
 parameter MotorType <x>`,
-	Args: cobra.MaximumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_MotorType}
-		if len(args) < 1 {
-			resp, err := sparkusb.GetParameter(&req)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Failed to get motor type: %s\n", err.Error())
-			}
-			idx, err := strconv.Atoi(resp.Value)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
-			}
-			fmt.Println(sparkusb.MotorType_name[int32(idx)])
-		} else {
-			var motorType sparkusb.MotorType
-			switch mt := strings.ToLower(args[0]); mt {
-			case "bdc", "brushed":
-				motorType = sparkusb.MotorType_Brushed
-			case "bldc", "brushless":
-				motorType = sparkusb.MotorType_Brushless
-			}
-			req.Value = strconv.FormatInt(int64(motorType), 10)
-			_, err := sparkusb.SetParameter(&req)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
-			}
-		}
-	},
+	Args:    cobra.MaximumNArgs(1),
+	Run:     runMotorType,
+	Aliases: []string{"MotorType", "motor", "Motor"},
 }
 
 func init() {
 	rootCmd.AddCommand(motortypeCmd)
+}
+
+func runMotorType(cmd *cobra.Command, args []string) {
+	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_MotorType}
+	if len(args) < 1 {
+		resp, err := sparkusb.GetParameter(&req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to get motor type: %s\n", err.Error())
+		}
+		idx, err := strconv.Atoi(resp.Value)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
+		}
+		fmt.Println(sparkusb.MotorType_name[int32(idx)])
+	} else {
+		var motorType sparkusb.MotorType
+		switch mt := strings.ToLower(args[0]); mt {
+		case "bdc", "brushed":
+			motorType = sparkusb.MotorType_Brushed
+		case "bldc", "brushless":
+			motorType = sparkusb.MotorType_Brushless
+		}
+		req.Value = strconv.FormatInt(int64(motorType), 10)
+		_, err := sparkusb.SetParameter(&req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
+		}
+	}
 }

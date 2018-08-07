@@ -16,35 +16,60 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/spf13/cobra"
+	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
+
+// enable and send heartbeat
+var enableMode bool
 
 // setpointCmd represents the setpoint command
 var setpointCmd = &cobra.Command{
 	Use:   "setpoint",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Set the controller setpoint",
+	Long: `Set the controller setpoint. Use the -e flag
+to also send an enable heartbeat.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+**Note** If not run in interactive
+mode (not implemented yet) you cannot reliably set the 
+motor controller as this shell will connect --> 
+enable --> send setpoint --> disconnect on every call, 
+and this will likely take more than 100ms on your system, 
+which will disable the controller. Best not to be 
+controlling powerful motors from the command line. Use the 
+built in remote server instead to control the motor with a 
+GUI.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("setpoint called")
+		if enableMode {
+			req := sparkusb.HeartbeatRequest{Enable: true}
+			_, err := sparkusb.Heartbeat(&req)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Heartbeat command failed: %s", err.Error())
+				return
+			}
+		}
+
+		setpoint, err := strconv.ParseFloat(args[0], 32)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Setpoint argument float conversion failed: %s", err.Error())
+			return
+		}
+
+		req := sparkusb.SetpointRequest{Setpoint: float32(setpoint)}
+		_, err = sparkusb.Setpoint(&req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Setpoint command failed: %s", err.Error())
+			return
+		}
 	},
+	Args:    cobra.ExactArgs(1),
+	Aliases: []string{"run", "Run", "Setpoint"},
 }
 
 func init() {
 	rootCmd.AddCommand(setpointCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// setpointCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// setpointCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	setpointCmd.Flags().BoolVarP(&enableMode, "enable", "e", false, "Send heartbeat with enable")
 }

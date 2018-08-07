@@ -16,35 +16,58 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
+	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
 
 // neutralmodeCmd represents the neutralmode command
 var neutralmodeCmd = &cobra.Command{
 	Use:   "neutralmode",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Set or get the neutral mode",
+	Long: `Set or get the neutral mode, options are:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("neutralmode called")
-	},
+coast
+brake,
+
+This is the same as calling the command:
+
+parameter IdleMode <x>`,
+	Run:     runNeutralMode,
+	Aliases: []string{"NeutralMode", "IdleMode", "idlemode"},
 }
 
 func init() {
 	rootCmd.AddCommand(neutralmodeCmd)
+}
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// neutralmodeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// neutralmodeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func runNeutralMode(cmd *cobra.Command, args []string) {
+	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_IdleMode}
+	if len(args) < 1 {
+		resp, err := sparkusb.GetParameter(&req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to get neutral mode: %s\n", err.Error())
+		}
+		idx, err := strconv.Atoi(resp.Value)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error in neutralmode: %s\n", err.Error())
+		}
+		fmt.Println(sparkusb.IdleMode_name[int32(idx)])
+	} else {
+		var idleMode sparkusb.IdleMode
+		switch mt := strings.ToLower(args[0]); mt {
+		case "b", "brake":
+			idleMode = sparkusb.IdleMode_Brake
+		case "c", "coast":
+			idleMode = sparkusb.IdleMode_Coast
+		}
+		req.Value = strconv.FormatInt(int64(idleMode), 10)
+		_, err := sparkusb.SetParameter(&req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
+		}
+	}
 }
