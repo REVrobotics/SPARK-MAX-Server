@@ -24,10 +24,11 @@ import (
 
 // parameterCmd represents the parameter command
 var parameterCmd = &cobra.Command{
-	Use:   "parameter",
-	Args:  cobra.RangeArgs(1, 2),
-	Short: "Get or set parameter",
-	Run:   runParameter,
+	Use:     "parameter",
+	Args:    cobra.RangeArgs(1, 2),
+	Short:   "Get or set parameter",
+	Run:     runParameter,
+	Aliases: []string{"param"},
 }
 
 const (

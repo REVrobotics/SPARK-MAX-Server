@@ -15,9 +15,9 @@ func sparkCommand(frame UsbFrame) (UsbFrame, error) {
 	} else {
 		resp, err = Read()
 
-		if resp.Header.API != CmdApiAck {
-			err = fmt.Errorf("Expected ACK, recieved :%d", resp.Header.API)
-		}
+		//if resp.Header.API != CmdApiAck {
+		//	err = fmt.Errorf("Expected ACK, recieved :%d", resp.Header.API)
+		//}
 	}
 
 	return resp, err
@@ -37,11 +37,7 @@ func Heartbeat(command *HeartbeatRequest) (*RootResponse, error) {
 
 	_, err := sparkCommand(frame)
 
-	//resp.Error = err.Error()
-
-	fmt.Println(err)
-
-	return &resp, nil
+	return &resp, err
 }
 
 /*
@@ -105,9 +101,6 @@ func SetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 
 	_, err = sparkCommand(frame)
 
-	//resp.Root.Error = err.Error()
-	fmt.Println(err)
-
 	return &resp, err
 }
 
@@ -119,13 +112,13 @@ func GetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 
 	frame.Data[0] = uint8(command.Parameter)
 
-	fmt.Print("Outgoing Frame: ")
-	fmt.Println(frame)
+	//fmt.Print("Outgoing Frame: ")
+	//fmt.Println(frame)
 
 	frameIn, err := sparkCommand(frame)
 
-	fmt.Print("Incoming Frame:")
-	fmt.Println(frameIn)
+	//fmt.Print("Incoming Frame:")
+	//fmt.Println(frameIn)
 
 	rawMsg := binary.LittleEndian.Uint32(frameIn.Data[:4])
 

@@ -75,7 +75,7 @@ and save/load configurations.`,
 		}
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if Remote == false {
+		if Remote == false && Persist == false {
 			err := sparkusb.Connect(Device)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)

@@ -16,35 +16,31 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
+	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
+
+//Enable flag
+var enable bool
 
 // heartbeatCmd represents the heartbeat command
 var heartbeatCmd = &cobra.Command{
 	Use:   "heartbeat",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Send a heartbeat command to the controller",
+	Long: `Send a heartbeat command to the controller
+, use -e flag to send with enable`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("heartbeat called")
+		req := sparkusb.HeartbeatRequest{Enable: enable}
+		_, err := sparkusb.Heartbeat(&req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Heartbeat command failed: %s", err.Error())
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(heartbeatCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// heartbeatCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// heartbeatCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	heartbeatCmd.Flags().BoolVarP(&enable, "enable", "e", false, "Send heartbeat with enable")
 }

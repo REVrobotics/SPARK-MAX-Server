@@ -10,14 +10,14 @@ import (
 )
 
 const (
-	spark2PID = "5740"
-	sparkVID  = "0483"
+	sparkPID = "5740"
+	sparkVID = "0483"
 )
 
 var localPort serial.Port
 
 func isSparkPID(pid string) (isSpark bool) {
-	if spark2PID == pid {
+	if sparkPID == pid {
 		isSpark = true
 	}
 	return

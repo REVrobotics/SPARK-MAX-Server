@@ -16,35 +16,58 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
+	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
 )
 
 // motortypeCmd represents the motortype command
 var motortypeCmd = &cobra.Command{
 	Use:   "motortype",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Set the motor type",
+	Long: `Set the motor type, options are:
+	
+bldc
+bdc,
+brushless,
+brushed
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+This is the same as calling the command:
+
+parameter MotorType <x>`,
+	Args: cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("motortype called")
+		req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_MotorType}
+		if len(args) < 1 {
+			resp, err := sparkusb.GetParameter(&req)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Failed to get motor type: %s\n", err.Error())
+			}
+			idx, err := strconv.Atoi(resp.Value)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
+			}
+			fmt.Println(sparkusb.MotorType_name[int32(idx)])
+		} else {
+			var motorType sparkusb.MotorType
+			switch mt := strings.ToLower(args[0]); mt {
+			case "bdc", "brushed":
+				motorType = sparkusb.MotorType_Brushed
+			case "bldc", "brushless":
+				motorType = sparkusb.MotorType_Brushless
+			}
+			req.Value = strconv.FormatInt(int64(motorType), 10)
+			_, err := sparkusb.SetParameter(&req)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
+			}
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(motortypeCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// motortypeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// motortypeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

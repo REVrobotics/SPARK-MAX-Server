@@ -36,7 +36,8 @@ var firmwareCmd = &cobra.Command{
 The command will block until the firmware is updated. Be sure that
 the device is plugged in and power is not removed during the entire
 update.`,
-	Run: firmware,
+	Run:  firmware,
+	Args: cobra.MaximumNArgs(1),
 }
 
 func init() {
