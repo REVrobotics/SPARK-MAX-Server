@@ -18,19 +18,26 @@ func sparkCommand(frame UsbFrame) (UsbFrame, error) {
 	return resp, err
 }
 
-func Heartbeat(command *HeartbeatRequest) (*RootResponse, error) {
-	var resp RootResponse
+func sendHeartbeat(enable bool) error {
 	frame := DefaultFrame()
 
 	frame.Header.Manufacturer = ManuBroadcast
 	frame.Header.DeviceType = DevBroadcast
 	frame.Header.API = CmdBcastHalt
 
-	if command.Enable {
+	if enable {
 		frame.Data[0] = 1
 	}
 
 	_, err := sparkCommand(frame)
+
+	return err
+}
+
+func Heartbeat(command *HeartbeatRequest) (*RootResponse, error) {
+	var resp RootResponse
+
+	err := sendHeartbeat(command.Enable)
 
 	return &resp, err
 }
@@ -155,9 +162,17 @@ func ListParameters(command *ParameterListRequest) (*ParameterListResponse, erro
 
 func Setpoint(command *SetpointRequest) (*SetpointResponse, error) {
 	var resp SetpointResponse
+	var err error
 	frame := DefaultFrame()
 
 	frame.Header.API = CmdApiDcSet
+
+	if command.Enable {
+		err = sendHeartbeat(command.Enable)
+		if err != nil {
+			return &resp, err
+		}
+	}
 
 	if command.Setpoint < 0.001 && command.Setpoint > -0.001 {
 		frame.Data[0] = 0
@@ -178,7 +193,7 @@ func Setpoint(command *SetpointRequest) (*SetpointResponse, error) {
 		copy(frame.Data[:3], tmparray[1:])
 	}
 
-	_, err := sparkCommand(frame)
+	_, err = sparkCommand(frame)
 
 	return &resp, err
 }

@@ -43,14 +43,16 @@ controlling powerful motors from the command line. Use the
 built in remote server instead to control the motor with a 
 GUI.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if enableMode {
-			req := sparkusb.HeartbeatRequest{Enable: true}
-			_, err := sparkusb.Heartbeat(&req)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Heartbeat command failed: %s", err.Error())
-				return
+		/*
+			if enableMode {
+				req := sparkusb.HeartbeatRequest{Enable: true}
+				_, err := sparkusb.Heartbeat(&req)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "Heartbeat command failed: %s", err.Error())
+					return
+				}
 			}
-		}
+		*/
 
 		setpoint, err := strconv.ParseFloat(args[0], 32)
 		if err != nil {
@@ -58,7 +60,7 @@ GUI.`,
 			return
 		}
 
-		req := sparkusb.SetpointRequest{Setpoint: float32(setpoint)}
+		req := sparkusb.SetpointRequest{Setpoint: float32(setpoint), Enable: enableMode}
 		_, err = sparkusb.Setpoint(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Setpoint command failed: %s", err.Error())

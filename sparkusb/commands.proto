@@ -202,6 +202,7 @@ message parameterListResponse {
 message setpointRequest {
     rootCommand root = 1;  
     float setpoint = 2;
+    bool enable = 3;
 }
 
 message setpointResponse {

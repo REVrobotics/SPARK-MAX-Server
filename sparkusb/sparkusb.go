@@ -57,71 +57,6 @@ func GetDefaultDevice() (device string) {
 
 }
 
-func RunCommand(frame UsbFrame, device string, persist bool) error {
-	if IsConnected() == true {
-		if persist == false {
-			Disconnect()
-			err := Connect(device)
-			if err != nil {
-				return err
-			}
-		}
-	} else {
-		err := Connect(device)
-		if err != nil {
-			return err
-		}
-	}
-
-	if persist == false {
-		defer Disconnect()
-	}
-
-	fmt.Println(frame)
-
-	err := Write(frame)
-	if err != nil {
-		return err
-	}
-
-	time.Sleep(time.Millisecond * 2)
-
-	out, err := Read()
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(out)
-
-	return nil
-}
-
-/*
-func RunCommand(frame UsbFrame, device string, persist bool) error {
-	if IsConnected() == true {
-		if persist == false {
-			Disconnect()
-			err := Connect(device)
-			if err != nil {
-				return err
-			}
-		}
-	} else {
-		err := Connect(device)
-		if err != nil {
-			return err
-		}
-	}
-
-	if persist == false {
-		defer Disconnect()
-	}
-
-	//write(frame)
-	return nil
-}
-*/
-
 func Connect(com string) error {
 	if com == "" {
 		com = GetDefaultDevice()
@@ -134,7 +69,7 @@ func Connect(com string) error {
 
 	//Note: as of development, requires this patch:
 	//https://patch-diff.githubusercontent.com/raw/bugst/go-serial/pull/33.patch
-	//port.SetReadTimeout(2000)
+	port.SetReadTimeout(2000)
 
 	if err == nil {
 		localPort = port
