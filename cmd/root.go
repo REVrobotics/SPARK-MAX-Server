@@ -41,6 +41,9 @@ var Remote bool
 // port for grpc server
 var port uint
 
+// default port
+var defaultPort uint = 8001
+
 // Version of application
 const (
 	AppVersion = "0.1.1"
@@ -113,7 +116,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&Device, "device", "d", "", "Set the device COM port")
 	rootCmd.PersistentFlags().BoolVarP(&Persist, "interactive", "i", false, "Keep connection alive between commands")
 	rootCmd.PersistentFlags().BoolVarP(&Remote, "remote", "r", false, "Run a TCP/IP server to stream commands")
-	rootCmd.PersistentFlags().UintVarP(&port, "port", "p", 8001, "Set port for 0mq server")
+	rootCmd.PersistentFlags().UintVarP(&port, "port", "p", defaultPort, "Set port for 0mq server")
 }
 
 // initConfig reads in config file and ENV variables if set.
