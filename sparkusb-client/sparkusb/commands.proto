@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-package sparkgrpc;
+package sparkusb;
 
-// Interface exported by the server.
+// Interface functions
+/*
 service sparkusb {
     
     rpc Connect(rootCommand) returns (rootResponse) {}
@@ -19,6 +20,39 @@ service sparkusb {
     rpc Setpoint(setpointRequest) returns (setpointResponse) {}
 
     rpc CommandLine(commandLineRequest) returns (commandLineResponse) {}
+}
+*/
+
+message RequestWire {
+    oneof req {
+        rootCommand             root = 10;
+        commandLineRequest      cmdLine = 11;
+        listRequest             list = 12;
+        firmwareRequest         firmware = 13;
+        heartbeatRequest        heartbeat = 14;
+        addressRequest          address = 15;
+        parameterRequest        parameter = 16;
+        parameterListRequest    parameterList = 17;
+        setpointRequest         setpoint = 18;
+        controlRequest          control = 19;
+    }
+}
+
+message ResponseWire {
+    oneof resp {
+        rootResponse            root = 10;
+        commandLineResponse     cmdLine = 11;
+        listResponse            list = 12;
+        firmwareResponse        firmware = 13;
+        addressResponse         address = 14;
+        parameterResponse       parameter = 15;
+        parameterListResponse   parameterlist = 16;
+        setpointResponse        setpoint = 17;
+    }
+}
+
+message controlRequest {
+    string req = 1;
 }
 
 message commandLineRequest {
@@ -43,7 +77,7 @@ message rootResponse {
 
 message listRequest {
     rootCommand root = 1;
-    bool all = 2;
+    bool all = 2; 
 }
 
 message listResponse {
@@ -73,7 +107,7 @@ message firmwareStreamRequest {
 message firmwareStreamResponse
 */
 
-message heartbeat {
+message heartbeatRequest {
     rootCommand root = 1;
     bool enable = 2;
 }
@@ -98,25 +132,66 @@ enum configParam {
     CtrlType = 5;
     IdleMode = 6;
     InputDeadband = 7;
+    FirmwareVersion = 8;
 }
 
+enum motorType {
+    Brushed = 0;
+    Brushless = 1;
+}
 
-message parameterRequest {
+enum sensorType {
+    HallSensor = 0;
+    Encoder = 1;
+    Sensorless = 2;
+}
+
+enum ctrlType {
+    DutyCycle = 0;
+    Velocity = 1;
+}
+
+enum idleMode {
+    Coast = 0;
+    Brake = 1;
+}
+
+enum faults {
+    Brownout = 0;
+    Overcurrent = 1;
+    Overvoltage = 2;
+    MotorFault = 3;
+    SensorFault = 4;
+    Stall = 5;
+    EEPROMCRC = 6;
+}
+
+enum stickyFaults {
+    BrownoutSticky = 0;
+    OvercurrentSticky = 1;
+    OvervoltageSticky = 2;
+    MotorFaultSticky = 3;
+    SensorFaultSticky = 4;
+    StallSticky = 5;
+    EEPROMCRCSticky = 6;
+}
+
+message parameterRequest { 
     rootCommand root = 1;
     configParam parameter = 2;
-    fixed32 value = 3;
+    string value = 3;
 }
 
 //Not fully yet implemented
 message parameterResponse {
-    fixed32 value = 1;
+    string value = 1;
     string oldParameter = 2;
     string newParameter = 3;
     rootResponse root = 4;
 }
 
-message parameterListRequest {
-    rootCommand root = 1;
+message parameterListRequest { 
+    rootCommand root = 1;  
 }
 
 message parameterListResponse {
@@ -125,8 +200,9 @@ message parameterListResponse {
 }
 
 message setpointRequest {
-    rootCommand root = 1;
+    rootCommand root = 1;  
     float setpoint = 2;
+    bool enable = 3;
 }
 
 message setpointResponse {

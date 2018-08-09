@@ -2,19 +2,24 @@ const {ipcMain, dialog, BrowserWindow} = require("electron");
 const execute = require("child_process").execFile;
 const path = require("path");
 const fs = require("fs");
-const grpc = require("grpc");
+//const grpc = require("grpc");
 const PROTO_BUFFERS = path.join(__dirname, "../sparkusb/commands.proto");
-const revCommands = grpc.load(PROTO_BUFFERS).sparkgrpc;
-const client = new revCommands.sparkusb('localhost:8001', grpc.credentials.createInsecure());
+//const revCommands = grpc.load(PROTO_BUFFERS).sparkgrpc;
+//const client = new revCommands.sparkusb('localhost:8001', grpc.credentials.createInsecure());
+const protobuf = require("protobufjs");
+const zmq = require('zeromq');
 const SerialPort = require("serialport");
+const Queue = require('better-queue');
 
 let usbPID = -1;
 let heartbeatID = -1;
 let connCheckID = -1;
 let setpoint = 0;
+let isWin = process.platform === "win32";
 
 ipcMain.on("start-server", (event) => {
-    const exePath = path.join(__dirname, "../sparkusb/sparkusb.exe");
+    const relPath = "../sparkusb/sparkusb" + isWin ? ".exe" : ""
+    const exePath = path.join(__dirname, relPath);
     if (fs.existsSync(exePath)) {
         try {
             usbPID = execute(exePath, ["-r"], (error, data) => {
@@ -144,3 +149,158 @@ ipcMain.on("request-firmware", (event) => {
       }
     });
 });
+
+class sparkusb {
+  constructor(port){
+    this.port = port;
+    //sock.bindSync('tcp://localhost:' + port);
+    this.sock = zmq.socket('req'); 
+    this.sock.bindSync('tcp://127.0.0.1:' + port);
+    console.log('Producer bound to port ' + port);
+    this.root;
+
+    var self = this;
+    
+    /*
+    protobuf.load(PROTO_BUFFERS, function(err, root) {
+      this.root = root
+    });
+    */
+
+    //Commands run one at a time in priority order
+    //Leave default of 1 task concurrently
+    this.cmdQueue = new Queue(function (input, cb) {
+      console.log("Running on queue item:");
+      console.log(input);
+
+      // Init message loads pb befor any other call
+      if (input.id === "init") {
+        protobuf.load(PROTO_BUFFERS)
+          .then(function(root) {
+            self.root = root;
+            cb(null,null);
+          });
+      } else {
+        //All calls here should have a 'msg' field set with a message that
+        //can be part of the 'Oneof' file of the 'RequestWire'
+        
+        // Send a message and wait for response before triggering callback   
+        cb(null, result);        
+      }
+    }, {
+      priority: function (input, cb) {
+        if (input.id === "init") return cb(null,100);
+        if (input.id === "sparkusb.controlRequest") return cb(null, 10);
+        if (input.id === "sparkusb.setpointRequest") return cb(null, 5);
+        if (input.id === "sparkusb.heartbeatRequest") return cb(null, 5);
+        cb(null, 1);
+      }
+    })
+
+    //First task is to initialize the queue
+    this.cmdQueue.push({id: "init"})
+  }
+
+  sendCommand(lookupType,msg,cb) {
+    /*Queue the attached request
+    * Priority:
+    *   - Connect (also flush queue)
+    *   - Disconnect (also flush queue)
+    *     - Setpoint (named so only 1 is ever in the queue)
+    *     - Heartbeat (named so only 1 is ever in the queue)
+    *       - Get Param
+    *       - Set Param
+    *       - Burn Param
+    *       - List
+    *       - Burn Flash
+    *       - All others   
+    */
+    var req = {}
+    switch (lookupType) {
+    case "sparkusb.controlRequest":
+      req.id = lookupType;
+      break;
+    case "sparkusb.setpointRequest":
+    case "sparkusb.heartbeatRequest":
+      req.id = lookupType;
+      req.count = 1;
+      break;
+    default:
+      break
+    }
+
+    req.msg = msg
+    this.cmdQueue.push(req, function (err, result) {
+      // Results from the task!
+      cb(err,result)
+    });
+  }
+
+  // Convert message of lookupType to requestWire as buffer
+  _toBuffer(lookupType) {
+    // Obtain a message type
+    console.log(this.root)
+    var cmd = this.root.lookupType(lookupType);
+
+    // Verify the payload
+    var errMsg = cmd.verify(rootCommand);
+    if (errMsg)
+        throw Error(errMsg);
+    
+    var wire = this.root.lookupType("sparkusb.RequestWire");
+
+    // Create a new message
+    var message = cmd.create(payload); // or use .fromObject if conversion is necessary
+    return cmd.encode(message).finish();
+  }
+
+  // Convert buffer to message of lookupType
+  _fromBuffer(lookupType,buffer) {
+    // Obtain a message type
+    var cmd = this.root.lookupType("sparkusb.ResponseWire");
+    var message = cmd.decode(buffer);
+    // ... do something with message    
+    var cmd = this.root.lookupType(lookupType);
+  }
+
+  // Convenience functions for each message type
+
+//Connect(rootCommand) returns (rootResponse) {}
+//Disconnect(rootCommand) returns (rootResponse) {}
+//List(listRequest) returns (listResponse) {}
+// NOTIMP Firmware(firmwareRequest) returns (firmwareResponse) {}
+// NOTIMP Heartbeat(heartbeat) returns (rootResponse) {}
+// NOTIMP Address(addressRequest) returns (addressResponse) {}
+//SetParameter(parameterRequest) returns (parameterResponse) {}
+//GetParameter(parameterRequest) returns (parameterResponse) {}
+// NOTIMP BurnFlash(rootCommand) returns (rootResponse) {}
+// NOTIMP ListParameters(parameterListRequest) returns (parameterListResponse) {}
+//Setpoint(setpointRequest) returns (setpointResponse) {}
+
+  connect(controlCommand,cb) {
+    this.sendCommand("sparkusb.controlRequest",controlCommand,cb)
+  }
+  disconnect(controlCommand,cb) {
+    this.sendCommand("sparkusb.controlRequest",controlCommand,cb)
+  }
+  list(listCommand,cb) {
+    this.sendCommand("sparkusb.listRequest",listCommand,cb)
+  }
+  getParameter(paramCommand,cb) {
+    this.sendCommand("sparkusb.parameterRequest",paramCommand,cb)
+  }
+  setParameter(paramCommand,cb) {
+    this.sendCommand("sparkusb.parameterRequest",paramCommand,cb)
+  }
+  setpoint(setpointCommand,cb) {
+    this.sendCommand("sparkusb.setpointRequest",setpointCommand,cb)
+  }
+  burnFlash(rootCommand,cb) {
+    this.sendCommand("sparkusb.rootRequest",rootCommand,cb)
+  }
+  heartbeat(heartbeatRequest,cb) {
+    this.sendCommand("sparkusb.heartbeatRequest",heartbeatRequest,cb)
+  }
+}
+
+const client = new sparkusb(8001);

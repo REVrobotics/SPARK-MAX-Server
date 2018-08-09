@@ -22,6 +22,7 @@ func Spark0mqStart(port int) (Spark0mqServer, error) {
 }
 
 func (s *Spark0mqServer) Stop() {
+	//s.running = false
 	fmt.Println("Sending STOP command to server -- not implemented")
 	/*
 
@@ -87,7 +88,25 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 		resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
 	} else {
 		switch x := req.Req.(type) {
-		//Get or Set parameter
+
+		/**************Control Message************
+		* Connect or disconnect
+		******************************************/
+		case *sparkusb.RequestWire_Control:
+			switch cmd := x.Control.Ctrl; cmd {
+			case sparkusb.ControlMessages_controlPing:
+				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
+			case sparkusb.ControlMessages_controlConnect:
+				root.Error = sparkusb.Connect(x.Control.Device).Error()
+				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
+			case sparkusb.ControlMessages_controlDisconnect:
+				root.Error = sparkusb.Disconnect().Error()
+				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
+			}
+
+		/************Parameter Message************
+		* Get or set parameter
+		******************************************/
 		case *sparkusb.RequestWire_Parameter:
 			param := x.Parameter.Parameter
 			val := x.Parameter.Value
@@ -110,6 +129,9 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 
 			resp.Resp = &sparkusb.ResponseWire_Parameter{Parameter: &paramResp}
 
+		/*************Setpoint Message************
+		* Set setpoint (enable sends a boardcast)
+		******************************************/
 		case *sparkusb.RequestWire_Setpoint:
 			setpoint := x.Setpoint.Setpoint
 			enabled := x.Setpoint.Enable
@@ -120,7 +142,8 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 			}
 			resp.Resp = &sparkusb.ResponseWire_Setpoint{Setpoint: r}
 
-		//Invalid message
+		/*****************Invalid*****************
+		******************************************/
 		default:
 			root.Error = fmt.Sprintf("Message has unexpected type %T", x)
 			err = fmt.Errorf(root.Error)

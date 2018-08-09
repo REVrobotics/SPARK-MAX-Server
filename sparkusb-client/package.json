@@ -8,13 +8,16 @@
   "dependencies": {
     "@blueprintjs/core": "^3.0.1",
     "@blueprintjs/select": "^3.0.0",
+    "better-queue": "^3.8.10",
     "echarts": "^4.1.0",
     "echarts-for-react": "^2.0.13",
     "grpc": "^1.13.0",
+    "protobufjs": "^6.8.8",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-scripts": "1.1.4",
-    "serialport": "^6.2.1"
+    "serialport": "^6.2.1",
+    "zeromq": "^4.6.0"
   },
   "devDependencies": {
     "concurrently": "^3.6.0",
