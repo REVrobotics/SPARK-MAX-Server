@@ -93,14 +93,21 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 		* Connect or disconnect
 		******************************************/
 		case *sparkusb.RequestWire_Control:
+			fmt.Println(x)
 			switch cmd := x.Control.Ctrl; cmd {
 			case sparkusb.ControlMessages_controlPing:
 				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
 			case sparkusb.ControlMessages_controlConnect:
-				root.Error = sparkusb.Connect(x.Control.Device).Error()
+				err := sparkusb.Connect(x.Control.Device)
+				if err != nil {
+					root.Error = err.Error()
+				}
 				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
 			case sparkusb.ControlMessages_controlDisconnect:
-				root.Error = sparkusb.Disconnect().Error()
+				err := sparkusb.Disconnect()
+				if err != nil {
+					root.Error = err.Error()
+				}
 				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
 			}
 
@@ -141,6 +148,23 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 				r.Root.Error = err.Error()
 			}
 			resp.Resp = &sparkusb.ResponseWire_Setpoint{Setpoint: r}
+
+		/***************List Message**************
+		* Set setpoint (enable sends a boardcast)
+		******************************************/
+		case *sparkusb.RequestWire_List:
+			ports := sparkusb.ListDevices(x.List.All)
+
+			devList := make([]string, 0)
+			devDetails := make([]string, 0)
+			for _, port := range ports {
+				devList = append(devList, port.Name)
+
+				result := fmt.Sprintf("Device: %s,\t%s:%s\t%s", port.SerialNumber, port.VID, port.PID, port.Name)
+				devDetails = append(devDetails, result)
+			}
+			tmp := sparkusb.ListResponse{DeviceList: devList, DeviceDetails: devDetails}
+			resp.Resp = &sparkusb.ResponseWire_List{List: &tmp}
 
 		/*****************Invalid*****************
 		******************************************/

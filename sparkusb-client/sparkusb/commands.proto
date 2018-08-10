@@ -51,8 +51,15 @@ message ResponseWire {
     }
 }
 
+enum controlMessage {
+    controlPing = 0;
+    controlConnect = 1;
+    controlDisconnect = 2;
+}
+
 message controlRequest {
-    string req = 1;
+    controlMessage ctrl = 1;
+    string device = 2;
 }
 
 message commandLineRequest {

@@ -154,18 +154,13 @@ class sparkusb {
   constructor(port){
     this.port = port;
     //sock.bindSync('tcp://localhost:' + port);
-    this.sock = zmq.socket('req'); 
-    this.sock.bindSync('tcp://127.0.0.1:' + port);
+    this.sock = zmq.socket('req');
+    //this.sock.bindSync('tcp://127.0.0.1:' + port);
+    this.sock.connect('tcp://127.0.0.1:' + port);
     console.log('Producer bound to port ' + port);
     this.root;
 
     var self = this;
-    
-    /*
-    protobuf.load(PROTO_BUFFERS, function(err, root) {
-      this.root = root
-    });
-    */
 
     //Commands run one at a time in priority order
     //Leave default of 1 task concurrently
@@ -182,17 +177,28 @@ class sparkusb {
           });
       } else {
         //All calls here should have a 'msg' field set with a message that
-        //can be part of the 'Oneof' file of the 'RequestWire'
+        //can be part of the 'Oneof' file of the 'RequestWire'        
+        var wire = self.root.lookupType("sparkusb.RequestWire");
+        var wireMsg = wire.create({req: input.id});
+        wireMsg[input.id] = input.msg;
+        var wireBuf = wire.encode(wireMsg).finish();
+
+        console.log(wireMsg);
+        console.log(wireBuf);
+
+        self.sock.send(wireBuf);
         
-        // Send a message and wait for response before triggering callback   
-        cb(null, result);        
+        // Send a message and wait for response before triggering callback
+        self.sock.on('message', function(msg) {
+          cb(null, msg);
+        });
       }
     }, {
       priority: function (input, cb) {
         if (input.id === "init") return cb(null,100);
-        if (input.id === "sparkusb.controlRequest") return cb(null, 10);
-        if (input.id === "sparkusb.setpointRequest") return cb(null, 5);
-        if (input.id === "sparkusb.heartbeatRequest") return cb(null, 5);
+        if (input.id === "control") return cb(null, 10);
+        if (input.id === "setpoint") return cb(null, 5);
+        if (input.id === "heartbeat") return cb(null, 5);
         cb(null, 1);
       }
     })
@@ -214,53 +220,25 @@ class sparkusb {
     *       - List
     *       - Burn Flash
     *       - All others   
+    * 
+    * All commands will be part of the requestWire
+    * and need to be encoded as such
     */
-    var req = {}
-    switch (lookupType) {
-    case "sparkusb.controlRequest":
-      req.id = lookupType;
-      break;
-    case "sparkusb.setpointRequest":
-    case "sparkusb.heartbeatRequest":
-      req.id = lookupType;
-      req.count = 1;
-      break;
-    default:
-      break
+    var req = {id: lookupType};
+    var self = this;
+
+    if (lookupType === "setpoint" || lookupType === "heartbeat") {
+          req.count = 1;
     }
 
-    req.msg = msg
+    req.msg = msg;
     this.cmdQueue.push(req, function (err, result) {
-      // Results from the task!
-      cb(err,result)
+      // Decode message
+      var cmd = self.root.lookupType("sparkusb.ResponseWire");
+      var message = cmd.decode(result);
+      console.log(message[lookupType]);
+      cb(err,message[lookupType]);
     });
-  }
-
-  // Convert message of lookupType to requestWire as buffer
-  _toBuffer(lookupType) {
-    // Obtain a message type
-    console.log(this.root)
-    var cmd = this.root.lookupType(lookupType);
-
-    // Verify the payload
-    var errMsg = cmd.verify(rootCommand);
-    if (errMsg)
-        throw Error(errMsg);
-    
-    var wire = this.root.lookupType("sparkusb.RequestWire");
-
-    // Create a new message
-    var message = cmd.create(payload); // or use .fromObject if conversion is necessary
-    return cmd.encode(message).finish();
-  }
-
-  // Convert buffer to message of lookupType
-  _fromBuffer(lookupType,buffer) {
-    // Obtain a message type
-    var cmd = this.root.lookupType("sparkusb.ResponseWire");
-    var message = cmd.decode(buffer);
-    // ... do something with message    
-    var cmd = this.root.lookupType(lookupType);
   }
 
   // Convenience functions for each message type
@@ -278,28 +256,33 @@ class sparkusb {
 //Setpoint(setpointRequest) returns (setpointResponse) {}
 
   connect(controlCommand,cb) {
-    this.sendCommand("sparkusb.controlRequest",controlCommand,cb)
+    controlCommand.ctrl = 1;
+    this.sendCommand("control",controlCommand,cb)
   }
-  disconnect(controlCommand,cb) {
-    this.sendCommand("sparkusb.controlRequest",controlCommand,cb)
+  disconnect(controlCommand,cb) {    
+    controlCommand.ctrl = 2;
+    this.sendCommand("control",controlCommand,cb)
   }
   list(listCommand,cb) {
-    this.sendCommand("sparkusb.listRequest",listCommand,cb)
+    this.sendCommand("list",listCommand,cb)
   }
   getParameter(paramCommand,cb) {
-    this.sendCommand("sparkusb.parameterRequest",paramCommand,cb)
+    this.sendCommand("parameter",paramCommand,cb)
   }
   setParameter(paramCommand,cb) {
-    this.sendCommand("sparkusb.parameterRequest",paramCommand,cb)
+    this.sendCommand("parameter",paramCommand,cb)
   }
   setpoint(setpointCommand,cb) {
-    this.sendCommand("sparkusb.setpointRequest",setpointCommand,cb)
+    setpointCommand.enable = true;
+    this.sendCommand("setpoint",setpointCommand,cb)
   }
   burnFlash(rootCommand,cb) {
-    this.sendCommand("sparkusb.rootRequest",rootCommand,cb)
+    //this.sendCommand("sparkusb.rootRequest",rootCommand,cb)
+    cb(null,null);
   }
   heartbeat(heartbeatRequest,cb) {
-    this.sendCommand("sparkusb.heartbeatRequest",heartbeatRequest,cb)
+    //this.sendCommand("heartbeat",heartbeatRequest,cb)
+    cb(null,null)
   }
 }
 

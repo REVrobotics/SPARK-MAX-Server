@@ -51,14 +51,14 @@ message ResponseWire {
     }
 }
 
-enum controlMessages {
+enum controlMessage {
     controlPing = 0;
     controlConnect = 1;
     controlDisconnect = 2;
 }
 
 message controlRequest {
-    controlMessages ctrl = 1;
+    controlMessage ctrl = 1;
     string device = 2;
 }
 
