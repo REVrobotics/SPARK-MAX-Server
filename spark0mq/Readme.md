@@ -1,5 +1,6 @@
 Requires go [zeromq4](https://github.com/pebbe/zmq4)
 
+**Windows**
 To build:
 
 1) Compile zeromq 4 using visual studio (target is DynRelease x64)
@@ -18,4 +19,8 @@ Same applies when building
 
 Example: ` & { $env:CGO_CFLAGS='-g -O2 -IC:\Users\Will\Src\zeromq-4.2.3\include'; $env:CGO_LDFLAGS='-g -O2 -LC:\Users\Will\Src\zeromq-4.2.3\bin\x64\Release\v141\dynamic'; go build}`
 
-Alternatively, put the built library somewhere accessible by PATH (go/bin?) and the header in a location accessible by 
+Alternatively, put the built library somewhere accessible by PATH (go/bin?) and the header in a location accessible by the compiler
+
+**Linux (Ubuntu)**
+
+`sudo apt-get install libzmq3-dev`
