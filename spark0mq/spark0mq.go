@@ -65,7 +65,7 @@ func spark0mqREQ(port int) {
 		//  Wait for next request from client
 		msg, _ := responder.RecvBytes(0)
 
-		fmt.Println("Received ", msg)
+		//fmt.Println("Received ", msg)
 
 		resp, err := parseMessage(msg)
 		if err != nil {
@@ -73,7 +73,7 @@ func spark0mqREQ(port int) {
 		}
 		//  Send reply back to client
 		responder.SendBytes(resp, 0)
-		fmt.Println("Sent ", resp)
+		//fmt.Println("Sent ", resp)
 	}
 }
 
@@ -93,7 +93,7 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 		* Connect or disconnect
 		******************************************/
 		case *sparkusb.RequestWire_Control:
-			fmt.Println(x)
+			//fmt.Println(x)
 			switch cmd := x.Control.Ctrl; cmd {
 			case sparkusb.ControlMessages_controlPing:
 				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}

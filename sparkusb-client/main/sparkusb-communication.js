@@ -165,8 +165,8 @@ class sparkusb {
     //Commands run one at a time in priority order
     //Leave default of 1 task concurrently
     this.cmdQueue = new Queue(function (input, cb) {
-      console.log("Running on queue item:");
-      console.log(input);
+      //console.log("Running on queue item:");
+      //console.log(input);
 
       // Init message loads pb befor any other call
       if (input.id === "init") {
@@ -183,8 +183,8 @@ class sparkusb {
         wireMsg[input.id] = input.msg;
         var wireBuf = wire.encode(wireMsg).finish();
 
-        console.log(wireMsg);
-        console.log(wireBuf);
+        //console.log(wireMsg);
+        //console.log(wireBuf);
 
         self.sock.send(wireBuf);
         
@@ -236,7 +236,7 @@ class sparkusb {
       // Decode message
       var cmd = self.root.lookupType("sparkusb.ResponseWire");
       var message = cmd.decode(result);
-      console.log(message[lookupType]);
+      //console.log(message[lookupType]);
       cb(err,message[lookupType]);
     });
   }
