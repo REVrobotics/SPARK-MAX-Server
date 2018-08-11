@@ -160,7 +160,7 @@ class sparkusb {
     console.log('Producer bound to port ' + port);
     this.root;
 
-    var self = this;
+    let self = this;
 
     //Commands run one at a time in priority order
     //Leave default of 1 task concurrently
@@ -178,10 +178,10 @@ class sparkusb {
       } else {
         //All calls here should have a 'msg' field set with a message that
         //can be part of the 'Oneof' file of the 'RequestWire'        
-        var wire = self.root.lookupType("sparkusb.RequestWire");
-        var wireMsg = wire.create({req: input.id});
+        let wire = self.root.lookupType("sparkusb.RequestWire");
+        let wireMsg = wire.create({req: input.id});
         wireMsg[input.id] = input.msg;
-        var wireBuf = wire.encode(wireMsg).finish();
+        let wireBuf = wire.encode(wireMsg).finish();
 
         //console.log(wireMsg);
         //console.log(wireBuf);
@@ -224,8 +224,8 @@ class sparkusb {
     * All commands will be part of the requestWire
     * and need to be encoded as such
     */
-    var req = {id: lookupType};
-    var self = this;
+    let req = {id: lookupType};
+    let self = this;
 
     if (lookupType === "setpoint" || lookupType === "heartbeat") {
           req.count = 1;
@@ -234,8 +234,8 @@ class sparkusb {
     req.msg = msg;
     this.cmdQueue.push(req, function (err, result) {
       // Decode message
-      var cmd = self.root.lookupType("sparkusb.ResponseWire");
-      var message = cmd.decode(result);
+      let cmd = self.root.lookupType("sparkusb.ResponseWire");
+      let message = cmd.decode(result);
       //console.log(message[lookupType]);
       cb(err,message[lookupType]);
     });

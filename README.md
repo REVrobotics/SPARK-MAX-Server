@@ -3,7 +3,7 @@
 Pre-reqs:
 
 Working Go environment [intalled](https://golang.org/doc/install) 
-*Not sure the minimum dependancy, as of development we are using 1.10.3, the ubuntu package in 16.04 usses 1.6 which does not work properly*
+*Not sure the minimum dependancy, as of development we are using 1.10.3, the ubuntu package in 16.04 usses 1.6 which does not work properly. Ubuntu 18.04 uses 1.10.1 and is ok (Same with Linux Mint 19).*
 
 Pre-build binary for Zeromq:
 
@@ -36,11 +36,8 @@ Alternatively, put the built library somewhere accessible by PATH (go/bin?) and 
 
 ```
 go get github.com/pebbe/zmq4
-
 go get -u github.com/spf13/cobra/cobra
-
 go get github.com/willtoth/go-serial
-
 go get -u github.com/golang/protobuf/protoc-gen-go
 ```
 
