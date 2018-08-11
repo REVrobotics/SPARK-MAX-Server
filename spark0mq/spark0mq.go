@@ -95,15 +95,15 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 		case *sparkusb.RequestWire_Control:
 			//fmt.Println(x)
 			switch cmd := x.Control.Ctrl; cmd {
-			case sparkusb.ControlMessages_controlPing:
+			case sparkusb.ControlMessage_controlPing:
 				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
-			case sparkusb.ControlMessages_controlConnect:
+			case sparkusb.ControlMessage_controlConnect:
 				err := sparkusb.Connect(x.Control.Device)
 				if err != nil {
 					root.Error = err.Error()
 				}
 				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
-			case sparkusb.ControlMessages_controlDisconnect:
+			case sparkusb.ControlMessage_controlDisconnect:
 				err := sparkusb.Disconnect()
 				if err != nil {
 					root.Error = err.Error()
