@@ -17,3 +17,13 @@ For example:
 */etc/udev/rules.d/99-ttyacms.rules* has the line:
 
 `ATTRS{idVendor}=="0483" ATTRS{idProduct}=="5740", ENV{ID_MM_DEVICE_IGNORE}="1"`
+
+**Generating Docs**
+
+Docs for the protocol buffers API was generated with [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc)
+
+Protoc version must be > 3.3.0 if not building via docker.
+
+Command is:
+
+`protoc --doc_out=./ --doc_opt=markdown,api.md ./*.proto`
