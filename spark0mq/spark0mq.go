@@ -130,7 +130,8 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 			} else {
 				_, err := sparkusb.SetParameter(&sparkusb.ParameterRequest{Parameter: param, Value: val})
 				if err != nil {
-					paramResp.Root.Error = err.Error()
+					tmp := sparkusb.RootResponse{Error: err.Error()}
+					paramResp.Root = &tmp
 				}
 			}
 

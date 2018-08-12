@@ -267,9 +267,14 @@ class sparkusb {
     this.sendCommand("list",listCommand,cb)
   }
   getParameter(paramCommand,cb) {
-    this.sendCommand("parameter",paramCommand,cb)
+    this.sendCommand("parameter",paramCommand, function (err, result){
+      result.value = Number(result.value);
+      cb(err,result);
+    })
   }
   setParameter(paramCommand,cb) {
+    //Make sure 'paramCommand' is a string
+    paramCommand.value += '';
     this.sendCommand("parameter",paramCommand,cb)
   }
   setpoint(setpointCommand,cb) {

@@ -50,17 +50,17 @@ func Address(command *AddressRequest) (*AddressResponse, error) {
 
 */
 
-func getParameterType(paramID ConfigParam) string {
-	var paramTypeList = map[int32]string{
-		int32(ConfigParam_CanID):           "uint",
-		int32(ConfigParam_InputMode):       "uint",
-		int32(ConfigParam_MotorType):       "uint",
-		int32(ConfigParam_CommAdv):         "float",
-		int32(ConfigParam_SensorType):      "uint",
-		int32(ConfigParam_CtrlType):        "uint",
-		int32(ConfigParam_IdleMode):        "uint",
-		int32(ConfigParam_InputDeadband):   "float",
-		int32(ConfigParam_FirmwareVersion): "uint",
+func getParameterType(paramID ConfigParam) ParamType {
+	var paramTypeList = map[int32]ParamType{
+		int32(ConfigParam_CanID):           ParamType_uint32,
+		int32(ConfigParam_InputMode):       ParamType_uint32,
+		int32(ConfigParam_MotorType):       ParamType_uint32,
+		int32(ConfigParam_CommAdv):         ParamType_float32,
+		int32(ConfigParam_SensorType):      ParamType_uint32,
+		int32(ConfigParam_CtrlType):        ParamType_uint32,
+		int32(ConfigParam_IdleMode):        ParamType_uint32,
+		int32(ConfigParam_InputDeadband):   ParamType_float32,
+		int32(ConfigParam_FirmwareVersion): ParamType_uint32,
 	}
 
 	return paramTypeList[int32(paramID)]
@@ -77,22 +77,23 @@ func SetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 	//rawMsg := frame.Data[2:6]
 	var rawMsg uint32
 	var err error
+	resp.Type = getParameterType(command.Parameter)
 
-	//Parse string param to raw bytes of the appropriate type
-	switch getParameterType(command.Parameter) {
-	case "uint":
+	//Parse to string from raw bytes of the appropriate type
+	switch resp.Type {
+	case ParamType_uint32:
 		tmp, err := strconv.ParseUint(command.Value, 10, 32)
 		if err != nil {
 			return &resp, err
 		}
 		rawMsg = uint32(tmp)
-	case "int":
+	case ParamType_int32:
 		tmp, err := strconv.ParseInt(command.Value, 10, 32)
 		if err != nil {
 			return &resp, err
 		}
 		rawMsg = uint32(tmp)
-	case "float":
+	case ParamType_float32:
 		tmp, err := strconv.ParseFloat(command.Value, 32)
 		if err != nil {
 			return &resp, err
@@ -123,14 +124,15 @@ func GetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 	//fmt.Println(frameIn)
 
 	rawMsg := binary.LittleEndian.Uint32(frameIn.Data[:4])
+	resp.Type = getParameterType(command.Parameter)
 
 	//Parse to string from raw bytes of the appropriate type
-	switch getParameterType(command.Parameter) {
-	case "int":
+	switch resp.Type {
+	case ParamType_int32:
 		resp.Value = strconv.FormatInt(int64(rawMsg), 10)
-	case "uint":
+	case ParamType_uint32:
 		resp.Value = strconv.FormatUint(uint64(rawMsg), 10)
-	case "float":
+	case ParamType_float32:
 		rawMsgFloat := math.Float32frombits(rawMsg)
 		resp.Value = strconv.FormatFloat(float64(rawMsgFloat), 'f', 6, 32)
 	}
