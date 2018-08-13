@@ -1,9 +1,20 @@
 # USB-BLDC-TOOL
 
-Pre-reqs:
+**Building**
+
+Steps to build the sparkusb server/cli tool
+
+1) Install and setup git
+2) Install and setup a go environemnt (minimum 1.7, recommended 1.10+)
+3) Build or install zeromq4
+4) 'Go get' all dependancies
+5) Clone this repo under `$GOPATH/src/github.com/willtoth/`
+6) 'Go build'
+
+#Pre-reqs:
 
 Working Go environment [intalled](https://golang.org/doc/install) 
-*Not sure the minimum dependancy, as of development we are using 1.10.3, the ubuntu package in 16.04 usses 1.6 which does not work properly. Ubuntu 18.04 uses 1.10.1 and is ok (Same with Linux Mint 19).*
+*Not sure the minimum dependancy, as of development we are using 1.10.3, the ubuntu package in 16.04 usses 1.6 which does not work properly. Ubuntu 18.04 uses 1.10.1 and is ok (Same with Linux Mint 19). Successfully built using go 1.7 on a raspberry pi zero w.*
 
 Pre-build binary for Zeromq:
 
