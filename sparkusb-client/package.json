@@ -2,7 +2,7 @@
   "name": "sparkusb-client",
   "author": "REV Robotics",
   "description": "Client for TNG",
-  "version": "0.5.3",
+  "version": "0.6.1",
   "private": true,
   "main": "public/electron.js",
   "dependencies": {
@@ -40,7 +40,7 @@
     "dist": "build"
   },
   "build": {
-    "appId": "org.revrobotics.tng.client",
+    "appId": "org.revrobotics.tng.client.0.6.1",
     "productName": "TNG Client",
     "files": [
       "build/**/*",

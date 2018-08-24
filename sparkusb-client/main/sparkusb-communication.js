@@ -18,7 +18,7 @@ let setpoint = 0;
 let isWin = process.platform === "win32";
 
 ipcMain.on("start-server", (event) => {
-    const relPath = "../sparkusb/sparkusb" + isWin ? ".exe" : ""
+    const relPath = "../sparkusb/sparkusb" + (isWin ? ".exe" : "");
     const exePath = path.join(__dirname, relPath);
     if (fs.existsSync(exePath)) {
         try {
@@ -279,6 +279,7 @@ class sparkusb {
   }
   setpoint(setpointCommand,cb) {
     setpointCommand.enable = true;
+    setpointCommand.setpoint = setpointCommand.setpoint / 1024;
     this.sendCommand("setpoint",setpointCommand,cb)
   }
   burnFlash(rootCommand,cb) {

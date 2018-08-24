@@ -6,6 +6,19 @@ import (
 	"strconv"
 )
 
+func float32FromBytes(bytes []byte) float32 {
+	bits := binary.LittleEndian.Uint32(bytes)
+	float := math.Float32frombits(bits)
+	return float
+}
+
+func float32ToBytes(float float32) []byte {
+	bits := math.Float32bits(float)
+	bytes := make([]byte, 4)
+	binary.LittleEndian.PutUint32(bytes, bits)
+	return bytes
+}
+
 func sparkCommand(frame UsbFrame) (UsbFrame, error) {
 	var resp UsbFrame
 	var err error
@@ -180,19 +193,12 @@ func Setpoint(command *SetpointRequest) (*SetpointResponse, error) {
 		frame.Data[0] = 0
 		frame.Data[1] = 0
 		frame.Data[2] = 0
+		frame.Data[3] = 0
 	} else {
-		if command.Setpoint > 1023 {
-			command.Setpoint = 1023
-		} else if command.Setpoint < -1024 {
-			command.Setpoint = 1024
-		}
+		//TODO: Implement a min/max based on user setting
+		tmparray := float32ToBytes(command.Setpoint)
 
-		tmparray := make([]byte, 4)
-		binary.BigEndian.PutUint32(tmparray[:], uint32(command.Setpoint))
-
-		//Copy 3 LSB of number (for some reason its way that CTRE does it)
-		//Implemented here (possible) for compatibility
-		copy(frame.Data[:3], tmparray[1:])
+		copy(frame.Data[:4], tmparray[:])
 	}
 
 	_, err = sparkCommand(frame)

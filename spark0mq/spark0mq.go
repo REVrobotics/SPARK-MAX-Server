@@ -69,7 +69,7 @@ func spark0mqREQ(port int) {
 
 		resp, err := parseMessage(msg)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(err.Error())
 		}
 		//  Send reply back to client
 		responder.SendBytes(resp, 0)
