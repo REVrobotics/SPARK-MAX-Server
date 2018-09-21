@@ -34,9 +34,7 @@ func sparkCommand(frame UsbFrame) (UsbFrame, error) {
 func sendHeartbeat(enable bool) error {
 	frame := DefaultFrame()
 
-	frame.Header.Manufacturer = ManuBroadcast
-	frame.Header.DeviceType = DevBroadcast
-	frame.Header.API = CmdBcastHalt
+	frame.Header.API = CmdApiHeartbeat
 
 	if enable {
 		frame.Data[0] = 1

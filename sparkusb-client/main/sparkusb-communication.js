@@ -16,6 +16,7 @@ let heartbeatID = -1;
 let connCheckID = -1;
 let setpoint = 0;
 let isWin = process.platform === "win32";
+let isEnabled = false
 
 ipcMain.on("start-server", (event) => {
     const relPath = "../sparkusb/sparkusb" + (isWin ? ".exe" : "");
@@ -101,12 +102,10 @@ ipcMain.on("list-devices", (event) => {
 });
 
 ipcMain.on("enable-heartbeat", (event, interval) => {
+  isEnabled = true
     if (heartbeatID === -1) {
       console.log("Enabling heartbeat for every " + interval + "ms");
       heartbeatID = setInterval(() => {
-        client.heartbeat({enable: true}, (err, response) => {
-            event.sender.send("enable-heartbeat-response", err, response);
-        });
         client.setpoint({setpoint: setpoint}, (err, response) => {
 
         });
@@ -115,13 +114,12 @@ ipcMain.on("enable-heartbeat", (event, interval) => {
 });
 
 ipcMain.on("disable-heartbeat", (event) => {
+  isEnabled = false
    if (heartbeatID !== -1) {
      console.log("Disabling heartbeat");
      clearInterval(heartbeatID);
-     client.heartbeat({enable: false}, (err, response) => {
-       heartbeatID = -1;
-       event.sender.send("disable-heartbeat-response", err, response);
-     });
+     heartbeatID = -1;
+     event.sender.send("disable-heartbeat-response", err, response);
    }
 });
 
@@ -278,7 +276,7 @@ class sparkusb {
     this.sendCommand("parameter",paramCommand,cb)
   }
   setpoint(setpointCommand,cb) {
-    setpointCommand.enable = true;
+    setpointCommand.enable = isEnabled;
     setpointCommand.setpoint = setpointCommand.setpoint / 1024;
     this.sendCommand("setpoint",setpointCommand,cb)
   }
