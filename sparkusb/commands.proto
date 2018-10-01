@@ -86,6 +86,11 @@ service sparkusb {
     * drive the motor.
     */
     rpc Setpoint(setpointRequest) returns (setpointResponse) {}
+
+    /*
+    * Set controller to follow another controller.
+    */
+    rpc Follow(followerRequest) returns (rootResponse) {}
 }
 
 /*
@@ -103,6 +108,7 @@ message RequestWire {
         parameterListRequest    parameterList = 17;
         setpointRequest         setpoint = 18;
         controlRequest          control = 19;
+        followerRequest         follower = 20;
     }
 }
 
@@ -824,4 +830,10 @@ message setpointResponse {
     float setpoint = 1;
     bool isRunning = 2;
     rootResponse root = 3;
+}
+
+message followerRequest {
+    rootCommand root = 1;
+    uint32 followerid = 2;
+    uint32 followerconfig = 3;
 }

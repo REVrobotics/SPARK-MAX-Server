@@ -66,30 +66,13 @@ const (
 	CmdBcastHalt      = 0x001
 	CmdBcastReset     = 0x002
 	CmdBcastAssign    = 0x003
-	CmdBcastQuery     = 0x004
 	CmdBcastHeartbeat = 0x005
-	CmdBcastSync      = 0x006
-	CmdBcastUpdate    = 0x007
 	CmdBcastFirmware  = 0x008
 	CmdBcastEnum      = 0x009
 	CmdBcastResume    = 0x00A
-	CmdApiDcEnable    = 0x000
-	CmdApiDcDisable   = 0x001
 	CmdApiDcSet       = 0x002
-	CmdApiDcRamp      = 0x003
-	CmdApiDcSetNoack  = 0x008
-	CmdApiSpdEnable   = 0x010
-	CmdApiSpdDisable  = 0x011
 	CmdApiSpdSet      = 0x012
-	CmdApiSpdSlot     = 0x013
-	CmdApiSpdRef      = 0x016
-	CmdApiSpdSetNoack = 0x01B
-	CmdApiPosEnable   = 0x030
-	CmdApiPosDisable  = 0x031
 	CmdApiPosSet      = 0x032
-	CmdApiPosSlot     = 0x033
-	CmdApiPosRef      = 0x036
-	CmdApiPosSetNoack = 0x03B
 	CmdApiStat0       = 0x060
 	CmdApiStat1       = 0x061
 	CmdApiUsrStat0    = 0x062
@@ -99,7 +82,13 @@ const (
 	CmdApiSetCfg      = 0x070
 	CmdApiGetCfg      = 0x071
 	CmdApiBurnFlash   = 0x072
+	CmdApiNack        = 0x080
 	CmdApiAck         = 0x081
+	CmdApiBroadcast   = 0x090
+	CmdApiHeartbeat   = 0x092
+	CmdApiSync        = 0x093
+	CmdApiIdQuery     = 0x094
+	CmdApiIdAssign    = 0x095
 )
 
 type UsbFrameHeader struct {
