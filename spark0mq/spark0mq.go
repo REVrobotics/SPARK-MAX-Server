@@ -147,7 +147,7 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 			r, err := sparkusb.Setpoint(&req)
 			if err != nil {
 				tmp := sparkusb.RootResponse{Error: err.Error()}
-				resp.Root = &tmp
+				r.Root = &tmp
 			}
 			resp.Resp = &sparkusb.ResponseWire_Setpoint{Setpoint: r}
 

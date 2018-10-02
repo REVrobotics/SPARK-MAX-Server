@@ -27,3 +27,9 @@ dist/
 
 # Yarn
 *.lock
+
+#makefile
+*.swp
+
+#pre-compiled binary libs
+*.lib

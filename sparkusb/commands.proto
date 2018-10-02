@@ -782,6 +782,7 @@ enum paramType {
     int32 = 0;
     uint32 = 1;
     float32 = 2;
+    bool = 3;
 }
 
 /*

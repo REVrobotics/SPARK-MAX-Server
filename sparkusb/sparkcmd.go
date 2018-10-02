@@ -112,8 +112,11 @@ func SetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 		rawMsg = math.Float32bits(float32(tmp))
 	}
 	binary.LittleEndian.PutUint32(frame.Data[2:6], rawMsg)
+	frame.Data[6] = uint8(resp.Type)
 
 	_, err = sparkCommand(frame)
+
+	//TODO: Check response for correct type and status flag
 
 	return &resp, err
 }
@@ -135,7 +138,7 @@ func GetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 	//fmt.Println(frameIn)
 
 	rawMsg := binary.LittleEndian.Uint32(frameIn.Data[:4])
-	resp.Type = getParameterType(command.Parameter)
+	resp.Type = ParamType(frameIn.Data[4])
 
 	//Parse to string from raw bytes of the appropriate type
 	switch resp.Type {
