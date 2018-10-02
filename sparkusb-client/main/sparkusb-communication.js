@@ -275,7 +275,6 @@ class sparkusb {
   setParameter(paramCommand,cb) {
     //Make sure 'paramCommand' is a string
     paramCommand.value += '';
-    console.log(paramCommand)
     this.sendCommand("parameter",paramCommand,cb)
   }
   setpoint(setpointCommand,cb) {

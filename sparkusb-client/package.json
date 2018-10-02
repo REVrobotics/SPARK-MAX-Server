@@ -2,7 +2,7 @@
   "name": "sparkusb-client",
   "author": "REV Robotics",
   "description": "Client for TNG",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "main": "public/electron.js",
   "dependencies": {
@@ -11,7 +11,6 @@
     "better-queue": "^3.8.10",
     "echarts": "^4.1.0",
     "echarts-for-react": "^2.0.13",
-    "grpc": "^1.13.0",
     "protobufjs": "^6.8.8",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
@@ -40,11 +39,19 @@
     "dist": "build"
   },
   "build": {
-    "appId": "org.revrobotics.tng.client.0.6.1",
-    "productName": "TNG Client",
+    "appId": "org.revrobotics.tng.client.0.6.2",
+    "productName": "SPARK MAX Client",
+    "copyright": "2018 REV Robotics LLC",
     "files": [
       "build/**/*",
       "node_modules/**/*"
+    ],
+    "extraFiles": [
+      {
+        "from": "sparkusb/libzmq-v120-mt-4_0_4.dll",
+        "to": "..",
+        "filter": ["*.dll"]
+      }
     ],
     "directories": {
       "output": "dist",
