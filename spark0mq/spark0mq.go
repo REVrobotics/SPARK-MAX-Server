@@ -16,7 +16,7 @@ type Spark0mqServer struct {
 }
 
 func Spark0mqStart(port int) (Spark0mqServer, error) {
-	fmt.Println("Starting smark0mq REQ")
+	fmt.Printf("Starting smark0mq REQ on port: %d\r\n", port)
 	go spark0mqREQ(port)
 	return Spark0mqServer{port, 0, true}, nil
 }
@@ -54,7 +54,10 @@ func (s *Spark0mqServer) IsRunning() bool {
 
 func spark0mqREQ(port int) {
 	//  Socket to talk to clients
-	responder, _ := zmq.NewSocket(zmq.REP)
+	responder, err := zmq.NewSocket(zmq.REP)
+	if err != nil {
+		panic(err)
+	}
 	defer responder.Close()
 	defer fmt.Println("Responder.Close called")
 
@@ -152,7 +155,7 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 			resp.Resp = &sparkusb.ResponseWire_Setpoint{Setpoint: r}
 
 		/***************List Message**************
-		* Set setpoint (enable sends a boardcast)
+		* List devices
 		******************************************/
 		case *sparkusb.RequestWire_List:
 			ports := sparkusb.ListDevices(x.List.All)
@@ -167,6 +170,19 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 			}
 			tmp := sparkusb.ListResponse{DeviceList: devList, DeviceDetails: devDetails}
 			resp.Resp = &sparkusb.ResponseWire_List{List: &tmp}
+
+		/***************Burn Flash**************
+		* Burn Flash
+		******************************************/
+		case *sparkusb.RequestWire_Burn:
+			doBurn := x.Burn.Verify
+			req := sparkusb.BurnRequest{Verify: doBurn}
+			r, err := sparkusb.BurnFlash(&req)
+			if err != nil {
+				tmp := sparkusb.RootResponse{Error: err.Error()}
+				r.Root = &tmp
+			}
+			resp.Resp = &sparkusb.ResponseWire_Burn{Burn: r}
 
 		/*****************Invalid*****************
 		******************************************/

@@ -114,6 +114,15 @@ func DefaultFrame() UsbFrame {
 	return frame
 }
 
+func BroadcastFrame() UsbFrame {
+	var frame UsbFrame
+
+	frame.Header.DeviceType = DevBroadcast
+	frame.Header.Manufacturer = ManuBroadcast
+
+	return frame
+}
+
 // SerializeUsbFrame convert frame to byte array
 func SerializeUsbFrame(frame UsbFrame) (out []byte) {
 	out = make([]byte, 12)

@@ -38,7 +38,7 @@ func init() {
 }
 
 func runAddress(cmd *cobra.Command, args []string) {
-	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_CanID}
+	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_kCanID}
 	if len(args) < 1 {
 		resp, err := sparkusb.GetParameter(&req)
 		if err != nil {

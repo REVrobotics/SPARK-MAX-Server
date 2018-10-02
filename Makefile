@@ -13,7 +13,7 @@ export CGO_LDFLAGS=-LC:/Users/Will/go/src/github.com/willtoth/USB-BLDC-TOOL/ -g 
 $(info ${CGO_CFLAGS})
 
 # Binary names
-BINARY_NAME=USB-BLDC-TOOL
+BINARY_NAME=USB-BLDC-TOOL.exe
 BINARY_UNIX=$(BINARY_NAME)_unix
 
 all: build
@@ -35,5 +35,5 @@ deps:
 	$(GOGET) go.bug.st/serial.v1
 
 # Cross compilation
-build-linux:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v
+#build-linux:
+#	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v

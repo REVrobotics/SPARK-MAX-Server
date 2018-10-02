@@ -15,10 +15,8 @@
 package cmd
 
 import (
-	"encoding/binary"
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/spf13/cobra"
 	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
@@ -51,25 +49,13 @@ func firmware(cmd *cobra.Command, args []string) {
 		fmt.Println("Firmware update is not implemented at this time")
 	} else {
 		//Return the firmware version
-		req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_FirmwareVersion}
-		resp, err := sparkusb.GetParameter(&req)
+		req := sparkusb.FirmwareRequest{}
+		resp, err := sparkusb.Firmware(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to get firmware: %s\r\n", err.Error())
-			//return
+			return
 		}
 
-		tmp, err := strconv.ParseUint(resp.Value, 10, 32)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to get firmware: %s\r\n", err.Error())
-			//return
-		}
-
-		tmpBytes := make([]byte, 4)
-		binary.LittleEndian.PutUint32(tmpBytes, uint32(tmp))
-
-		versionMajor := tmpBytes[0]
-		versionMinor := tmpBytes[1]
-		versionBuild := (int(tmpBytes[3]) | int(tmpBytes[2])<<8)
-		fmt.Printf("Firmware Version: v%d.%d.%d", versionMajor, versionMinor, versionBuild)
+		fmt.Printf("Firmware Version: %s", resp.Version)
 	}
 }

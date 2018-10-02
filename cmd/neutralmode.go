@@ -45,7 +45,7 @@ func init() {
 }
 
 func runNeutralMode(cmd *cobra.Command, args []string) {
-	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_IdleMode}
+	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_kIdleMode}
 	if len(args) < 1 {
 		resp, err := sparkusb.GetParameter(&req)
 		if err != nil {

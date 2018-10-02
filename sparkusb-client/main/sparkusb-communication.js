@@ -119,6 +119,8 @@ ipcMain.on("disable-heartbeat", (event) => {
      console.log("Disabling heartbeat");
      clearInterval(heartbeatID);
      heartbeatID = -1;
+     err = ""
+     response = ""
      event.sender.send("disable-heartbeat-response", err, response);
    }
 });
@@ -249,7 +251,7 @@ class sparkusb {
 // NOTIMP Address(addressRequest) returns (addressResponse) {}
 //SetParameter(parameterRequest) returns (parameterResponse) {}
 //GetParameter(parameterRequest) returns (parameterResponse) {}
-// NOTIMP BurnFlash(rootCommand) returns (rootResponse) {}
+//BurnFlash(rootCommand) returns (rootResponse) {}
 // NOTIMP ListParameters(parameterListRequest) returns (parameterListResponse) {}
 //Setpoint(setpointRequest) returns (setpointResponse) {}
 
@@ -273,6 +275,7 @@ class sparkusb {
   setParameter(paramCommand,cb) {
     //Make sure 'paramCommand' is a string
     paramCommand.value += '';
+    console.log(paramCommand)
     this.sendCommand("parameter",paramCommand,cb)
   }
   setpoint(setpointCommand,cb) {
@@ -280,9 +283,10 @@ class sparkusb {
     setpointCommand.setpoint = setpointCommand.setpoint / 1024;
     this.sendCommand("setpoint",setpointCommand,cb)
   }
-  burnFlash(rootCommand,cb) {
-    //this.sendCommand("sparkusb.rootRequest",rootCommand,cb)
-    cb(null,null);
+  burnFlash(burnCommand,cb) {
+    burnCommand.verify = true
+    this.sendCommand("burn",burnCommand,cb)
+    //cb(null,null);
   }
   heartbeat(heartbeatRequest,cb) {
     //this.sendCommand("heartbeat",heartbeatRequest,cb)

@@ -2,6 +2,7 @@ package sparkusb
 
 import (
 	"encoding/binary"
+	"fmt"
 	"math"
 	"strconv"
 )
@@ -63,15 +64,14 @@ func Address(command *AddressRequest) (*AddressResponse, error) {
 
 func getParameterType(paramID ConfigParam) ParamType {
 	var paramTypeList = map[int32]ParamType{
-		int32(ConfigParam_CanID):           ParamType_uint32,
-		int32(ConfigParam_InputMode):       ParamType_uint32,
-		int32(ConfigParam_MotorType):       ParamType_uint32,
-		int32(ConfigParam_CommAdv):         ParamType_float32,
-		int32(ConfigParam_SensorType):      ParamType_uint32,
-		int32(ConfigParam_CtrlType):        ParamType_uint32,
-		int32(ConfigParam_IdleMode):        ParamType_uint32,
-		int32(ConfigParam_InputDeadband):   ParamType_float32,
-		int32(ConfigParam_FirmwareVersion): ParamType_uint32,
+		int32(ConfigParam_kCanID):         ParamType_uint32,
+		int32(ConfigParam_kInputMode):     ParamType_uint32,
+		int32(ConfigParam_kMotorType):     ParamType_uint32,
+		int32(ConfigParam_kCommAdvance):   ParamType_float32,
+		int32(ConfigParam_kSensorType):    ParamType_uint32,
+		int32(ConfigParam_kCtrlType):      ParamType_uint32,
+		int32(ConfigParam_kIdleMode):      ParamType_uint32,
+		int32(ConfigParam_kInputDeadband): ParamType_float32,
 	}
 
 	return paramTypeList[int32(paramID)]
@@ -154,8 +154,8 @@ func GetParameter(command *ParameterRequest) (*ParameterResponse, error) {
 	return &resp, err
 }
 
-func BurnFlash(command *RootCommand) (*RootResponse, error) {
-	var resp RootResponse
+func BurnFlash(command *BurnRequest) (*BurnResponse, error) {
+	var resp BurnResponse
 	frame := DefaultFrame()
 
 	frame.Header.API = CmdApiBurnFlash
@@ -164,6 +164,37 @@ func BurnFlash(command *RootCommand) (*RootResponse, error) {
 	frame.Data[1] = 0x3A
 
 	_, err := sparkCommand(frame)
+
+	if err != nil {
+		var tmp RootResponse
+		tmp.Error = err.Error()
+		resp.Root = &tmp
+		resp.Verify = false
+	} else {
+		resp.Verify = true
+	}
+	return &resp, err
+}
+
+func Firmware(command *FirmwareRequest) (*FirmwareResponse, error) {
+	var resp FirmwareResponse
+	var err error
+	var frameIn UsbFrame
+	frame := BroadcastFrame()
+
+	if command.Filename == "" {
+		frame.Header.API = CmdBcastFirmware
+
+		frameIn, err = sparkCommand(frame)
+
+		resp.Version = fmt.Sprintf("v%d.%d.%d", frameIn.Data[0], frameIn.Data[1], uint16(frameIn.Data[2])<<8|uint16(frameIn.Data[3]))
+
+		if frameIn.Data[4] == 1 {
+			resp.Version += ", Debug build"
+		}
+	} else {
+		//TODO: Firmware update
+	}
 
 	return &resp, err
 }

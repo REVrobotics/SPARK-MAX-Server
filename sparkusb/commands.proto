@@ -72,7 +72,7 @@ service sparkusb {
     * Flash wear leveling is being implemented and should be in the release
     * before kickoff
     */
-    rpc BurnFlash(rootCommand) returns (rootResponse) {}
+    rpc BurnFlash(burnRequest) returns (burnResponse) {}
 
     /*
     * Return a list of all available parameters with their name, number, and type
@@ -109,6 +109,7 @@ message RequestWire {
         setpointRequest         setpoint = 18;
         controlRequest          control = 19;
         followerRequest         follower = 20;
+        burnRequest             burn = 21;
     }
 }
 
@@ -126,6 +127,7 @@ message ResponseWire {
         parameterListResponse   parameterlist = 16;
         setpointResponse        setpoint = 17;
         controlResponse         control = 18;
+        burnResponse            burn = 19;
     }
 }
 
@@ -144,6 +146,20 @@ enum controlMessage {
 message controlRequest {
     controlMessage ctrl = 1;
     string device = 2;
+}
+
+/*
+* Burn command
+*/
+message burnRequest {
+    rootCommand root = 1;
+    bool verify = 2;
+}
+
+
+message burnResponse {    
+    rootResponse root = 1;
+    bool verify = 2;
 }
 
 /*

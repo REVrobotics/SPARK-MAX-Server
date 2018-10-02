@@ -48,7 +48,7 @@ func init() {
 }
 
 func runMotorType(cmd *cobra.Command, args []string) {
-	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_MotorType}
+	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_kMotorType}
 	if len(args) < 1 {
 		resp, err := sparkusb.GetParameter(&req)
 		if err != nil {
