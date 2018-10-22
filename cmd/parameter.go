@@ -25,18 +25,14 @@ import (
 	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
-type parameterCommand struct {
-	cobra.Command
-}
-
 // parameterCmd represents the parameter command
-var parameterCmd = &parameterCommand{cobra.Command{
+var parameterCmd = &cobra.Command{
 	Use:     "parameter",
 	Args:    cobra.RangeArgs(1, 2),
 	Short:   "Get or set parameter",
 	Run:     runParameter,
 	Aliases: []string{"param"},
-}}
+}
 
 const (
 	longPrefix = `The first argument is <parameter ID>, the second
@@ -57,8 +53,10 @@ func buildLongStr() string {
 }
 
 func init() {
-	parameterCmd.Command.Long = buildLongStr()
-	rootCmd.AddCommand(&parameterCmd.Command)
+	parameterCmd.Long = buildLongStr()
+	rootCmd.AddCommand(parameterCmd)
+	sparkmax.RegisterCommand(&getParameterCmd)
+	sparkmax.RegisterCommand(&setParameterCmd)
 }
 
 func getParameterType(paramID sparkmax.ConfigParam) sparkmax.ParamType {
@@ -155,6 +153,11 @@ func runParameter(cmd *cobra.Command, args []string) {
 		if len(args) == 1 {
 			req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam(val)}
 			resp, err := GetParameter(&req)
+			if resp.Status != sparkmax.ParamStatus_paramOK {
+				fmt.Fprintf(os.Stderr, "Failed to get parameter %s: %s\r\n",
+					sparkmax.ConfigParam_value[args[0]],
+					sparkmax.ParamStatus_name[int32(resp.Status)])
+			}
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Failed to get parameter %s: %s\r\n", val, err.Error())
 			}
@@ -162,7 +165,14 @@ func runParameter(cmd *cobra.Command, args []string) {
 		} else {
 			req := sparkmax.SetParameterRequest{Parameter: sparkmax.ConfigParam(val)}
 			req.Value = args[1]
-			_, err := SetParameter(&req)
+			resp, err := SetParameter(&req)
+
+			if resp.Status != sparkmax.ParamStatus_paramOK {
+				fmt.Fprintf(os.Stderr, "Set parameter failed for %s: %s\r\n",
+					val,
+					sparkmax.ParamStatus_name[int32(resp.Status)])
+			}
+
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Set parameter failed for %s: %s\r\n", val, err.Error())
 			}
@@ -170,4 +180,38 @@ func runParameter(cmd *cobra.Command, args []string) {
 	} else {
 		fmt.Fprintf(os.Stderr, "Invalid parameter: %s", args[0])
 	}
+}
+
+type setParameterCommand struct{}
+type getParameterCommand struct{}
+
+var getParameterCmd = getParameterCommand{}
+var setParameterCmd = setParameterCommand{}
+
+func (s *setParameterCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
+	r, err := SetParameter(req.GetSetParameter())
+	if err != nil {
+		tmp := sparkmax.RootResponse{Error: err.Error()}
+		r.Root = &tmp
+	}
+	resp.Resp = &sparkmax.ResponseWire_Parameter{Parameter: r}
+	return resp, err
+}
+
+func (s *setParameterCommand) ExpectedType() string {
+	return "SetParameterRequest"
+}
+
+func (g *getParameterCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
+	r, err := GetParameter(req.GetGetParameter())
+	if err != nil {
+		tmp := sparkmax.RootResponse{Error: err.Error()}
+		r.Root = &tmp
+	}
+	resp.Resp = &sparkmax.ResponseWire_Parameter{Parameter: r}
+	return resp, err
+}
+
+func (g *getParameterCommand) ExpectedType() string {
+	return "GetParameterRequest"
 }
