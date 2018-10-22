@@ -2,7 +2,7 @@ package spark0mq
 
 import (
 	"github.com/golang/protobuf/proto"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	"github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 
 	zmq "github.com/pebbe/zmq4"
 
@@ -22,30 +22,7 @@ func Spark0mqStart(port int) (Spark0mqServer, error) {
 }
 
 func (s *Spark0mqServer) Stop() {
-	//s.running = false
 	fmt.Println("Sending STOP command to server -- not implemented")
-	/*
-
-		//  Socket to talk to server
-		requester, _ := zmq.NewSocket(zmq.REQ)
-		defer requester.Close()
-		bindStr := fmt.Sprintf("tcp://localhost:%d", s.port)
-		requester.Connect(bindStr)
-
-		ctrlMsg := sparkusb.ParameterRequest{Parameter: 0}
-		msg := sparkusb.RequestWire{Req: &sparkusb.RequestWire_Parameter{&ctrlMsg}}
-
-		val, _ := proto.Marshal(&msg)
-
-		// send quit
-		requester.SendBytes(val, 0)
-
-		bytes, _ := requester.RecvBytes(0)
-
-		resp := sparkusb.ResponseWire{}
-		proto.Unmarshal(bytes, &resp)
-		fmt.Println("Resp: ", resp.GetParameter().Value)
-	*/
 }
 
 func (s *Spark0mqServer) IsRunning() bool {
@@ -81,116 +58,16 @@ func spark0mqREQ(port int) {
 }
 
 func parseMessage(msg []byte) (rawBytes []byte, err error) {
-	req := &sparkusb.RequestWire{}
-	root := &sparkusb.RootResponse{}
-	var resp sparkusb.ResponseWire
+	req := sparkmax.RequestWire{}
+	root := &sparkmax.RootResponse{}
+	var resp sparkmax.ResponseWire
 
-	if err := proto.Unmarshal(msg, req); err != nil {
+	if err := proto.Unmarshal(msg, &req); err != nil {
 		err = fmt.Errorf("Parse failure in server: %s", err.Error())
 		root.Error = err.Error()
-		resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
+		resp.Resp = &sparkmax.ResponseWire_Root{Root: root}
 	} else {
-		switch x := req.Req.(type) {
-
-		/**************Control Message************
-		* Connect or disconnect
-		******************************************/
-		case *sparkusb.RequestWire_Control:
-			//fmt.Println(x)
-			switch cmd := x.Control.Ctrl; cmd {
-			case sparkusb.ControlMessage_controlPing:
-				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
-			case sparkusb.ControlMessage_controlConnect:
-				err := sparkusb.Connect(x.Control.Device)
-				if err != nil {
-					root.Error = err.Error()
-				}
-				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
-			case sparkusb.ControlMessage_controlDisconnect:
-				err := sparkusb.Disconnect()
-				if err != nil {
-					root.Error = err.Error()
-				}
-				resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
-			}
-
-		/************Parameter Message************
-		* Get or set parameter
-		******************************************/
-		case *sparkusb.RequestWire_Parameter:
-			param := x.Parameter.Parameter
-			val := x.Parameter.Value
-			paramResp := sparkusb.ParameterResponse{}
-
-			//Get
-			if val == "" {
-				r, err := sparkusb.GetParameter(&sparkusb.ParameterRequest{Parameter: param})
-				if err != nil {
-					tmp := sparkusb.RootResponse{Error: err.Error()}
-					paramResp.Root = &tmp
-				}
-				paramResp.Value = r.Value
-			} else {
-				_, err := sparkusb.SetParameter(&sparkusb.ParameterRequest{Parameter: param, Value: val})
-				if err != nil {
-					tmp := sparkusb.RootResponse{Error: err.Error()}
-					paramResp.Root = &tmp
-				}
-			}
-
-			resp.Resp = &sparkusb.ResponseWire_Parameter{Parameter: &paramResp}
-
-		/*************Setpoint Message************
-		* Set setpoint (enable sends a boardcast)
-		******************************************/
-		case *sparkusb.RequestWire_Setpoint:
-			setpoint := x.Setpoint.Setpoint
-			enabled := x.Setpoint.Enable
-			req := sparkusb.SetpointRequest{Setpoint: setpoint, Enable: enabled}
-			r, err := sparkusb.Setpoint(&req)
-			if err != nil {
-				tmp := sparkusb.RootResponse{Error: err.Error()}
-				r.Root = &tmp
-			}
-			resp.Resp = &sparkusb.ResponseWire_Setpoint{Setpoint: r}
-
-		/***************List Message**************
-		* List devices
-		******************************************/
-		case *sparkusb.RequestWire_List:
-			ports := sparkusb.ListDevices(x.List.All)
-
-			devList := make([]string, 0)
-			devDetails := make([]string, 0)
-			for _, port := range ports {
-				devList = append(devList, port.Name)
-
-				result := fmt.Sprintf("Device: %s,\t%s:%s\t%s", port.SerialNumber, port.VID, port.PID, port.Name)
-				devDetails = append(devDetails, result)
-			}
-			tmp := sparkusb.ListResponse{DeviceList: devList, DeviceDetails: devDetails}
-			resp.Resp = &sparkusb.ResponseWire_List{List: &tmp}
-
-		/***************Burn Flash**************
-		* Burn Flash
-		******************************************/
-		case *sparkusb.RequestWire_Burn:
-			doBurn := x.Burn.Verify
-			req := sparkusb.BurnRequest{Verify: doBurn}
-			r, err := sparkusb.BurnFlash(&req)
-			if err != nil {
-				tmp := sparkusb.RootResponse{Error: err.Error()}
-				r.Root = &tmp
-			}
-			resp.Resp = &sparkusb.ResponseWire_Burn{Burn: r}
-
-		/*****************Invalid*****************
-		******************************************/
-		default:
-			root.Error = fmt.Sprintf("Message has unexpected type %T", x)
-			err = fmt.Errorf(root.Error)
-			resp.Resp = &sparkusb.ResponseWire_Root{Root: root}
-		}
+		sparkmax.RunCommand(req)
 	}
 
 	rawBytes, err = proto.Marshal(&resp)

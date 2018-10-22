@@ -20,7 +20,7 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
 // enable and send heartbeat
@@ -45,8 +45,8 @@ GUI.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		/*
 			if enableMode {
-				req := sparkusb.HeartbeatRequest{Enable: true}
-				_, err := sparkusb.Heartbeat(&req)
+				req := sparkmax.HeartbeatRequest{Enable: true}
+				_, err := sparkmax.Heartbeat(&req)
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "Heartbeat command failed: %s", err.Error())
 					return
@@ -60,8 +60,8 @@ GUI.`,
 			return
 		}
 
-		req := sparkusb.SetpointRequest{Setpoint: float32(setpoint), Enable: enableMode}
-		_, err = sparkusb.Setpoint(&req)
+		req := sparkmax.SetpointRequest{Setpoint: float32(setpoint), Enable: enableMode}
+		_, err = runSetpoint(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Setpoint command failed: %s", err.Error())
 			return
@@ -71,6 +71,66 @@ GUI.`,
 	Aliases: []string{"run", "Run", "Setpoint"},
 }
 
+func sendHeartbeat(enable bool) error {
+	frame := sparkmax.DefaultFrame()
+
+	frame.Header.API = sparkmax.CmdApiHeartbeat
+
+	if enable {
+		frame.Data[0] = 1
+	}
+
+	_, err := sparkmax.SparkWriteFrame(frame)
+
+	return err
+}
+
+func runSetpoint(command *sparkmax.SetpointRequest) (*sparkmax.SetpointResponse, error) {
+	var resp sparkmax.SetpointResponse
+	var err error
+	frame := sparkmax.DefaultFrame()
+
+	frame.Header.API = sparkmax.CmdApiDcSet
+
+	if command.Enable {
+		err = sendHeartbeat(command.Enable)
+		if err != nil {
+			return &resp, err
+		}
+	}
+
+	if command.Setpoint < 0.001 && command.Setpoint > -0.001 {
+		frame.Data[0] = 0
+		frame.Data[1] = 0
+		frame.Data[2] = 0
+		frame.Data[3] = 0
+	} else {
+		//TODO: Implement a min/max based on user setting
+		tmparray := Float32ToBytes(command.Setpoint)
+
+		copy(frame.Data[:4], tmparray[:])
+	}
+
+	_, err = sparkmax.SparkWriteFrame(frame)
+
+	return &resp, err
+}
+
+type setpointCommand struct{}
+
+func (s *setpointCommand) sparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
+	r, err := runSetpoint(req.GetSetpoint())
+	if err != nil {
+		tmp := sparkmax.RootResponse{Error: err.Error()}
+		r.Root = &tmp
+	}
+	resp.Resp = &sparkmax.ResponseWire_Setpoint{Setpoint: r}
+	return resp, err
+}
+
+func (s *setpointCommand) expectedType() string {
+	return "SetpointRequest"
+}
 func init() {
 	rootCmd.AddCommand(setpointCmd)
 	setpointCmd.Flags().BoolVarP(&enableMode, "enable", "e", false, "Send heartbeat with enable")

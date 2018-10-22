@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	spark0mq "github.com/willtoth/USB-BLDC-TOOL/spark0mq"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
 var cfgFile string
@@ -52,12 +52,12 @@ const (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Version: AppVersion,
-	Use:     "revbldc",
+	Use:     "sparkmax",
 	Short:   "configure and control REV CAN BLDC controller",
 	Long: `Use this tool to configure and command the REV CAN BLDC
 controller over USB, either by CLI interface or GUI:
 
-revbldc tool provides bindings to talk to the REV motor
+sparkmax tool provides bindings to talk to the REV motor
 controller and can be called via command line or
 externally. It can update firmware, set and get parameters
 and save/load configurations.`,
@@ -79,7 +79,7 @@ and save/load configurations.`,
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if Remote == false && Persist == false {
-			err := sparkusb.Connect(Device)
+			err := sparkmax.Connect(Device)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
@@ -88,7 +88,7 @@ and save/load configurations.`,
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		if Remote == false && Persist == false {
-			sparkusb.Disconnect()
+			sparkmax.Disconnect()
 		}
 	},
 }
