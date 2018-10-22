@@ -15,21 +15,28 @@
 package cmd
 
 import (
+	"encoding/binary"
 	"fmt"
+	"math"
 	"os"
+	"strconv"
 
 	"github.com/spf13/cobra"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
+type parameterCommand struct {
+	cobra.Command
+}
+
 // parameterCmd represents the parameter command
-var parameterCmd = &cobra.Command{
+var parameterCmd = &parameterCommand{cobra.Command{
 	Use:     "parameter",
 	Args:    cobra.RangeArgs(1, 2),
 	Short:   "Get or set parameter",
 	Run:     runParameter,
 	Aliases: []string{"param"},
-}
+}}
 
 const (
 	longPrefix = `The first argument is <parameter ID>, the second
@@ -42,7 +49,7 @@ Parameter ID list is as follows:
 
 func buildLongStr() string {
 	val := longPrefix
-	for key := range sparkusb.ConfigParam_value {
+	for key := range sparkmax.ConfigParam_value {
 		val += key
 		val += "\n"
 	}
@@ -50,23 +57,112 @@ func buildLongStr() string {
 }
 
 func init() {
-	parameterCmd.Long = buildLongStr()
-	rootCmd.AddCommand(parameterCmd)
+	parameterCmd.Command.Long = buildLongStr()
+	rootCmd.AddCommand(&parameterCmd.Command)
+}
+
+func getParameterType(paramID sparkmax.ConfigParam) sparkmax.ParamType {
+	tmp := sparkmax.ConfigParam_name[int32(paramID)] + "_t"
+	return sparkmax.ParamType(sparkmax.ConfigParamTypes_value[tmp])
+}
+
+func SetParameter(command *sparkmax.SetParameterRequest) (*sparkmax.ParameterResponse, error) {
+	var resp sparkmax.ParameterResponse
+	frame := sparkmax.DefaultFrame()
+
+	frame.Header.API = sparkmax.CmdApiSetCfg
+
+	frame.Data[0] = uint8(command.Parameter)
+
+	//rawMsg := frame.Data[2:6]
+	var rawMsg uint32
+	var err error
+	resp.Type = getParameterType(command.Parameter)
+
+	//Parse to string from raw bytes of the appropriate type
+	switch resp.Type {
+	case sparkmax.ParamType_bool:
+		fallthrough
+	case sparkmax.ParamType_uint32:
+		tmp, err := strconv.ParseUint(command.Value, 10, 32)
+		if err != nil {
+			return &resp, err
+		}
+		rawMsg = uint32(tmp)
+	case sparkmax.ParamType_int32:
+		tmp, err := strconv.ParseInt(command.Value, 10, 32)
+		if err != nil {
+			return &resp, err
+		}
+		rawMsg = uint32(tmp)
+	case sparkmax.ParamType_float32:
+		tmp, err := strconv.ParseFloat(command.Value, 32)
+		if err != nil {
+			return &resp, err
+		}
+		rawMsg = math.Float32bits(float32(tmp))
+	}
+	binary.LittleEndian.PutUint32(frame.Data[2:6], rawMsg)
+	frame.Data[6] = uint8(resp.Type)
+
+	sparkResp, err := sparkmax.SparkWriteFrame(frame)
+
+	//TODO: Check response for correct type and status flag
+	resp.Status = sparkmax.ParamStatus(sparkResp.Data[7])
+
+	return &resp, err
+}
+
+func GetParameter(command *sparkmax.GetParameterRequest) (*sparkmax.ParameterResponse, error) {
+	var resp sparkmax.ParameterResponse
+	frame := sparkmax.DefaultFrame()
+
+	frame.Header.API = sparkmax.CmdApiGetCfg
+
+	frame.Data[0] = uint8(command.Parameter)
+
+	//fmt.Print("Outgoing Frame: ")
+	//fmt.Println(frame)
+
+	frameIn, err := sparkmax.SparkWriteFrame(frame)
+
+	//fmt.Print("Incoming Frame:")
+	//fmt.Println(frameIn)
+
+	rawMsg := binary.LittleEndian.Uint32(frameIn.Data[:4])
+	resp.Type = sparkmax.ParamType(frameIn.Data[4])
+	resp.Status = sparkmax.ParamStatus(frameIn.Data[5])
+
+	//Parse to string from raw bytes of the appropriate type
+	switch resp.Type {
+	case sparkmax.ParamType_int32:
+		resp.Value = strconv.FormatInt(int64(rawMsg), 10)
+	case sparkmax.ParamType_bool:
+		fallthrough
+	case sparkmax.ParamType_uint32:
+		resp.Value = strconv.FormatUint(uint64(rawMsg), 10)
+	case sparkmax.ParamType_float32:
+		rawMsgFloat := math.Float32frombits(rawMsg)
+		resp.Value = strconv.FormatFloat(float64(rawMsgFloat), 'f', 6, 32)
+	}
+
+	return &resp, err
 }
 
 func runParameter(cmd *cobra.Command, args []string) {
-	if val, ok := sparkusb.ConfigParam_value[args[0]]; ok {
-		req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam(val)}
-
+	//TODO: Allow non-exact spelling
+	if val, ok := sparkmax.ConfigParam_value[args[0]]; ok {
 		if len(args) == 1 {
-			resp, err := sparkusb.GetParameter(&req)
+			req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam(val)}
+			resp, err := GetParameter(&req)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Failed to get parameter %s: %s\r\n", val, err.Error())
 			}
 			fmt.Println(resp.Value)
 		} else {
+			req := sparkmax.SetParameterRequest{Parameter: sparkmax.ConfigParam(val)}
 			req.Value = args[1]
-			_, err := sparkusb.SetParameter(&req)
+			_, err := SetParameter(&req)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Set parameter failed for %s: %s\r\n", val, err.Error())
 			}

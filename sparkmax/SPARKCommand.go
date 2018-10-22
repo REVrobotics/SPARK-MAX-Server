@@ -9,16 +9,21 @@ import (
 var registeredCommands map[string]SparkMaxCommand
 
 type SparkMaxCommand interface {
-	sparkCommandProcess(RequestWire) (ResponseWire, error)
+	SparkCommandProcess(RequestWire) (ResponseWire, error)
 
-	expectedType() string
+	ExpectedType() string
 }
 
 func RegisterCommand(cmd SparkMaxCommand) {
-	if _, exists := registeredCommands[cmd.expectedType()]; exists {
+	if _, exists := registeredCommands[cmd.ExpectedType()]; exists {
 		log.Fatal("Command request already registered, command being overwritten")
 	}
-	registeredCommands[cmd.expectedType()] = cmd
+
+	if registeredCommands == nil {
+		registeredCommands = make(map[string]SparkMaxCommand)
+	}
+
+	registeredCommands[cmd.ExpectedType()] = cmd
 }
 
 func RunCommand(req RequestWire) (ResponseWire, error) {
@@ -28,7 +33,7 @@ func RunCommand(req RequestWire) (ResponseWire, error) {
 	typename := reflect.TypeOf(req.Req).Name()
 
 	if val, exists := registeredCommands[typename]; exists {
-		resp, err = val.sparkCommandProcess(req)
+		resp, err = val.SparkCommandProcess(req)
 	} else {
 		err = fmt.Errorf("Command not found")
 	}

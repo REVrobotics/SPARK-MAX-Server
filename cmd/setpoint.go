@@ -26,8 +26,12 @@ import (
 // enable and send heartbeat
 var enableMode bool
 
+type setpointCommand struct {
+	cobra.Command
+}
+
 // setpointCmd represents the setpoint command
-var setpointCmd = &cobra.Command{
+var setpointCmd = &setpointCommand{cobra.Command{
 	Use:   "setpoint",
 	Short: "Set the controller setpoint",
 	Long: `Set the controller setpoint. Use the -e flag
@@ -69,7 +73,7 @@ GUI.`,
 	},
 	Args:    cobra.ExactArgs(1),
 	Aliases: []string{"run", "Run", "Setpoint"},
-}
+}}
 
 func sendHeartbeat(enable bool) error {
 	frame := sparkmax.DefaultFrame()
@@ -116,9 +120,7 @@ func runSetpoint(command *sparkmax.SetpointRequest) (*sparkmax.SetpointResponse,
 	return &resp, err
 }
 
-type setpointCommand struct{}
-
-func (s *setpointCommand) sparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
+func (s *setpointCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
 	r, err := runSetpoint(req.GetSetpoint())
 	if err != nil {
 		tmp := sparkmax.RootResponse{Error: err.Error()}
@@ -128,10 +130,13 @@ func (s *setpointCommand) sparkCommandProcess(req sparkmax.RequestWire) (resp sp
 	return resp, err
 }
 
-func (s *setpointCommand) expectedType() string {
+func (s *setpointCommand) ExpectedType() string {
 	return "SetpointRequest"
 }
+
 func init() {
-	rootCmd.AddCommand(setpointCmd)
+	rootCmd.AddCommand(&setpointCmd.Command)
 	setpointCmd.Flags().BoolVarP(&enableMode, "enable", "e", false, "Send heartbeat with enable")
+
+	sparkmax.RegisterCommand(setpointCmd)
 }

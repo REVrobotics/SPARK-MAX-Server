@@ -601,3 +601,69 @@ enum configParam {
     */
     kFollowerConfig = 58;
 }
+
+//Type lookup for above
+enum configParamTypes {
+    option allow_alias = true;
+    kDefault_t = 0;
+    //Below is auto generated
+    kCanID_t = 1;
+    kInputMode_t = 1;
+    kMotorType_t = 1;
+    kCommAdvance_t = 2;
+    kSensorType_t = 1;
+    kCtrlType_t = 1;
+    kIdleMode_t = 1;
+    kInputDeadband_t = 2;
+    kFirmwareVer_t = 1;
+    kHallOffset_t = 0;
+    kPolePairs_t = 1;
+    kCurrentChop_t = 2;
+    kCurrentLimit_t = 2;
+    kP_0_t = 2;
+    kI_0_t = 2;
+    kD_0_t = 2;
+    kF_0_t = 2;
+    kIZone_0_t = 2;
+    kDFilter_0_t = 2;
+    kOutputMin_0_t = 2;
+    kOutputMax_0_t = 2;
+    kP_1_t = 2;
+    kI_1_t = 2;
+    kD_1_t = 2;
+    kF_1_t = 2;
+    kIZone_1_t = 2;
+    kDFilter_1_t = 2;
+    kOutputMin_1_t = 2;
+    kOutputMax_1_t = 2;
+    kP_2_t = 2;
+    kI_2_t = 2;
+    kD_2_t = 2;
+    kF_2_t = 2;
+    kIZone_2_t = 2;
+    kDFilter_2_t = 2;
+    kOutputMin_2_t = 2;
+    kOutputMax_2_t = 2;
+    kP_3_t = 2;
+    kI_3_t = 2;
+    kD_3_t = 2;
+    kF_3_t = 2;
+    kIZone_3_t = 2;
+    kDFilter_3_t = 2;
+    kOutputMin_3_t = 2;
+    kOutputMax_3_t = 2;
+    kReserved_t = 1;
+    kOutputRatio_t = 2;
+    kSerialNumberLow_t = 1;
+    kSerialNumberMid_t = 1;
+    kSerialNumberHigh_t = 1;
+    kLimitSwitchFwdPolarity_t = 3;
+    kLimitSwitchRevPolarity_t = 3;
+    kHardLimitFwdEn_t = 3;
+    kHardLimitRevEn_t = 3;
+    kSoftLimitFwdEn_t = 3;
+    kSoftLimitRevEn_t = 3;
+    kRampRate_t = 2;
+    kFollowerID_t = 1;
+    kFollowerConfig_t = 1;
+}
