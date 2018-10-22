@@ -103,10 +103,16 @@ func SetParameter(command *sparkmax.SetParameterRequest) (*sparkmax.ParameterRes
 	binary.LittleEndian.PutUint32(frame.Data[2:6], rawMsg)
 	frame.Data[6] = uint8(resp.Type)
 
-	sparkResp, err := sparkmax.SparkWriteFrame(frame)
+	//fmt.Print("Outgoing Frame: ")
+	//fmt.Println(frame)
+
+	frameIn, err := sparkmax.SparkWriteFrame(frame)
 
 	//TODO: Check response for correct type and status flag
-	resp.Status = sparkmax.ParamStatus(sparkResp.Data[7])
+	resp.Status = sparkmax.ParamStatus(frameIn.Data[7])
+
+	//fmt.Print("Incoming Frame:")
+	//fmt.Println(frameIn)
 
 	return &resp, err
 }

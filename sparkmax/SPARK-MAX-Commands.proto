@@ -37,14 +37,14 @@ service sparkMaxServer {
     /*
     * Update the firmware of the device
     */
-    //rpc Firmware(firmwareRequest) returns (firmwareResponse) {}
+    rpc Firmware(firmwareRequest) returns (firmwareResponse) {}
 
     /*
     * Send a Heartbeat to the SPARK device (similar to how the roboRIO
     * heartbeat to the device over CAN). This message can be simplified
     * if driving the motor by calling Setpoint({Enable: true})
     */
-    rpc Heartbeat(heartbeatRequest) returns (rootResponse) {}
+    //rpc Heartbeat(heartbeatRequest) returns (rootResponse) {}
 
     /*
     * Change the SPARK address. Currently done through SetParameter()

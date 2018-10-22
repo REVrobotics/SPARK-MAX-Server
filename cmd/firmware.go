@@ -19,13 +19,17 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
 var update bool
 
+type firmwareCommand struct {
+	cobra.Command
+}
+
 // firmwareCmd represents the firmware command
-var firmwareCmd = &cobra.Command{
+var firmwareCmd = &firmwareCommand{cobra.Command{
 	Use:   "firmware",
 	Short: "Get firmware version or update",
 	Long: `Get the firmware version or program new firmware
@@ -36,12 +40,36 @@ the device is plugged in and power is not removed during the entire
 update.`,
 	Run:  firmware,
 	Args: cobra.MaximumNArgs(1),
-}
+}}
 
 func init() {
-	rootCmd.AddCommand(firmwareCmd)
+	rootCmd.AddCommand(&firmwareCmd.Command)
+	sparkmax.RegisterCommand(firmwareCmd)
 
 	firmwareCmd.Flags().BoolVarP(&update, "update", "u", false, "Get current firmware version from device")
+}
+
+func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, error) {
+	var resp sparkmax.FirmwareResponse
+	var err error
+	var frameIn sparkmax.UsbFrame
+	frame := sparkmax.BroadcastFrame()
+
+	if command.Filename == "" {
+		frame.Header.API = sparkmax.CmdBcastFirmware
+
+		frameIn, err = sparkmax.SparkWriteFrame(frame)
+
+		resp.Version = fmt.Sprintf("v%d.%d.%d", frameIn.Data[0], frameIn.Data[1], uint16(frameIn.Data[2])<<8|uint16(frameIn.Data[3]))
+
+		if frameIn.Data[4] == 1 {
+			resp.Version += ", Debug build"
+		}
+	} else {
+		//TODO: Firmware update
+	}
+
+	return &resp, err
 }
 
 func firmware(cmd *cobra.Command, args []string) {
@@ -49,8 +77,8 @@ func firmware(cmd *cobra.Command, args []string) {
 		fmt.Println("Firmware update is not implemented at this time")
 	} else {
 		//Return the firmware version
-		req := sparkusb.FirmwareRequest{}
-		resp, err := sparkusb.Firmware(&req)
+		req := sparkmax.FirmwareRequest{}
+		resp, err := Firmware(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to get firmware: %s\r\n", err.Error())
 			return
@@ -58,4 +86,18 @@ func firmware(cmd *cobra.Command, args []string) {
 
 		fmt.Printf("Firmware Version: %s", resp.Version)
 	}
+}
+
+func (s *firmwareCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
+	r, err := Firmware(req.GetFirmware())
+	if err != nil {
+		tmp := sparkmax.RootResponse{Error: err.Error()}
+		r.Root = &tmp
+	}
+	resp.Resp = &sparkmax.ResponseWire_Firmware{Firmware: r}
+	return resp, err
+}
+
+func (s *firmwareCommand) ExpectedType() string {
+	return "FirmwareRequest"
 }

@@ -20,7 +20,7 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
 // addressCmd represents the address command
@@ -38,9 +38,9 @@ func init() {
 }
 
 func runAddress(cmd *cobra.Command, args []string) {
-	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_kCanID}
 	if len(args) < 1 {
-		resp, err := sparkusb.GetParameter(&req)
+		req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam_kCanID}
+		resp, err := GetParameter(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to get address: %s\n", err.Error())
 		}
@@ -50,8 +50,9 @@ func runAddress(cmd *cobra.Command, args []string) {
 		}
 		fmt.Println(int32(val))
 	} else {
+		req := sparkmax.SetParameterRequest{Parameter: sparkmax.ConfigParam_kCanID}
 		req.Value = args[0]
-		_, err := sparkusb.SetParameter(&req)
+		_, err := SetParameter(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error in address: %s\n", err.Error())
 		}

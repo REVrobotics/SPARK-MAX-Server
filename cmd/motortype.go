@@ -21,7 +21,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
 // motortypeCmd represents the motortype command
@@ -48,9 +48,9 @@ func init() {
 }
 
 func runMotorType(cmd *cobra.Command, args []string) {
-	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_kMotorType}
 	if len(args) < 1 {
-		resp, err := sparkusb.GetParameter(&req)
+		req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam_kMotorType}
+		resp, err := GetParameter(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to get motor type: %s\n", err.Error())
 		}
@@ -58,17 +58,18 @@ func runMotorType(cmd *cobra.Command, args []string) {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
 		}
-		fmt.Println(sparkusb.MotorType_name[int32(idx)])
+		fmt.Println(sparkmax.MotorType_name[int32(idx)])
 	} else {
-		var motorType sparkusb.MotorType
+		req := sparkmax.SetParameterRequest{Parameter: sparkmax.ConfigParam_kMotorType}
+		var motorType sparkmax.MotorType
 		switch mt := strings.ToLower(args[0]); mt {
 		case "bdc", "brushed":
-			motorType = sparkusb.MotorType_Brushed
+			motorType = sparkmax.MotorType_Brushed
 		case "bldc", "brushless":
-			motorType = sparkusb.MotorType_Brushless
+			motorType = sparkmax.MotorType_Brushless
 		}
 		req.Value = strconv.FormatInt(int64(motorType), 10)
-		_, err := sparkusb.SetParameter(&req)
+		_, err := SetParameter(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
 		}
