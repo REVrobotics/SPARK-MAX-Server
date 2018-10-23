@@ -602,7 +602,7 @@ enum configParam {
     kFollowerConfig = 58;
 }
 
-//Type lookup for above
+//Type lookup for above, lists what type the controller expects for each parameter
 enum configParamTypes {
     option allow_alias = true;
     kDefault_t = 0;

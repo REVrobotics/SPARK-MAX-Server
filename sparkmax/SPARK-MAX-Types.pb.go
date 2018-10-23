@@ -3,9 +3,11 @@
 
 package sparkmax
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -31,6 +33,7 @@ var MotorType_name = map[int32]string{
 	0: "Brushed",
 	1: "Brushless",
 }
+
 var MotorType_value = map[string]int32{
 	"Brushed":   0,
 	"Brushless": 1,
@@ -39,8 +42,9 @@ var MotorType_value = map[string]int32{
 func (x MotorType) String() string {
 	return proto.EnumName(MotorType_name, int32(x))
 }
+
 func (MotorType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{0}
+	return fileDescriptor_47761fbfa943f69b, []int{0}
 }
 
 //
@@ -60,6 +64,7 @@ var SensorType_name = map[int32]string{
 	2: "Encoder",
 	3: "Sensorless",
 }
+
 var SensorType_value = map[string]int32{
 	"NoSensor":   0,
 	"HallSensor": 1,
@@ -70,8 +75,9 @@ var SensorType_value = map[string]int32{
 func (x SensorType) String() string {
 	return proto.EnumName(SensorType_name, int32(x))
 }
+
 func (SensorType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{1}
+	return fileDescriptor_47761fbfa943f69b, []int{1}
 }
 
 //
@@ -89,6 +95,7 @@ var CtrlType_name = map[int32]string{
 	1: "Velocity",
 	2: "Voltage",
 }
+
 var CtrlType_value = map[string]int32{
 	"DutyCycle": 0,
 	"Velocity":  1,
@@ -98,8 +105,9 @@ var CtrlType_value = map[string]int32{
 func (x CtrlType) String() string {
 	return proto.EnumName(CtrlType_name, int32(x))
 }
+
 func (CtrlType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{2}
+	return fileDescriptor_47761fbfa943f69b, []int{2}
 }
 
 //
@@ -115,6 +123,7 @@ var IdleMode_name = map[int32]string{
 	0: "Coast",
 	1: "Brake",
 }
+
 var IdleMode_value = map[string]int32{
 	"Coast": 0,
 	"Brake": 1,
@@ -123,8 +132,9 @@ var IdleMode_value = map[string]int32{
 func (x IdleMode) String() string {
 	return proto.EnumName(IdleMode_name, int32(x))
 }
+
 func (IdleMode) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{3}
+	return fileDescriptor_47761fbfa943f69b, []int{3}
 }
 
 //
@@ -140,6 +150,7 @@ var InputMode_name = map[int32]string{
 	0: "PWM",
 	1: "CAN",
 }
+
 var InputMode_value = map[string]int32{
 	"PWM": 0,
 	"CAN": 1,
@@ -148,8 +159,9 @@ var InputMode_value = map[string]int32{
 func (x InputMode) String() string {
 	return proto.EnumName(InputMode_name, int32(x))
 }
+
 func (InputMode) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{4}
+	return fileDescriptor_47761fbfa943f69b, []int{4}
 }
 
 //
@@ -191,6 +203,7 @@ var Faults_name = map[int32]string{
 	14: "HardLimitFwd",
 	15: "HardLimitRev",
 }
+
 var Faults_value = map[string]int32{
 	"Brownout":     0,
 	"Overcurrent":  1,
@@ -212,8 +225,9 @@ var Faults_value = map[string]int32{
 func (x Faults) String() string {
 	return proto.EnumName(Faults_name, int32(x))
 }
+
 func (Faults) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{5}
+	return fileDescriptor_47761fbfa943f69b, []int{5}
 }
 
 //
@@ -234,6 +248,7 @@ var ParamType_name = map[int32]string{
 	2: "float32",
 	3: "bool",
 }
+
 var ParamType_value = map[string]int32{
 	"int32":   0,
 	"uint32":  1,
@@ -244,8 +259,9 @@ var ParamType_value = map[string]int32{
 func (x ParamType) String() string {
 	return proto.EnumName(ParamType_name, int32(x))
 }
+
 func (ParamType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{6}
+	return fileDescriptor_47761fbfa943f69b, []int{6}
 }
 
 //
@@ -269,6 +285,7 @@ var ParamStatus_name = map[int32]string{
 	4: "Invalid",
 	5: "NotImplementedDeprecated",
 }
+
 var ParamStatus_value = map[string]int32{
 	"paramOK":                  0,
 	"InvalidID":                1,
@@ -281,8 +298,9 @@ var ParamStatus_value = map[string]int32{
 func (x ParamStatus) String() string {
 	return proto.EnumName(ParamStatus_name, int32(x))
 }
+
 func (ParamStatus) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{7}
+	return fileDescriptor_47761fbfa943f69b, []int{7}
 }
 
 //
@@ -302,6 +320,7 @@ var DefinedFollowerID_name = map[int32]string{
 	26: "FollowerSparkMax",
 	27: "FollowerPhoenix",
 }
+
 var DefinedFollowerID_value = map[string]int32{
 	"FollowerDisabled": 0,
 	"FollowerCustom":   25,
@@ -312,8 +331,9 @@ var DefinedFollowerID_value = map[string]int32{
 func (x DefinedFollowerID) String() string {
 	return proto.EnumName(DefinedFollowerID_name, int32(x))
 }
+
 func (DefinedFollowerID) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{8}
+	return fileDescriptor_47761fbfa943f69b, []int{8}
 }
 
 //
@@ -331,6 +351,7 @@ var FollowerSignMode_name = map[int32]string{
 	1: "FollowerTwosComp",
 	2: "FollowerSignMag",
 }
+
 var FollowerSignMode_value = map[string]int32{
 	"FollowerNoSign":   0,
 	"FollowerTwosComp": 1,
@@ -340,8 +361,9 @@ var FollowerSignMode_value = map[string]int32{
 func (x FollowerSignMode) String() string {
 	return proto.EnumName(FollowerSignMode_name, int32(x))
 }
+
 func (FollowerSignMode) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{9}
+	return fileDescriptor_47761fbfa943f69b, []int{9}
 }
 
 //
@@ -683,7 +705,7 @@ const (
 	// @default 0
 	// @type bool
 	ConfigParam_kHardLimitFwdEn ConfigParam = 52
-	// sparkusb
+	//sparkusb
 	// Limit switch enable, disabled by default
 	// @default 0
 	// @type bool
@@ -783,6 +805,7 @@ var ConfigParam_name = map[int32]string{
 	57: "kFollowerID",
 	58: "kFollowerConfig",
 }
+
 var ConfigParam_value = map[string]int32{
 	"kCanID":                  0,
 	"kInputMode":              1,
@@ -848,14 +871,17 @@ var ConfigParam_value = map[string]int32{
 func (x ConfigParam) String() string {
 	return proto.EnumName(ConfigParam_name, int32(x))
 }
+
 func (ConfigParam) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{10}
+	return fileDescriptor_47761fbfa943f69b, []int{10}
 }
 
+//Type lookup for above, lists what type the controller expects for each parameter
 type ConfigParamTypes int32
 
 const (
-	ConfigParamTypes_kDefault_t                ConfigParamTypes = 0
+	ConfigParamTypes_kDefault_t ConfigParamTypes = 0
+	//Below is auto generated
 	ConfigParamTypes_kCanID_t                  ConfigParamTypes = 1
 	ConfigParamTypes_kInputMode_t              ConfigParamTypes = 1
 	ConfigParamTypes_kMotorType_t              ConfigParamTypes = 1
@@ -979,6 +1005,7 @@ var ConfigParamTypes_name = map[int32]string{
 	// Duplicate value: 1: "kFollowerID_t",
 	// Duplicate value: 1: "kFollowerConfig_t",
 }
+
 var ConfigParamTypes_value = map[string]int32{
 	"kDefault_t":                0,
 	"kCanID_t":                  1,
@@ -1045,8 +1072,9 @@ var ConfigParamTypes_value = map[string]int32{
 func (x ConfigParamTypes) String() string {
 	return proto.EnumName(ConfigParamTypes_name, int32(x))
 }
+
 func (ConfigParamTypes) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f, []int{11}
+	return fileDescriptor_47761fbfa943f69b, []int{11}
 }
 
 func init() {
@@ -1064,11 +1092,9 @@ func init() {
 	proto.RegisterEnum("sparkmax.ConfigParamTypes", ConfigParamTypes_name, ConfigParamTypes_value)
 }
 
-func init() {
-	proto.RegisterFile("SPARK-MAX-Types.proto", fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f)
-}
+func init() { proto.RegisterFile("SPARK-MAX-Types.proto", fileDescriptor_47761fbfa943f69b) }
 
-var fileDescriptor_SPARK_MAX_Types_cb1e531d8160846f = []byte{
+var fileDescriptor_47761fbfa943f69b = []byte{
 	// 1269 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x96, 0x69, 0x73, 0xe2, 0x46,
 	0x13, 0xc7, 0x01, 0x5f, 0x30, 0xbe, 0xda, 0xda, 0xfb, 0x7a, 0x9e, 0xcd, 0xb9, 0x89, 0x92, 0xdd,
