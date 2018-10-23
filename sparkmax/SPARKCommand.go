@@ -42,12 +42,12 @@ func RunCommand(req RequestWire) (ResponseWire, error) {
 
 	typename := getType(req.Req)
 
-	fmt.Println("running command: " + typename)
+	//fmt.Println("running command: " + typename)
 
 	if val, exists := registeredCommands[typename]; exists {
 		resp, err = val.SparkCommandProcess(req)
 	} else {
-		err = fmt.Errorf("Command not found")
+		err = fmt.Errorf("Command not found: " + typename)
 	}
 	return resp, err
 }

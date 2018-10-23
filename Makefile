@@ -13,8 +13,14 @@ export CGO_LDFLAGS=-LC:/Users/Will/go/src/github.com/willtoth/USB-BLDC-TOOL/ -g 
 $(info ${CGO_CFLAGS})
 
 # Binary names
-BINARY_NAME=USB-BLDC-TOOL.exe
-BINARY_UNIX=$(BINARY_NAME)_unix
+BINARY_NAME_WINDOWS=SparkMax.exe
+BINARY_UNIX=SparkMax.out
+
+ifeq ($(OS),Windows_NT)
+	BINARY_NAME=${BINARY_NAME_WINDOWS}
+else
+	BINARY_NAME=${BINARY_UNIX}
+endif
 
 all: build
 build: 
@@ -23,16 +29,15 @@ build:
 clean: 
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
-	rm -f $(BINARY_UNIX)
 run:
 	$(GOBUILD) -o $(BINARY_NAME) -v ./...
 	./$(BINARY_NAME)
 deps:
 	$(GOGET) github.com/pebbe/zmq4
 	$(GOGET) -u github.com/spf13/cobra/cobra
-	$(GOGET) github.com/willtoth/go-serial
-	$(GOGET) -u github.com/golang/protobuf/protoc-gen-go
+	$(GOGET) github.com/tarm/serial
 	$(GOGET) go.bug.st/serial.v1
+	$(GOGET) -u github.com/golang/protobuf/protoc-gen-go
 
 # Cross compilation
 #build-linux:
