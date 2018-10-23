@@ -32,6 +32,8 @@ func RunCommand(req RequestWire) (ResponseWire, error) {
 
 	typename := reflect.TypeOf(req.Req).Name()
 
+	fmt.Println("running command: " + typename)
+
 	if val, exists := registeredCommands[typename]; exists {
 		resp, err = val.SparkCommandProcess(req)
 	} else {

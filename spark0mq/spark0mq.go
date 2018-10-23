@@ -45,7 +45,7 @@ func spark0mqREQ(port int) {
 		//  Wait for next request from client
 		msg, _ := responder.RecvBytes(0)
 
-		//fmt.Println("Received ", msg)
+		fmt.Println("Received ", msg)
 
 		resp, err := parseMessage(msg)
 		if err != nil {
@@ -53,7 +53,7 @@ func spark0mqREQ(port int) {
 		}
 		//  Send reply back to client
 		responder.SendBytes(resp, 0)
-		//fmt.Println("Sent ", resp)
+		fmt.Println("Sent ", resp)
 	}
 }
 
@@ -67,6 +67,7 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 		root.Error = err.Error()
 		resp.Resp = &sparkmax.ResponseWire_Root{Root: root}
 	} else {
+		fmt.Println("running command")
 		sparkmax.RunCommand(req)
 	}
 
