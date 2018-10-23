@@ -18,14 +18,14 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
 var listAll bool
 var verbose bool
 
 func listDevices(cmd *cobra.Command, args []string) {
-	ports := sparkusb.ListDevices(listAll)
+	ports := sparkmax.ListDevices(listAll)
 	for _, port := range ports {
 		if verbose {
 			fmt.Printf("Device: %v\n", port)
@@ -60,4 +60,30 @@ func init() {
 
 	listCmd.PersistentFlags().BoolVarP(&listAll, "all", "a", false, "List all devices including over CAN")
 	listCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "List more details for devices")
+
+	sparkmax.RegisterCommand(&listDevicesCmd)
+}
+
+type listDevicesCommand struct{}
+
+var listDevicesCmd = listDevicesCommand{}
+
+func (s *listDevicesCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
+	ports := sparkmax.ListDevices(req.GetList().All)
+
+	devList := make([]string, 0)
+	devDetails := make([]string, 0)
+	for _, port := range ports {
+		devList = append(devList, port.Name)
+
+		result := fmt.Sprintf("Device: %s,\t%s:%s\t%s", port.SerialNumber, port.VID, port.PID, port.Name)
+		devDetails = append(devDetails, result)
+	}
+	tmp := sparkmax.ListResponse{DeviceList: devList, DeviceDetails: devDetails}
+	resp.Resp = &sparkmax.ResponseWire_List{List: &tmp}
+	return resp, err
+}
+
+func (s *listDevicesCommand) ExpectedType() string {
+	return "List"
 }

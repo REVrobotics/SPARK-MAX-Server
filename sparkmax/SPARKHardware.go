@@ -1,11 +1,11 @@
-package sparkusb
+package sparkmax
 
 import (
 	"fmt"
 	"log"
 	"time"
 
-	serial "github.com/willtoth/go-serial"
+	serial "github.com/tarm/serial"
 	enumerator "go.bug.st/serial.v1/enumerator"
 )
 
@@ -14,7 +14,7 @@ const (
 	sparkVID = "0483"
 )
 
-var localPort serial.Port
+var localPort *serial.Port
 
 func isSparkPID(pid string) (isSpark bool) {
 	if sparkPID == pid {
@@ -51,10 +51,8 @@ func IsConnected() bool {
 func GetDefaultDevice() (device string) {
 	if devices := ListDevices(false); len(devices) > 0 {
 		return ListDevices(false)[0].Name
-	} else {
-		return ""
 	}
-
+	return ""
 }
 
 func Connect(com string) error {
@@ -65,11 +63,8 @@ func Connect(com string) error {
 		}
 	}
 
-	port, err := serial.Open(com, &serial.Mode{})
-
-	//Note: as of development, requires this patch:
-	//https://patch-diff.githubusercontent.com/raw/bugst/go-serial/pull/33.patch
-	//port.SetReadTimeout(2000)
+	serialConfig := &serial.Config{Name: com, Baud: 115200, ReadTimeout: time.Millisecond * 2000}
+	port, err := serial.OpenPort(serialConfig)
 
 	if err == nil {
 		localPort = port
@@ -109,7 +104,7 @@ func Read() (UsbFrame, error) {
 		return frame, fmt.Errorf("Attempted read to uninitialized serial port")
 	}
 
-	buf := make([]byte, 12)
+	buf := make([]byte, FrameSize)
 	len, err := localPort.Read(buf)
 	if err != nil {
 		return frame, err
@@ -123,7 +118,7 @@ func Read() (UsbFrame, error) {
 	//TODO: Depending on frame size, parse multiple frames
 	//Maybe a different function, as this would need to
 	//return multiple frames
-	frame, err = DeserializeUsbFrame(buf[:12])
+	frame, err = DeserializeUsbFrame(buf[:FrameSize])
 
 	return frame, err
 }

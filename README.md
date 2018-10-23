@@ -1,64 +1,53 @@
-# USB-BLDC-TOOL
+# SPARK MAX Backend Tool
 
-**Building**
+## Building
 
 Steps to build the sparkusb server/cli tool
 
 1) Install and setup git
 2) Install and setup a go environemnt (minimum 1.7, recommended 1.10+)
-3) Build or install zeromq4
-4) 'Go get' all dependancies
-5) Clone this repo under `$GOPATH/src/github.com/willtoth/`
-6) 'Go build'
+3) On linux instatll zeromq `sudo apt-get install libzmq3-dev` (windows includes pre-built binaries)
+4) Clone this repo under `$GOPATH/src/github.com/willtoth/`
+5) Run `make deps` or manually get go dependencies
+6) run `make` to build the project
 
-#Pre-reqs:
+## Pre-reqs:
 
-Working Go environment [intalled](https://golang.org/doc/install) 
+- Working Go environment [intalled](https://golang.org/doc/install) 
 *Not sure the minimum dependancy, as of development we are using 1.10.3, the ubuntu package in 16.04 usses 1.6 which does not work properly. Ubuntu 18.04 uses 1.10.1 and is ok (Same with Linux Mint 19). Successfully built using go 1.7 on a raspberry pi zero w.*
 
-Pre-build binary for Zeromq:
+- Make build system
 
-**Windows**
-To build:
+## Go dependencies:
 
-1) Compile zeromq 4 using visual studio (target is DynRelease x64)
-2) Install a gcc toolset for windows, in this case mingw-64 - make sure gcc is in PATH
-3) Set the following flags on the command line (Recommend a path without spaces for source)
+To install the below run `make deps`
 
-```
-set CGO_CFLAGS=-I<path to zeromq> -g -O2
-set CGO_LDFLAGS=-L<path to build library> -g -O2
-go get github.com/pebbe/zmq4
-```
-
-Example with powershell: ` & { $env:CGO_CFLAGS='-g -O2 -IC:\Users\Will\Src\zeromq-4.2.3\include'; $env:CGO_LDFLAGS='-g -O2 -LC:\Users\Will\Src\zeromq-4.2.3\bin\x64\Release\v141\dynamic'; go get github.com/pebbe/zmq4}`
-
-Same applies when building
-
-Example with powershell: ` & { $env:CGO_CFLAGS='-g -O2 -IC:\Users\Will\Src\zeromq-4.2.3\include'; $env:CGO_LDFLAGS='-g -O2 -LC:\Users\Will\Src\zeromq-4.2.3\bin\x64\Release\v141\dynamic'; go build}`
-
-Alternatively, put the built library somewhere accessible by PATH (go/bin?) and the header in a location accessible by the compiler
-
-**Linux (Ubuntu)**
-
-`sudo apt-get install libzmq3-dev`
-
-# Go dependencies:
-
+*Manual package list:*
 ```
 go get github.com/pebbe/zmq4
 go get -u github.com/spf13/cobra/cobra
-go get github.com/willtoth/go-serial
+go get go.bug.st/serial.v1
+go get github.com/tarm/serial
 go get -u github.com/golang/protobuf/protoc-gen-go
 ```
+## Structure
 
-*The serial package is from here*
-go.bug.st/serial.v1
+This application can run both as a command line utility or remote command server to interface to the SPARK MAX. It includes the following packages:
 
-With this patch applied: https://patch-diff.githubusercontent.com/raw/bugst/go-serial/pull/33.patch
+- sparkmax - Protocol buffer definitions of all types and messages and hardware interface
+- spark0mq - Includes the ZeroMQ server for network communication
+- cmd - All defined commands for either cli tool, zmq server, or both depending on the command
 
-# sparkusb-client
+## Front-end Client
 
-Pre-reqs:
+Moved to its own repo [SPARK-Max-Client](https://github.com/REVrobotics/SPARK-MAX-Client)
 
-Working nodejs environment and node package manager (npm)
+## Known Issues
+
+On Linux machines with ModemManager installed, the device may show up as busy for ~15 seconds while modem manager tries to decide if its a modem. To disable this add a custom UDEV rule, [here](https://linux-tips.com/t/prevent-modem-manager-to-capture-usb-serial-devices/284) is a detailed description. **VID** = 0483 **PID** = 5740
+
+For example:
+
+*/etc/udev/rules.d/99-ttyacms.rules* has the line:
+
+`ATTRS{idVendor}=="0483" ATTRS{idProduct}=="5740", ENV{ID_MM_DEVICE_IGNORE}="1"`

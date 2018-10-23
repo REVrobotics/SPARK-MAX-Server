@@ -1,4 +1,4 @@
-package sparkusb
+package sparkmax
 
 import (
 	"encoding/binary"

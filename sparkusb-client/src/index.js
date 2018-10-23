@@ -9,7 +9,7 @@ window.eval = global.eval = () => {
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 
-const headless = false;
+const headless = true;
 
 if (headless) {
   ReactDOM.render(<App />, document.getElementById('root'));

@@ -21,7 +21,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	sparkusb "github.com/willtoth/USB-BLDC-TOOL/sparkusb"
+	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
 )
 
 // neutralmodeCmd represents the neutralmode command
@@ -45,9 +45,9 @@ func init() {
 }
 
 func runNeutralMode(cmd *cobra.Command, args []string) {
-	req := sparkusb.ParameterRequest{Parameter: sparkusb.ConfigParam_kIdleMode}
 	if len(args) < 1 {
-		resp, err := sparkusb.GetParameter(&req)
+		req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam_kIdleMode}
+		resp, err := GetParameter(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to get neutral mode: %s\n", err.Error())
 		}
@@ -55,17 +55,18 @@ func runNeutralMode(cmd *cobra.Command, args []string) {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error in neutralmode: %s\n", err.Error())
 		}
-		fmt.Println(sparkusb.IdleMode_name[int32(idx)])
+		fmt.Println(sparkmax.IdleMode_name[int32(idx)])
 	} else {
-		var idleMode sparkusb.IdleMode
+		req := sparkmax.SetParameterRequest{Parameter: sparkmax.ConfigParam_kIdleMode}
+		var idleMode sparkmax.IdleMode
 		switch mt := strings.ToLower(args[0]); mt {
 		case "b", "brake":
-			idleMode = sparkusb.IdleMode_Brake
+			idleMode = sparkmax.IdleMode_Brake
 		case "c", "coast":
-			idleMode = sparkusb.IdleMode_Coast
+			idleMode = sparkmax.IdleMode_Coast
 		}
 		req.Value = strconv.FormatInt(int64(idleMode), 10)
-		_, err := sparkusb.SetParameter(&req)
+		_, err := SetParameter(&req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error in motortype: %s\n", err.Error())
 		}

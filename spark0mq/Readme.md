@@ -1,5 +1,7 @@
 Requires go [zeromq4](https://github.com/pebbe/zmq4)
 
+All distributions now use makefile, to build you must have make on your machine. Windows pre-built binaries are included in the repo. Previous build instructions included below.
+
 **Windows**
 To build:
 
