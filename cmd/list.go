@@ -85,5 +85,5 @@ func (s *listDevicesCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp
 }
 
 func (s *listDevicesCommand) ExpectedType() string {
-	return "ListRequest"
+	return "List"
 }

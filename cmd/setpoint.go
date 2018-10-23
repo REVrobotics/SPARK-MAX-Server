@@ -131,7 +131,7 @@ func (s *setpointCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sp
 }
 
 func (s *setpointCommand) ExpectedType() string {
-	return "SetpointRequest"
+	return "Setpoint"
 }
 
 func init() {

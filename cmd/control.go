@@ -40,7 +40,7 @@ func (s *connectCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp spa
 }
 
 func (s *connectCommand) ExpectedType() string {
-	return "ConnectRequest"
+	return "Connect"
 }
 
 func (s *disconnectCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
@@ -51,7 +51,7 @@ func (s *disconnectCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp 
 }
 
 func (s *disconnectCommand) ExpectedType() string {
-	return "DisconnectRequest"
+	return "Disconnect"
 }
 
 func (s *pingCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
@@ -61,5 +61,5 @@ func (s *pingCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkm
 }
 
 func (s *pingCommand) ExpectedType() string {
-	return "PingRequest"
+	return "Ping"
 }

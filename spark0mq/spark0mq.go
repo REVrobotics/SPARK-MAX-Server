@@ -67,10 +67,10 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 		root.Error = err.Error()
 		resp.Resp = &sparkmax.ResponseWire_Root{Root: root}
 	} else {
-		fmt.Println("running command")
-		sparkmax.RunCommand(req)
+		resp, err = sparkmax.RunCommand(req)
 	}
 
 	rawBytes, err = proto.Marshal(&resp)
+	fmt.Println(rawBytes)
 	return
 }

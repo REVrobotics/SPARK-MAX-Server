@@ -23,14 +23,24 @@ func RegisterCommand(cmd SparkMaxCommand) {
 		registeredCommands = make(map[string]SparkMaxCommand)
 	}
 
-	registeredCommands[cmd.ExpectedType()] = cmd
+	typeName := "RequestWire_" + cmd.ExpectedType()
+
+	registeredCommands[typeName] = cmd
+}
+
+func getType(myvar interface{}) string {
+	t := reflect.TypeOf(myvar)
+	if t.Kind() == reflect.Ptr {
+		return t.Elem().Name()
+	}
+	return t.Name()
 }
 
 func RunCommand(req RequestWire) (ResponseWire, error) {
 	var err error
 	var resp ResponseWire
 
-	typename := reflect.TypeOf(req.Req).Name()
+	typename := getType(req.Req)
 
 	fmt.Println("running command: " + typename)
 

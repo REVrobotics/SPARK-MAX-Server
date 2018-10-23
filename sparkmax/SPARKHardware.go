@@ -51,10 +51,8 @@ func IsConnected() bool {
 func GetDefaultDevice() (device string) {
 	if devices := ListDevices(false); len(devices) > 0 {
 		return ListDevices(false)[0].Name
-	} else {
-		return ""
 	}
-
+	return ""
 }
 
 func Connect(com string) error {

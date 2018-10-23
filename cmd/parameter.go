@@ -205,7 +205,7 @@ func (s *setParameterCommand) SparkCommandProcess(req sparkmax.RequestWire) (res
 }
 
 func (s *setParameterCommand) ExpectedType() string {
-	return "SetParameterRequest"
+	return "SetParameter"
 }
 
 func (g *getParameterCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
@@ -219,5 +219,5 @@ func (g *getParameterCommand) SparkCommandProcess(req sparkmax.RequestWire) (res
 }
 
 func (g *getParameterCommand) ExpectedType() string {
-	return "GetParameterRequest"
+	return "GetParameter"
 }

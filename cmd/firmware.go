@@ -99,5 +99,5 @@ func (s *firmwareCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sp
 }
 
 func (s *firmwareCommand) ExpectedType() string {
-	return "FirmwareRequest"
+	return "Firmware"
 }

@@ -84,5 +84,5 @@ func (s *burnFlashCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp s
 }
 
 func (s *burnFlashCommand) ExpectedType() string {
-	return "BurnRequest"
+	return "Burn"
 }
