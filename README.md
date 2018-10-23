@@ -1,4 +1,6 @@
-# SPARK MAX Backend Tool
+# SPARK MAX Server
+
+This tool is a CLI tool and server used for communicating to a SPARK MAX motor controller over USB. Basic commands can be used to configure the device, and a ZeroMQ server can be set up for remote control. This is also the backend for the SPARK MAX Client.
 
 ## Building
 
