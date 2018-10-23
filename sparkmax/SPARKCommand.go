@@ -30,6 +30,9 @@ func RegisterCommand(cmd SparkMaxCommand) {
 
 func getType(myvar interface{}) string {
 	t := reflect.TypeOf(myvar)
+	if t == nil {
+		return ""
+	}
 	if t.Kind() == reflect.Ptr {
 		return t.Elem().Name()
 	}

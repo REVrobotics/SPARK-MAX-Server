@@ -3,7 +3,8 @@ const execute = require("child_process").execFile;
 const path = require("path");
 const fs = require("fs");
 //const grpc = require("grpc");
-const PROTO_BUFFERS = path.join(__dirname, "../sparkusb/commands.proto");
+const PROTO_BUFFERS_COMMANDS = path.join(__dirname, "../sparkusb/SPARK-MAX-Commands.proto");
+const PROTO_BUFFERS_TYPES = path.join(__dirname, "../sparkusb/SPARK-MAX-Types.proto");
 //const revCommands = grpc.load(PROTO_BUFFERS).sparkgrpc;
 //const client = new revCommands.sparkusb('localhost:8001', grpc.credentials.createInsecure());
 const protobuf = require("protobufjs");
@@ -25,17 +26,17 @@ ipcMain.on("start-server", (event) => {
         try {
             usbPID = execute(exePath, ["-r"], (error, data) => {
                 if (error) {
-                    event.sender.send("start-server-error", "There was en error while running the sparkusb TCP/IP server: " + error);
+                    event.sender.send("start-server-error", "There was en error while running the sparkmax TCP/IP server: " + error);
                 } else {
                     event.sender.send("start-server-success");
                 }
             });
             event.sender.send("start-server-success");
         } catch (e) {
-            event.sender.send("start-server-error", "There was en error while trying to execute the sparkusb binary. " + e);
+            event.sender.send("start-server-error", "There was en error while trying to execute the sparkmax binary. " + e);
         }
     } else {
-        event.sender.send("start-server-error", "The sparkusb executable was not found.");
+        event.sender.send("start-server-error", "The sparkmax executable was not found.");
     }
 });
 
@@ -150,7 +151,7 @@ ipcMain.on("request-firmware", (event) => {
     });
 });
 
-class sparkusb {
+class sparkmax {
   constructor(port){
     this.port = port;
     //sock.bindSync('tcp://localhost:' + port);
@@ -170,15 +171,18 @@ class sparkusb {
 
       // Init message loads pb befor any other call
       if (input.id === "init") {
-        protobuf.load(PROTO_BUFFERS)
-          .then(function(root) {
-            self.root = root;
-            cb(null,null);
-          });
+        protobuf.load(PROTO_BUFFERS_TYPES)
+        .then(function() {
+          protobuf.load(PROTO_BUFFERS_COMMANDS)
+            .then(function(root) {
+              self.root = root;
+              cb(null,null);
+            });
+        });
       } else {
         //All calls here should have a 'msg' field set with a message that
         //can be part of the 'Oneof' file of the 'RequestWire'        
-        let wire = self.root.lookupType("sparkusb.RequestWire");
+        let wire = self.root.lookupType("sparkmax.RequestWire");
         let wireMsg = wire.create({req: input.id});
         wireMsg[input.id] = input.msg;
         let wireBuf = wire.encode(wireMsg).finish();
@@ -207,7 +211,7 @@ class sparkusb {
     this.cmdQueue.push({id: "init"})
   }
 
-  sendCommand(lookupType,msg,cb) {
+  sendCommand(lookupType, respType, msg,cb) {
     /*Queue the attached request
     * Priority:
     *   - Connect (also flush queue)
@@ -234,40 +238,24 @@ class sparkusb {
     req.msg = msg;
     this.cmdQueue.push(req, function (err, result) {
       // Decode message
-      let cmd = self.root.lookupType("sparkusb.ResponseWire");
+      let cmd = self.root.lookupType("sparkmax.ResponseWire");
       let message = cmd.decode(result);
-      //console.log(message[lookupType]);
-      cb(err,message[lookupType]);
+      //console.log(message);
+      cb(err,message[respType]);
     });
   }
 
-  // Convenience functions for each message type
-
-//Connect(rootCommand) returns (rootResponse) {}
-//Disconnect(rootCommand) returns (rootResponse) {}
-//List(listRequest) returns (listResponse) {}
-// NOTIMP Firmware(firmwareRequest) returns (firmwareResponse) {}
-// NOTIMP Heartbeat(heartbeat) returns (rootResponse) {}
-// NOTIMP Address(addressRequest) returns (addressResponse) {}
-//SetParameter(parameterRequest) returns (parameterResponse) {}
-//GetParameter(parameterRequest) returns (parameterResponse) {}
-//BurnFlash(rootCommand) returns (rootResponse) {}
-// NOTIMP ListParameters(parameterListRequest) returns (parameterListResponse) {}
-//Setpoint(setpointRequest) returns (setpointResponse) {}
-
   connect(controlCommand,cb) {
-    controlCommand.ctrl = 1;
-    this.sendCommand("control",controlCommand,cb)
+    this.sendCommand("connect","connect",controlCommand,cb)
   }
   disconnect(controlCommand,cb) {    
-    controlCommand.ctrl = 2;
-    this.sendCommand("control",controlCommand,cb)
+    this.sendCommand("disconnect","disconnect",controlCommand,cb)
   }
   list(listCommand,cb) {
-    this.sendCommand("list",listCommand,cb)
+    this.sendCommand("list","list",listCommand,cb)
   }
   getParameter(paramCommand,cb) {
-    this.sendCommand("parameter",paramCommand, function (err, result){
+    this.sendCommand("getParameter","parameter",paramCommand, function (err, result){
       result.value = Number(result.value);
       cb(err,result);
     })
@@ -275,16 +263,16 @@ class sparkusb {
   setParameter(paramCommand,cb) {
     //Make sure 'paramCommand' is a string
     paramCommand.value += '';
-    this.sendCommand("parameter",paramCommand,cb)
+    this.sendCommand("setParameter","parameter",paramCommand,cb)
   }
   setpoint(setpointCommand,cb) {
     setpointCommand.enable = isEnabled;
     setpointCommand.setpoint = setpointCommand.setpoint / 1024;
-    this.sendCommand("setpoint",setpointCommand,cb)
+    this.sendCommand("setpoint","setpoint",setpointCommand,cb)
   }
   burnFlash(burnCommand,cb) {
     burnCommand.verify = true
-    this.sendCommand("burn",burnCommand,cb)
+    this.sendCommand("burn","burn",burnCommand,cb)
     //cb(null,null);
   }
   heartbeat(heartbeatRequest,cb) {
@@ -293,4 +281,4 @@ class sparkusb {
   }
 }
 
-const client = new sparkusb(8001);
+const client = new sparkmax(8001);
