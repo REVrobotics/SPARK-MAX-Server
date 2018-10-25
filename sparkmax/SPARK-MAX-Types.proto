@@ -206,8 +206,8 @@ enum configParam {
 
     /*
     * If the half bridge detects this current limit, it will disable the motor dr
-    * iver until the current goes below a certain threshold before enabling. Thi
-    * s is a low sophistication 'current control'
+    * iver for a fixed amount of time set by kCurrentChopCycles. This is a low
+    * sophistication 'current control'
     * @default 0
     * @type float32
     * @unit Amps
@@ -215,14 +215,13 @@ enum configParam {
     kCurrentChop = 11;
 
     /*
-    * If the half bridge detects this current limit, it will disable the motor dr
-    * iver and report a sticky fault. The motor driver will not enable again unt
-    * il this fault is cleared.
+    * Number of PWM Cycles for the h-bridge to be off in the case that the current
+    * limit is set. Min = 1, multiples of PWM period (50us)
     * @default 0
-    * @type float32
-    * @unit Amps
+    * @type uint
+    * @unit
     */
-    kCurrentLimit = 12;
+    kCurrentChopCycles = 12;
 
     /*
     * Perportional gain constant for gain slot 0. In cascaded control modes this 
@@ -619,7 +618,7 @@ enum configParamTypes {
     kHallOffset_t = 0;
     kPolePairs_t = 1;
     kCurrentChop_t = 2;
-    kCurrentLimit_t = 2;
+    kCurrentChopCycles_t = 1;
     kP_0_t = 2;
     kI_0_t = 2;
     kD_0_t = 2;

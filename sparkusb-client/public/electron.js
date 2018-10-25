@@ -2,7 +2,7 @@ const {app, BrowserWindow, ipcMain} = require("electron");
 const url = require("url");
 const path = require("path");
 
-const production = false;
+const production = true;
 
 if (!production) {
   require("electron-debug")({showDevTools: true, enabled: true});

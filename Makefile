@@ -13,8 +13,8 @@ export CGO_LDFLAGS=-LC:/Users/Will/go/src/github.com/willtoth/USB-BLDC-TOOL/ -g 
 $(info ${CGO_CFLAGS})
 
 # Binary names
-BINARY_NAME_WINDOWS=SparkMax.exe
-BINARY_UNIX=SparkMax.out
+BINARY_NAME_WINDOWS=sparkmax.exe
+BINARY_UNIX=sparkmax.out
 
 ifeq ($(OS),Windows_NT)
 	BINARY_NAME=${BINARY_NAME_WINDOWS}

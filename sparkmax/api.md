@@ -618,8 +618,8 @@ these values match the SPARK firmware
 | kFirmwareVer | 8 | Read only parameter showing the 32-bit firmware version. The first byte is the major build, the second byte is in the minor build, the last two bytes are the build @default 0 @type Firmware |
 | kHallOffset | 9 | Electrical offset of the hall sensor compared to the motor phases in degree s. Typically this is either 0, 60, 120 @default 0 @type int @unit Degrees |
 | kPolePairs | 10 | Number of pole pairs for the brushless motor. This is the number of poles/2 and can be determined by either counting the number of magents or countin g the number of windings and dividing by 3. This is an important term for speed regulation to properly calculate the speed @default 1 @type uint |
-| kCurrentChop | 11 | If the half bridge detects this current limit, it will disable the motor dr iver until the current goes below a certain threshold before enabling. Thi s is a low sophistication &#39;current control&#39; @default 0 @type float32 @unit Amps |
-| kCurrentLimit | 12 | If the half bridge detects this current limit, it will disable the motor dr iver and report a sticky fault. The motor driver will not enable again unt il this fault is cleared. @default 0 @type float32 @unit Amps |
+| kCurrentChop | 11 | If the half bridge detects this current limit, it will disable the motor dr iver for a fixed amount of time set by kCurrentChopCycles. This is a low sophistication &#39;current control&#39; @default 0 @type float32 @unit Amps |
+| kCurrentChopCycles | 12 | Number of PWM Cycles for the h-bridge to be off in the case that the current limit is set. Min = 1, multiples of PWM period (50us) @default 0 @type uint @unit |
 | kP_0 | 13 | Perportional gain constant for gain slot 0. In cascaded control modes this is the inner loop gain slot 0. @default 0 @type float32 |
 | kI_0 | 14 | Integral gain constant for gain slot 0. In cascaded control modes this is t he inner loop gain slot 0. @default 0 @type float32 |
 | kD_0 | 15 | Derivative gain constant for gain slot 0. In cascaded control modes this is the inner loop gain slot 0. @default 0 @type float32 |
@@ -689,7 +689,7 @@ Type lookup for above, lists what type the controller expects for each parameter
 | kHallOffset_t | 0 |  |
 | kPolePairs_t | 1 |  |
 | kCurrentChop_t | 2 |  |
-| kCurrentLimit_t | 2 |  |
+| kCurrentChopCycles_t | 1 |  |
 | kP_0_t | 2 |  |
 | kI_0_t | 2 |  |
 | kD_0_t | 2 |  |
