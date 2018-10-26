@@ -79,6 +79,7 @@ const (
 	CmdApiUsrStat1    = 0x063
 	CmdApiUsrStat2    = 0x064
 	CmdApiUsrStat3    = 0x065
+	CmdApiDrvStatus   = 0x06A
 	CmdApiSetCfg      = 0x070
 	CmdApiGetCfg      = 0x071
 	CmdApiBurnFlash   = 0x072

@@ -666,3 +666,33 @@ enum configParamTypes {
     kFollowerID_t = 1;
     kFollowerConfig_t = 1;
 }
+
+//Bit definitions for DRV STAT0
+enum DRVStat0_Bits {
+    VDS_LC_Bit = 0;
+    VDS_HC_Bit = 1;
+    VDS_LB_Bit = 2;
+    VDS_HB_Bit = 3;
+    VDS_LA_Bit = 4;
+    VDS_HA_Bit = 5;
+    OTSD_Bit = 6;
+    UVLO_Bit = 7;
+    GDF_Bit = 8;
+    VDS_OCP_Bit = 9;
+    FAULT_Bit = 10;
+}
+
+//Bit definitions for DRV STAT1
+enum DRVStat1_Bits {
+    VGS_LC_Bit = 0;
+    VGS_HC_Bit = 1;
+    VGS_LB_Bit = 2;
+    VGS_HB_Bit = 3;
+    VGS_LA_Bit = 4;
+    VGS_HA_Bit = 5;   
+    CPUV_Bit = 6;
+    OTW_Bit = 7;
+    SC_OC_Bit = 8;
+    SB_OC_Bit = 9;
+    SA_OC_Bit = 10;
+}

@@ -93,6 +93,11 @@ service sparkMaxServer {
     * Set controller to follow another controller.
     */
     rpc Follow(followerRequest) returns (rootResponse) {}
+
+    /*
+    * Get the status of the DRV8320 device.
+    */
+    rpc DRVStatus(DRVStatusRequest) returns (DRVStatusResponse) {}
 }
 
 /*
@@ -113,6 +118,7 @@ message RequestWire {
         followerRequest         follower = 22;
         burnRequest             burn = 23;
         parameterListRequest    parameterList = 24;
+        DRVStatusRequest        drvStatus = 25;
     }
 }
 
@@ -132,6 +138,7 @@ message ResponseWire {
         disconnectResponse      disconnect = 19;
         pingResponse            ping = 20;
         burnResponse            burn = 21;
+        DRVStatusResponse       drvStatus = 25;
     }
 }
 
@@ -338,4 +345,141 @@ message followerRequest {
     rootCommand root = 1;
     uint32 followerid = 2;
     uint32 followerconfig = 3;
+}
+
+/*
+* Request for status from the DRV8320
+*/
+message DRVStatusRequest {
+    rootCommand root = 1;
+}
+
+/*
+* DRV Status Response
+*/
+message DRVStatusResponse {
+    DRVStat0 stat0 = 1;
+    DRVStat1 stat1 = 2;
+    rootResponse root = 3;
+}
+
+/*
+* DRV8320 Stat0 register
+*/
+message DRVStat0 {
+    /*
+    * Indicates VDS overcurrent fault on the C low-side MOSFET
+    */
+    bool VDS_LC = 1;
+
+    /*
+    * Indicates VDS overcurrent fault on the C high-side MOSFET
+    */
+    bool VDS_HC = 2;
+    
+    /*
+    * Indicates VDS overcurrent fault on the B low-side MOSFET
+    */
+    bool VDS_LB = 3;
+    
+    /*
+    * Indicates VDS overcurrent fault on the B high-side MOSFET
+    */
+    bool VDS_HB = 4;
+    
+    /*
+    * Indicates VDS overcurrent fault on the A low-side MOSFET
+    */
+    bool VDS_LA = 5;
+    
+    /*
+    * Indicates VDS overcurrent fault on the A high-side MOSFET
+    */
+    bool VDS_HA = 6;
+    
+    /*
+    * Indicates overtemperature shutdown
+    */
+    bool OTSD = 7;
+    
+    /*
+    * Indicates undervoltage lockout fault condition
+    */
+    bool UVLO = 8;
+    
+    /*
+    * Indicates gate drive fault condition
+    */
+    bool GDF = 9;
+    
+    /*
+    * Indicates VDS monitor overcurrent fault condition
+    */
+    bool VDS_OCP = 10;
+    
+    /*
+    * Logic OR of FAULT status registers. Mirrors nFAULT pin.
+    */
+    bool FAULT = 11;
+}
+
+/*
+* DRV8320 Stat1 register
+*/
+message DRVStat1 {
+    
+    /*
+    * Indicates gate drive fault on the C low-side MOSFET
+    */
+    bool VGS_LC = 1;
+    
+    /*
+    * Indicates gate drive fault on the C high-side MOSFET
+    */
+    bool VGS_HC = 2;
+    
+    /*
+    * Indicates gate drive fault on the B low-side MOSFET
+    */
+    bool VGS_LB = 3;
+    
+    /*
+    * Indicates gate drive fault on the B high-side MOSFET
+    */
+    bool VGS_HB = 4;
+    
+    /*
+    * Indicates gate drive fault on the A low-side MOSFET
+    */
+    bool VGS_LA = 5;
+    
+    /*
+    * Indicates gate drive fault on the A high-side MOSFET
+    */
+    bool VGS_HA = 6;  
+    
+    /*
+    * Indicates charge pump undervoltage fault condition
+    */  
+    bool CPUV = 7;
+    
+    /*
+    * Indicates overtemperature warning
+    */
+    bool OTW = 8;
+    
+    /*
+    * Always 0 for DRV8320
+    */
+    bool SC_OC = 9;
+    
+    /*
+    * Always 0 for DRV8320
+    */
+    bool SB_OC = 10;
+    
+    /*
+    * Always 0 for DRV8320
+    */
+    bool SA_OC = 11;
 }
