@@ -133,9 +133,9 @@ func GetParameter(command *sparkmax.GetParameterRequest) (*sparkmax.ParameterRes
 	//fmt.Print("Incoming Frame:")
 	//fmt.Println(frameIn)
 
-	rawMsg := binary.LittleEndian.Uint32(frameIn.Data[:4])
-	resp.Type = sparkmax.ParamType(frameIn.Data[4])
-	resp.Status = sparkmax.ParamStatus(frameIn.Data[5])
+	rawMsg := binary.LittleEndian.Uint32(frameIn.Data[2:6])
+	resp.Type = sparkmax.ParamType(frameIn.Data[6])
+	resp.Status = sparkmax.ParamStatus(frameIn.Data[7])
 
 	//Parse to string from raw bytes of the appropriate type
 	switch resp.Type {
