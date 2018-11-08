@@ -5,22 +5,27 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 
-CURRENT_DIR=$(shell pwd)
-
-export CGO_CFLAGS=-IC:/Users/Will/go/src/github.com/willtoth/USB-BLDC-TOOL/ -g -O2
-export CGO_LDFLAGS=-LC:/Users/Will/go/src/github.com/willtoth/USB-BLDC-TOOL/ -g -O2
-
-$(info ${CGO_CFLAGS})
-
 # Binary names
 BINARY_NAME_WINDOWS=sparkmax.exe
 BINARY_UNIX=sparkmax.out
+
+CURRENT_DIR=$(shell pwd)
+PROJECT_PATH=${GOPATH}/src/github.com/REVrobotics/SPARK-MAX-Server/
+
+ifndef GOPATH
+  $(error GOPATH is undefined, must have a working go distribution with GOPATH environtment variable set)
+endif
 
 ifeq ($(OS),Windows_NT)
 	BINARY_NAME=${BINARY_NAME_WINDOWS}
 else
 	BINARY_NAME=${BINARY_UNIX}
 endif
+
+export CGO_CFLAGS=-I${PROJECT_PATH} -g -O2
+export CGO_LDFLAGS=-L${PROJECT_PATH} -g -O2
+
+$(info ${CGO_CFLAGS})
 
 all: build
 build: 

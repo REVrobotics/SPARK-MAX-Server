@@ -15,7 +15,7 @@
 package main
 
 import (
-	"github.com/willtoth/USB-BLDC-TOOL/cmd"
+	"github.com/REVrobotics/SPARK-MAX-Server/cmd"
 )
 
 func main() {

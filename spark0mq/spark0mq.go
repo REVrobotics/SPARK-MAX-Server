@@ -2,7 +2,7 @@ package spark0mq
 
 import (
 	"github.com/golang/protobuf/proto"
-	"github.com/willtoth/USB-BLDC-TOOL/sparkmax"
+	"github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 
 	zmq "github.com/pebbe/zmq4"
 

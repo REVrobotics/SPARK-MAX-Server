@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
+	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 )
 
 type connectCommand struct{}

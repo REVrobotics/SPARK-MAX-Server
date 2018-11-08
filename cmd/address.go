@@ -20,7 +20,7 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
+	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 )
 
 // addressCmd represents the address command

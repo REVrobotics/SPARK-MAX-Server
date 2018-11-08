@@ -23,8 +23,8 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	spark0mq "github.com/willtoth/USB-BLDC-TOOL/spark0mq"
-	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
+	spark0mq "github.com/REVrobotics/SPARK-MAX-Server/spark0mq"
+	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 )
 
 var cfgFile string

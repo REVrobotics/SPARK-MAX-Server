@@ -21,7 +21,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	sparkmax "github.com/willtoth/USB-BLDC-TOOL/sparkmax"
+	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 )
 
 // neutralmodeCmd represents the neutralmode command
