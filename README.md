@@ -9,7 +9,7 @@ Steps to build the sparkusb server/cli tool
 1) Install and setup git
 2) Install and setup a go environemnt (minimum 1.7, recommended 1.10+)
 3) On linux instatll zeromq `sudo apt-get install libzmq3-dev` (windows includes pre-built binaries)
-4) Clone this repo under `$GOPATH/src/github.com/willtoth/`
+4) Clone this repo under `$GOPATH/src/github.com/REVrobotics/`
 5) Run `make deps` or manually get go dependencies
 6) run `make` to build the project
 
