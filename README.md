@@ -44,12 +44,47 @@ This application can run both as a command line utility or remote command server
 
 Moved to its own repo [SPARK-Max-Client](https://github.com/REVrobotics/SPARK-MAX-Client)
 
+## Usage
+
+This tool can either be used as a command line tool (CLI), or remote server. When used as a command line tool, help strings for each command can be accessed by typing `sparkmax.exe [command] help`
+
+When setting parameters, the value is not saved to the flash until commanded to do so. This can be done by calling `sparkmax.exe burn`
+
+### CLI Examples
+
+**Firmware Version**
+To read the firmware version
+
+`sparkmax.exe firmware`
+> *Firmware version v0.1.342*
+
+**Ramp Rates**
+To read the ramp rate type 
+
+`sparkmax.exe parameter kRampRate`
+Output> *100.0000*
+
+To set the ramp rate:
+
+`sparkmax.exe parameter kRampRate 1`
+`sparkmax.exe burn`
+
+### Remote Server
+
+The RPC server uses ZeroMQ with messages defined by protocol buffers. There is currenly a single socket which can connect to a single client, which runs commands. This interface is designed for the SPARK MAX Client, any connection can send commands. To run the server, run
+
+`sparkmax.exe -r`
+
 ## Known Issues
 
-On Linux machines with ModemManager installed, the device may show up as busy for ~15 seconds while modem manager tries to decide if its a modem. To disable this add a custom UDEV rule, [here](https://linux-tips.com/t/prevent-modem-manager-to-capture-usb-serial-devices/284) is a detailed description. **VID** = 0483 **PID** = 5740
+- On Linux machines with ModemManager installed, the device may show up as busy for ~15 seconds while modem manager tries to decide if its a modem. To disable this add a custom UDEV rule, [here](https://linux-tips.com/t/prevent-modem-manager-to-capture-usb-serial-devices/284) is a detailed description. **VID** = 0483 **PID** = 5740
 
 For example:
 
 */etc/udev/rules.d/99-ttyacms.rules* has the line:
 
 `ATTRS{idVendor}=="0483" ATTRS{idProduct}=="5740", ENV{ID_MM_DEVICE_IGNORE}="1"`
+
+- ‘Burn’ command throws an error but still succeeds.
+- -i, --interactive command is not yet implemented
+- --config is not yet implemented
