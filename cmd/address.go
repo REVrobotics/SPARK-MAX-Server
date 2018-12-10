@@ -19,8 +19,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/spf13/cobra"
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/spf13/cobra"
 )
 
 // addressCmd represents the address command
@@ -30,7 +30,9 @@ var addressCmd = &cobra.Command{
 	Long: `Get or set the device CAN ID. Run with 
 no arguments to get the CAN ID. Run with a valid ID to 
 set the CAN ID. The CAN ID must be a number between 1 - 62.`,
-	Run: runAddress,
+	Run:     runAddress,
+	PreRun:  preRunConnect,
+	PostRun: postRunDisconnect,
 }
 
 func init() {

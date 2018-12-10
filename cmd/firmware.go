@@ -17,9 +17,13 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
-	"github.com/spf13/cobra"
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/spf13/cobra"
+	"github.com/willtoth/go-dfuse/dfudevice"
+	"github.com/willtoth/go-dfuse/dfufile"
+	pb "gopkg.in/cheggaaa/pb.v1"
 )
 
 var update bool
@@ -33,7 +37,8 @@ var firmwareCmd = &firmwareCommand{cobra.Command{
 	Use:   "firmware",
 	Short: "Get firmware version or update",
 	Long: `Get the firmware version or program new firmware
-	into the device. To get the firmware pass the -u flag.
+	into the device. To update the firmware pass the file path 
+	to the .dfu file.
 
 The command will block until the firmware is updated. Be sure that
 the device is plugged in and power is not removed during the entire
@@ -45,8 +50,6 @@ update.`,
 func init() {
 	rootCmd.AddCommand(&firmwareCmd.Command)
 	sparkmax.RegisterCommand(firmwareCmd)
-
-	firmwareCmd.Flags().BoolVarP(&update, "update", "u", false, "Get current firmware version from device")
 }
 
 func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, error) {
@@ -73,9 +76,11 @@ func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, er
 }
 
 func firmware(cmd *cobra.Command, args []string) {
-	if update == true {
-		fmt.Println("Firmware update is not implemented at this time")
+	if len(args) == 1 {
+		updateFirmware(args[0])
 	} else {
+		//Run this here so we don't connect during update
+		preRunConnect(cmd, args)
 		//Return the firmware version
 		req := sparkmax.FirmwareRequest{}
 		resp, err := Firmware(&req)
@@ -85,7 +90,101 @@ func firmware(cmd *cobra.Command, args []string) {
 		}
 
 		fmt.Printf("Firmware Version: %s", resp.Version)
+		postRunDisconnect(cmd, args)
 	}
+}
+
+type consoleProgress struct {
+	pb  *pb.ProgressBar
+	inc uint
+	max uint
+}
+
+func (c *consoleProgress) Reset() {
+	c.pb.Reset(int(c.max))
+	c.pb.Set(0)
+	c.pb.Update()
+	c.pb.Start()
+}
+
+func (c *consoleProgress) Increment() {
+	c.pb.Add(int(c.inc))
+	c.pb.Update()
+}
+
+func (c *consoleProgress) SetStatus(status string) {
+	c.pb.Prefix(status)
+}
+
+func (c *consoleProgress) SetIncrement(increment uint) {
+	c.inc = increment
+}
+
+func (c *consoleProgress) SetMax(max uint) {
+	c.pb.SetTotal(int(max))
+	c.max = max
+}
+
+func StartNew() consoleProgress {
+	var c consoleProgress
+	c.pb = pb.New(1)
+	c.pb.SetMaxWidth(120)
+	c.pb.ShowTimeLeft = false
+
+	//Manually update the progress bar
+	c.pb.SetRefreshRate(time.Second * 10000)
+	return c
+}
+
+const (
+	SPARKMAXDFUVID = 0x0483
+	SPARKMAXDFUPID = 0xdf11
+)
+
+func updateFirmware(filename string) {
+	dfu, err := dfufile.Read(filename)
+
+	if err != nil {
+		fmt.Println("DFU File Format Failed: ", err)
+		return
+	}
+
+	fmt.Println("Connecting to device...")
+
+	dev, err := dfudevice.Open(SPARKMAXDFUVID, SPARKMAXDFUPID)
+	defer dev.Close()
+
+	if err != nil {
+		fmt.Println("Failed to initialize ", err)
+		return
+	}
+
+	bar := StartNew()
+	dev.RegisterProgress(&bar)
+
+	err = dfudevice.WriteImage(dfu.Images[0], dev)
+
+	if err != nil {
+		fmt.Println("Write DFUFile Failed ", err)
+		return
+	}
+
+	verify, err := dfudevice.VerifyImage(dfu.Images[0], dev)
+
+	if err != nil || verify == false {
+		fmt.Println("Failed to verify DFU Image: ", err)
+		return
+	}
+
+	err = dev.ExitDFU(uint(dfu.Images[0].Targets[0].Prefix.Address))
+
+	if err != nil || verify == false {
+		fmt.Println("Failed to exit DFU mode: ", err)
+	}
+
+	fmt.Println("")
+	fmt.Println("Success!")
+
 }
 
 func (s *firmwareCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {

@@ -19,8 +19,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/spf13/cobra"
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/spf13/cobra"
 )
 
 // enable and send heartbeat
@@ -73,6 +73,8 @@ GUI.`,
 	},
 	Args:    cobra.ExactArgs(1),
 	Aliases: []string{"run", "Run", "Setpoint"},
+	PreRun:  preRunConnect,
+	PostRun: postRunDisconnect,
 }}
 
 func sendHeartbeat(enable bool) error {

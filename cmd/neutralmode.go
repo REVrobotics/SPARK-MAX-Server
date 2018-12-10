@@ -20,8 +20,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/spf13/cobra"
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/spf13/cobra"
 )
 
 // neutralmodeCmd represents the neutralmode command
@@ -38,6 +38,8 @@ This is the same as calling the command:
 parameter IdleMode <x>`,
 	Run:     runNeutralMode,
 	Aliases: []string{"NeutralMode", "IdleMode", "idlemode"},
+	PreRun:  preRunConnect,
+	PostRun: postRunDisconnect,
 }
 
 func init() {

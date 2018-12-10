@@ -21,8 +21,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/spf13/cobra"
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/spf13/cobra"
 )
 
 // parameterCmd represents the parameter command
@@ -32,6 +32,8 @@ var parameterCmd = &cobra.Command{
 	Short:   "Get or set parameter",
 	Run:     runParameter,
 	Aliases: []string{"param"},
+	PreRun:  preRunConnect,
+	PostRun: postRunDisconnect,
 }
 
 const (

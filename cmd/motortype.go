@@ -20,8 +20,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/spf13/cobra"
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/spf13/cobra"
 )
 
 // motortypeCmd represents the motortype command
@@ -41,6 +41,8 @@ parameter MotorType <x>`,
 	Args:    cobra.MaximumNArgs(1),
 	Run:     runMotorType,
 	Aliases: []string{"MotorType", "motor", "Motor"},
+	PreRun:  preRunConnect,
+	PostRun: postRunDisconnect,
 }
 
 func init() {

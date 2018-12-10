@@ -17,8 +17,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/spf13/cobra"
 )
 
 var listAll bool
@@ -46,11 +46,6 @@ Use this command to list available connected devices if
 more than one device is connected. Output of this command
 can be used to specify device for other commands`,
 	Run: listDevices,
-	//overwrite these since we don't want ot connect/disconnect
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-	},
-	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-	},
 }
 
 func init() {

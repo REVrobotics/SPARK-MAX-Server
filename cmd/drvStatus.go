@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/spf13/cobra"
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/spf13/cobra"
 )
 
 type drvStatusCommand struct {
@@ -38,6 +38,8 @@ var drvStatusCmd = &drvStatusCommand{cobra.Command{
 	Run:     runDRVStatus,
 	Args:    cobra.ExactArgs(0),
 	Aliases: []string{"drv"},
+	PreRun:  preRunConnect,
+	PostRun: postRunDisconnect,
 }}
 
 func init() {

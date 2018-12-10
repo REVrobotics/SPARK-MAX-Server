@@ -43,6 +43,8 @@ deps:
 	$(GOGET) github.com/tarm/serial
 	$(GOGET) go.bug.st/serial.v1
 	$(GOGET) -u github.com/golang/protobuf/protoc-gen-go
+	$(GOGET) github.com/willtoth/go-dfuse
+	$(GOGET) gopkg.in/cheggaaa/pb.v1
 
 # Cross compilation
 #build-linux:

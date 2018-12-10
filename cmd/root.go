@@ -20,11 +20,10 @@ import (
 	"log"
 	"os"
 
+	spark0mq "github.com/REVrobotics/SPARK-MAX-Server/spark0mq"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	spark0mq "github.com/REVrobotics/SPARK-MAX-Server/spark0mq"
-	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 )
 
 var cfgFile string
@@ -75,20 +74,6 @@ and save/load configurations.`,
 			fmt.Println("Interactive feature not yet implmeneted")
 		} else {
 			cmd.Usage()
-		}
-	},
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if Remote == false && Persist == false {
-			err := sparkmax.Connect(Device)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-				os.Exit(1)
-			}
-		}
-	},
-	PersistentPostRun: func(cmd *cobra.Command, args []string) {
-		if Remote == false && Persist == false {
-			sparkmax.Disconnect()
 		}
 	},
 }
