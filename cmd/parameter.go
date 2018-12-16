@@ -40,6 +40,10 @@ const (
 	longPrefix = `The first argument is <parameter ID>, the second
 optional parameter is the value for that parameter. 
 
+To set a negative number, use the -- argument, example:
+
+sparkmax.exe parameter -- kOutputMin_2 -1
+
 Parameter ID list is as follows:
 
 `
@@ -162,8 +166,8 @@ func runParameter(cmd *cobra.Command, args []string) {
 			req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam(val)}
 			resp, err := GetParameter(&req)
 			if resp.Status != sparkmax.ParamStatus_paramOK {
-				fmt.Fprintf(os.Stderr, "Failed to get parameter %s: %s\r\n",
-					sparkmax.ConfigParam_value[args[0]],
+				fmt.Fprintf(os.Stderr, "Controller rejected parameter %s, reason: %s\r\n",
+					args[0],
 					sparkmax.ParamStatus_name[int32(resp.Status)])
 			}
 			if err != nil {

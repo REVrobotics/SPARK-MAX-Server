@@ -27,6 +27,7 @@ enum ctrlType {
     DutyCycle = 0;
     Velocity = 1;
     Voltage = 2;
+    Position = 3;
 }
 
 /*
@@ -60,6 +61,7 @@ enum faults {
     CANRX = 8;
     HasReset = 9;
     DRVFault = 10;
+    OtherFault = 11;
     SoftLimitFwd = 12;
     SoftLimitRev = 13;
     HardLimitFwd = 14;
@@ -599,6 +601,68 @@ enum configParam {
     * @type uint
     */
     kFollowerConfig = 58;
+    
+    /*
+    * Smart Current Limit at stall, or any value less thatn kSmartCurrentConfig R
+    * PM.
+    * @default 60
+    * @type uint
+    * @unit A
+    */
+    kSmartCurrentStallLimit = 59;
+
+    /*
+    * Smart current limit at free speed
+    * @default 0
+    * @type uint
+    * @unit A
+    */
+    kSmartCurrentFreeLimit = 60;
+
+    /*
+    * 
+    * @default 0
+    * @type uint
+    * @unit ms
+    */
+    kSmartCurrentReserved = 62;
+
+    /*
+    * Motor ph-ph resistance
+    * @default 35000
+    * @type uint
+    * @unit uohm
+    */
+    kMotorR = 64;
+
+    /*
+    * Motor ph-ph inductance
+    * @default 3800
+    * @type uint
+    * @unit nH
+    */
+    kMotorL = 65;
+
+    /*
+    * 
+    * @default 0
+    * @type uint
+    */
+    kMotorRsvd1 = 66;
+
+    /*
+    * 
+    * @default 0
+    * @type uint
+    */
+    kMotorRsvd2 = 67;
+
+    /*
+    * 
+    * @default 0
+    * @type uint
+    */
+    kMotorRsvd3 = 68;
 }
 
 //Type lookup for above, lists what type the controller expects for each parameter
@@ -665,6 +729,14 @@ enum configParamTypes {
     kRampRate_t = 2;
     kFollowerID_t = 1;
     kFollowerConfig_t = 1;
+    kSmartCurrentStallLimit_t = 1;
+    kSmartCurrentFreeLimit_t = 1;
+    kSmartCurrentReserved_t = 1;
+    kMotorR_t = 1;
+    kMotorL_t = 1;
+    kMotorRsvd1_t = 1;
+    kMotorRsvd2_t = 1;
+    kMotorRsvd3_t = 1;
 }
 
 //Bit definitions for DRV STAT0

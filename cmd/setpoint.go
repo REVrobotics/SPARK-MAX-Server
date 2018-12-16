@@ -37,6 +37,10 @@ var setpointCmd = &setpointCommand{cobra.Command{
 	Long: `Set the controller setpoint. Use the -e flag
 to also send an enable heartbeat.
 
+To set a negative number, use the -- argument, example:
+
+sparkmax.exe setpoint -- -0.75
+
 **Note** If not run in interactive
 mode (not implemented yet) you cannot reliably set the 
 motor controller as this shell will connect --> 
