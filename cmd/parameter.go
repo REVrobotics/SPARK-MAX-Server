@@ -166,7 +166,7 @@ func runParameter(cmd *cobra.Command, args []string) {
 			req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam(val)}
 			resp, err := GetParameter(&req)
 			if resp.Status != sparkmax.ParamStatus_paramOK {
-				fmt.Fprintf(os.Stderr, "Controller rejected parameter %s, reason: %s\r\n",
+				fmt.Fprintf(os.Stderr, "Controller rejected get parameter %s request, reason: %s\r\n",
 					args[0],
 					sparkmax.ParamStatus_name[int32(resp.Status)])
 			}
@@ -180,8 +180,8 @@ func runParameter(cmd *cobra.Command, args []string) {
 			resp, err := SetParameter(&req)
 
 			if resp.Status != sparkmax.ParamStatus_paramOK {
-				fmt.Fprintf(os.Stderr, "Set parameter failed for %s: %s\r\n",
-					val,
+				fmt.Fprintf(os.Stderr, "Controller rejected value set for parameter %s, reason: %s\r\n",
+					args[0],
 					sparkmax.ParamStatus_name[int32(resp.Status)])
 			}
 
