@@ -1,8 +1,8 @@
 package spark0mq
 
 import (
-	"github.com/golang/protobuf/proto"
 	"github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
+	"github.com/golang/protobuf/proto"
 
 	zmq "github.com/pebbe/zmq4"
 
@@ -13,12 +13,21 @@ type Spark0mqServer struct {
 	port      int
 	verbosity int
 	running   bool
+	publisher chan []byte
 }
 
 func Spark0mqStart(port int) (Spark0mqServer, error) {
 	fmt.Printf("Starting smark0mq REQ on port: %d\r\n", port)
+
+	var server Spark0mqServer
+
+	server.port = port
+	server.verbosity = 0
+	server.running = true
+	server.publisher = make(chan []byte, 32)
+
 	go spark0mqREQ(port)
-	return Spark0mqServer{port, 0, true}, nil
+	return server, nil
 }
 
 func (s *Spark0mqServer) Stop() {
@@ -73,4 +82,32 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 	rawBytes, err = proto.Marshal(&resp)
 	//fmt.Println(rawBytes)
 	return
+}
+
+func (s *Spark0mqServer) PublishMessage(msg []byte) {
+	s.publisher <- msg
+}
+
+func (s *Spark0mqServer) spark0mqPUB(port int) {
+	//  Socket to talk to clients
+	pubSocket, err := zmq.NewSocket(zmq.PUB)
+	if err != nil {
+		panic(err)
+	}
+	defer pubSocket.Close()
+	defer fmt.Println("pubSocket.Close called")
+
+	bindStr := fmt.Sprintf("tcp://*:%d", port)
+	pubSocket.Bind(bindStr)
+
+	for {
+		for msg := range s.publisher {
+			//  Wait for next request from client
+			_, err := pubSocket.SendBytes(msg, 0)
+
+			if err != nil {
+				fmt.Println("Error when attemping to publish data, ", err.Error())
+			}
+		}
+	}
 }
