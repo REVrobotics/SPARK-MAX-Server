@@ -63,13 +63,31 @@ func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, er
 
 		frameIn, err = sparkmax.SparkWriteFrame(frame)
 
-		resp.Version = fmt.Sprintf("v%d.%d.%d", frameIn.Data[0], frameIn.Data[1], uint16(frameIn.Data[2])<<8|uint16(frameIn.Data[3]))
+		resp.Major = uint32(frameIn.Data[0])
+		resp.Minor = uint32(frameIn.Data[1])
+		resp.Build = uint32((uint16(frameIn.Data[2])<<8 | uint16(frameIn.Data[3])))
+		resp.IsDebug = false
+		resp.HardwareVersion = string(frameIn.Data[5])
+
+		resp.Version = fmt.Sprintf("v%d.%d.%d", resp.Major, resp.Minor, resp.Build)
 
 		if frameIn.Data[4] == 1 {
 			resp.Version += ", Debug build"
+			resp.IsDebug = true
 		}
+
+		resp.UpdateSuccess = false
+
 	} else {
-		//TODO: Firmware update
+		err := updateFirmware(command.Filename)
+
+		if err != nil {
+			tmp := sparkmax.RootResponse{Error: err.Error()}
+			resp.Root = &tmp
+			resp.UpdateSuccess = false
+		}
+
+		resp.UpdateSuccess = true
 	}
 
 	return &resp, err
@@ -141,12 +159,12 @@ const (
 	SPARKMAXDFUPID = 0xdf11
 )
 
-func updateFirmware(filename string) {
+func updateFirmware(filename string) error {
 	dfu, err := dfufile.Read(filename)
 
 	if err != nil {
 		fmt.Println("DFU File Format Failed: ", err)
-		return
+		return err
 	}
 
 	fmt.Println("Connecting to device...")
@@ -156,7 +174,7 @@ func updateFirmware(filename string) {
 
 	if err != nil {
 		fmt.Println("Failed to initialize ", err)
-		return
+		return err
 	}
 
 	bar := StartNew()
@@ -166,25 +184,27 @@ func updateFirmware(filename string) {
 
 	if err != nil {
 		fmt.Println("Write DFUFile Failed ", err)
-		return
+		return err
 	}
 
 	verify, err := dfudevice.VerifyImage(dfu.Images[0], dev)
 
 	if err != nil || verify == false {
 		fmt.Println("Failed to verify DFU Image: ", err)
-		return
+		return err
 	}
 
 	err = dev.ExitDFU(uint(dfu.Images[0].Targets[0].Prefix.Address))
 
 	if err != nil || verify == false {
 		fmt.Println("Failed to exit DFU mode: ", err)
+		return err
 	}
 
 	fmt.Println("")
 	fmt.Println("Success!")
 
+	return nil
 }
 
 func (s *firmwareCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {

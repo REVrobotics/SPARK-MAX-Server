@@ -257,7 +257,17 @@ message firmwareRequest {
 */
 message firmwareResponse {
     string version = 1;
+
+    //Return true if the firmware was updated, false otherwise
+    //Returns false when polling the firmware version
+    bool updateSuccess = 2;
+    
     rootResponse root = 3;
+    uint32 major = 4;
+    uint32 minor = 5;
+    uint32 build = 6;
+    bool isDebug = 7;
+    string hardwareVersion = 8;
 }
 
 /*
