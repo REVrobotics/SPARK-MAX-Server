@@ -679,20 +679,47 @@ enum configParam {
     kMotorRsvd3 = 68;
 
     /*
-    * 
-    * @default 0
+    * Number of encoder counts in a single revolution, counting every edge on the
+    *  A and B lines of a quadrature encoder. (Note: This is different than the 
+    * CPR spec of the encoder which is 'Cycles per revolution'. This value is 4 
+    * * CPR.
+    * @default 4096
     * @type uint
-    * @unit ms
     */
-    kStatus0FrameRate = 69;
+    kEncoderCountsPerRev = 69;
+
+    /*
+    * Number of samples to average for velocity data based on quadrature encoder 
+    * input. This value can be between 1 and 64.
+    * @default 64
+    * @type uint
+    */
+    kEncoderAverageDepth = 70;
+
+    /*
+    * Delta time value for encoder velocity measurement in 500us increments. The 
+    * velocity calculation will take delta the current sample, and the sample  
+    * x * 500us behind, and divide by this the sample delta time. Can be any numb
+    * er between 1 and 255
+    * @default 200
+    * @type uint
+    * @unit per 500us
+    */
+    kEncoderSampleDelta = 71;
 
     /*
     * 
     * @default 0
     * @type uint
-    * @unit ms
     */
-    kStatus1FrameRate = 70;
+    kEncoderRsvd0 = 72;
+
+    /*
+    * 
+    * @default 0
+    * @type uint
+    */
+    kEncoderRsvd1 = 73;
 }
 
 //Type lookup for above, lists what type the controller expects for each parameter
@@ -769,8 +796,11 @@ enum configParamTypes {
     kMotorRsvd1_t = 1;
     kMotorRsvd2_t = 1;
     kMotorRsvd3_t = 1;
-    kStatus0FrameRate_t = 1;
-    kStatus1FrameRate_t = 1;
+    kEncoderCountsPerRev_t = 1;
+    kEncoderAverageDepth_t = 1;
+    kEncoderSampleDelta_t = 1;
+    kEncoderRsvd0_t = 1;
+    kEncoderRsvd1_t = 1;
 }
 
 //Bit definitions for DRV STAT0
