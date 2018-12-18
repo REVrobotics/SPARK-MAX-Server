@@ -29,8 +29,8 @@ $(info ${CGO_CFLAGS})
 
 all: build
 build: 
-	$(GOBUILD) -o $(BINARY_NAME) -v
 	protoc -I./sparkmax --go_out=./sparkmax ./sparkmax/SPARK-MAX*.proto
+	$(GOBUILD) -o $(BINARY_NAME) -v
 
 clean: 
 	$(GOCLEAN)

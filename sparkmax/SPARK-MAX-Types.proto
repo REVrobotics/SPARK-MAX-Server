@@ -603,9 +603,8 @@ enum configParam {
     kFollowerConfig = 58;
     
     /*
-    * Smart Current Limit at stall, or any value less thatn kSmartCurrentConfig R
-    * PM.
-    * @default 60
+    * Smart Current Limit at stall, or any value less than kSmartCurrentConfig RPM
+    * @default 80
     * @type uint
     * @unit A
     */
@@ -618,6 +617,13 @@ enum configParam {
     * @unit A
     */
     kSmartCurrentFreeLimit = 60;
+    /*
+    * Smart current limit RPM value to start linear reduction of current limit. S
+    * et this > free speed to disable.
+    * @default 10000 (disabled)
+    * @type uint
+    */
+    kSmartCurrentConfig = 61;
 
     /*
     * 
@@ -626,6 +632,14 @@ enum configParam {
     * @unit ms
     */
     kSmartCurrentReserved = 62;
+
+    /*
+    * Kv in RPM/V
+    * @default 480
+    * @type uint
+    * @unit RPM/V
+    */
+    kMotorKv = 63;
 
     /*
     * Motor ph-ph resistance
@@ -663,6 +677,49 @@ enum configParam {
     * @type uint
     */
     kMotorRsvd3 = 68;
+
+    /*
+    * Number of encoder counts in a single revolution, counting every edge on the
+    *  A and B lines of a quadrature encoder. (Note: This is different than the 
+    * CPR spec of the encoder which is 'Cycles per revolution'. This value is 4 
+    * * CPR.
+    * @default 4096
+    * @type uint
+    */
+    kEncoderCountsPerRev = 69;
+
+    /*
+    * Number of samples to average for velocity data based on quadrature encoder 
+    * input. This value can be between 1 and 64.
+    * @default 64
+    * @type uint
+    */
+    kEncoderAverageDepth = 70;
+
+    /*
+    * Delta time value for encoder velocity measurement in 500us increments. The 
+    * velocity calculation will take delta the current sample, and the sample  
+    * x * 500us behind, and divide by this the sample delta time. Can be any numb
+    * er between 1 and 255
+    * @default 200
+    * @type uint
+    * @unit per 500us
+    */
+    kEncoderSampleDelta = 71;
+
+    /*
+    * 
+    * @default 0
+    * @type uint
+    */
+    kEncoderRsvd0 = 72;
+
+    /*
+    * 
+    * @default 0
+    * @type uint
+    */
+    kEncoderRsvd1 = 73;
 }
 
 //Type lookup for above, lists what type the controller expects for each parameter
@@ -731,12 +788,19 @@ enum configParamTypes {
     kFollowerConfig_t = 1;
     kSmartCurrentStallLimit_t = 1;
     kSmartCurrentFreeLimit_t = 1;
+    kSmartCurrentConfig_t = 1;
     kSmartCurrentReserved_t = 1;
+    kMotorKv_t = 1;
     kMotorR_t = 1;
     kMotorL_t = 1;
     kMotorRsvd1_t = 1;
     kMotorRsvd2_t = 1;
     kMotorRsvd3_t = 1;
+    kEncoderCountsPerRev_t = 1;
+    kEncoderAverageDepth_t = 1;
+    kEncoderSampleDelta_t = 1;
+    kEncoderRsvd0_t = 1;
+    kEncoderRsvd1_t = 1;
 }
 
 //Bit definitions for DRV STAT0
