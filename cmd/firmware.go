@@ -160,6 +160,13 @@ const (
 )
 
 func updateFirmware(filename string) error {
+	foundDevices := dfudevice.List(SPARKMAXDFUVID, SPARKMAXDFUPID)
+
+	if len(foundDevices) == 0 {
+		fmt.Println("No DFU Devices Found")
+		return nil
+	}
+
 	dfu, err := dfufile.Read(filename)
 
 	if err != nil {
