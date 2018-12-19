@@ -73,16 +73,19 @@ const (
 	CmdApiDcSet       = 0x002
 	CmdApiSpdSet      = 0x012
 	CmdApiPosSet      = 0x032
+	CmdApiVolSet      = 0x042
 	CmdApiStat0       = 0x060
 	CmdApiStat1       = 0x061
 	CmdApiUsrStat0    = 0x062
 	CmdApiUsrStat1    = 0x063
 	CmdApiUsrStat2    = 0x064
 	CmdApiUsrStat3    = 0x065
-	CmdApiDrvStatus   = 0x06A
+	CmdApiDrvStat     = 0x06A
+	CmdApiClrFaults   = 0x06E
 	CmdApiSetCfg      = 0x070
 	CmdApiGetCfg      = 0x071
 	CmdApiBurnFlash   = 0x072
+	CmdApiSetFollower = 0x073
 	CmdApiNack        = 0x080
 	CmdApiAck         = 0x081
 	CmdApiBroadcast   = 0x090
@@ -90,10 +93,19 @@ const (
 	CmdApiSync        = 0x093
 	CmdApiIdQuery     = 0x094
 	CmdApiIdAssign    = 0x095
+	CmdApiFirmware    = 0x098
+
+	ExtCmdBootloader = 0x010
+)
+
+const (
+	CmdTypeStandard = 0
+	CmdTypeExtended = 1
+	CmdTypeRemote   = 2
 )
 
 type UsbFrameHeader struct {
-	PacketNum    uint32
+	CommandType  uint32
 	DeviceType   uint32
 	Manufacturer uint32
 	API          uint32
@@ -149,7 +161,7 @@ func DeserializeUsbFrame(in []byte) (UsbFrame, error) {
 }
 
 func usbFrameHeaderToUint32(header UsbFrameHeader) (output uint32) {
-	output |= header.PacketNum << shiftPacketNum
+	output |= header.CommandType << shiftPacketNum
 	output |= header.DeviceType << shiftDeviceType
 	output |= header.Manufacturer << shiftManufacturer
 	output |= header.API << shiftAPI
@@ -158,7 +170,7 @@ func usbFrameHeaderToUint32(header UsbFrameHeader) (output uint32) {
 }
 
 func uint32ToUsbFrameHeader(input uint32) (header UsbFrameHeader) {
-	header.PacketNum = (input & bitsPacketNum) >> shiftPacketNum
+	header.CommandType = (input & bitsPacketNum) >> shiftPacketNum
 	header.DeviceType = (input & bitsDeviceType) >> shiftDeviceType
 	header.Manufacturer = (input & bitsManufacturer) >> shiftManufacturer
 	header.API = (input & bitsAPI) >> shiftAPI

@@ -84,7 +84,7 @@ func drvStatus(command *sparkmax.DRVStatusRequest) (*sparkmax.DRVStatusResponse,
 	var resp sparkmax.DRVStatusResponse
 	frame := sparkmax.DefaultFrame()
 
-	frame.Header.API = sparkmax.CmdApiDrvStatus
+	frame.Header.API = sparkmax.CmdApiDrvStat
 
 	frameIn, err := sparkmax.SparkWriteFrame(frame)
 

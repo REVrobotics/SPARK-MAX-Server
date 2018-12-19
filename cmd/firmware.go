@@ -52,6 +52,13 @@ func init() {
 	sparkmax.RegisterCommand(firmwareCmd)
 }
 
+func sendBootloaderCommand() {
+	frame := sparkmax.DefaultFrame()
+	frame.Header.API = sparkmax.ExtCmdBootloader
+	frame.Header.CommandType = sparkmax.CmdTypeExtended
+	sparkmax.SparkWriteFrame(frame)
+}
+
 func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, error) {
 	var resp sparkmax.FirmwareResponse
 	var err error
@@ -79,7 +86,27 @@ func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, er
 		resp.UpdateSuccess = false
 
 	} else {
-		err := updateFirmware(command.Filename)
+		if sparkmax.IsConnected() != true {
+			err := sparkmax.Connect(Device)
+			if err == nil {
+				fmt.Println("Entering bootloader...")
+				sendBootloaderCommand()
+				sparkmax.Disconnect()
+			}
+		}
+
+		//Wait for up to 5 seconds for device to enter DFU mode
+		for timeToWait := 0; timeToWait < 10; timeToWait++ {
+			foundDevices := dfudevice.List(SPARKMAXDFUVID, SPARKMAXDFUPID)
+
+			if len(foundDevices) != 0 {
+				break
+			}
+
+			time.Sleep(500 * time.Millisecond)
+		}
+
+		err = updateFirmware(command.Filename)
 
 		if err != nil {
 			tmp := sparkmax.RootResponse{Error: err.Error()}
@@ -95,7 +122,12 @@ func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, er
 
 func firmware(cmd *cobra.Command, args []string) {
 	if len(args) == 1 {
-		updateFirmware(args[0])
+		req := sparkmax.FirmwareRequest{Filename: args[0]}
+		resp, err := Firmware(&req)
+		if err != nil || resp.UpdateSuccess != true {
+			fmt.Fprintf(os.Stderr, "Failed to upload firmware: %v\r\n", err)
+			return
+		}
 	} else {
 		//Run this here so we don't connect during update
 		preRunConnect(cmd, args)
@@ -103,7 +135,7 @@ func firmware(cmd *cobra.Command, args []string) {
 		req := sparkmax.FirmwareRequest{}
 		resp, err := Firmware(&req)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to get firmware: %s\r\n", err.Error())
+			fmt.Fprintf(os.Stderr, "Failed to get firmware: %v\r\n", err)
 			return
 		}
 
