@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
@@ -83,7 +84,7 @@ func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, er
 			resp.IsDebug = true
 		}
 
-		resp.UpdateSuccess = false
+		resp.UpdateStarted = false
 
 	} else {
 		if sparkmax.IsConnected() != true {
@@ -106,15 +107,15 @@ func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, er
 			time.Sleep(500 * time.Millisecond)
 		}
 
-		err = updateFirmware(command.Filename)
+		err = startFirmwareUpdate(command.Filename)
 
 		if err != nil {
 			tmp := sparkmax.RootResponse{Error: err.Error()}
 			resp.Root = &tmp
-			resp.UpdateSuccess = false
+			resp.UpdateStarted = false
 		}
 
-		resp.UpdateSuccess = true
+		resp.UpdateStarted = true
 	}
 
 	return &resp, err
@@ -124,10 +125,17 @@ func firmware(cmd *cobra.Command, args []string) {
 	if len(args) == 1 {
 		req := sparkmax.FirmwareRequest{Filename: args[0]}
 		resp, err := Firmware(&req)
-		if err != nil || resp.UpdateSuccess != true {
+		if err != nil || resp.UpdateStarted != true {
 			fmt.Fprintf(os.Stderr, "Failed to upload firmware: %v\r\n", err)
 			return
 		}
+
+		err = firmwareThread.waitOnFirmwareUpdate(20)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to upload firmware after start: %v\r\n", err)
+			return
+		}
+
 	} else {
 		//Run this here so we don't connect during update
 		preRunConnect(cmd, args)
@@ -191,29 +199,93 @@ const (
 	SPARKMAXDFUPID = 0xdf11
 )
 
-func updateFirmware(filename string) error {
+type firmwareUpdateThread struct {
+	sync.Mutex
+	status  string
+	running bool
+	err     error
+}
+
+var firmwareThread firmwareUpdateThread
+
+func startFirmwareUpdate(filename string) error {
+	firmwareThread.Lock()
+	if firmwareThread.running == true {
+		return fmt.Errorf("Firmware update already running, must wait for completion")
+	}
+	firmwareThread.Unlock()
+
+	firmwareThread = firmwareUpdateThread{}
+	firmwareThread.running = true
+
+	go firmwareThread.updateFirmware(filename)
+
+	return nil
+}
+
+//Block until firmware update is done
+func (f *firmwareUpdateThread) waitOnFirmwareUpdate(timeout time.Duration) error {
+	timeLeft := timeout * 1000
+
+	pollTime := time.Duration(100)
+
+	for timeLeft > 0 {
+		firmwareThread.Lock()
+		running := firmwareThread.running
+		firmwareThread.Unlock()
+
+		if running == false {
+			break
+		}
+
+		time.Sleep(pollTime * time.Millisecond)
+		timeLeft = timeLeft - pollTime
+	}
+
+	firmwareThread.Lock()
+	err := firmwareThread.err
+	firmwareThread.Unlock()
+
+	return err
+}
+
+func (f *firmwareUpdateThread) updateFirmware(filename string) {
+	defer func() {
+		f.Lock()
+		f.running = false
+		f.Unlock()
+	}()
+
+	fmt.Println("Starting Update!")
+
 	foundDevices := dfudevice.List(SPARKMAXDFUVID, SPARKMAXDFUPID)
 
 	if len(foundDevices) == 0 {
-		fmt.Println("No DFU Devices Found")
-		return nil
+		f.Lock()
+		f.err = fmt.Errorf("No DFU Devices Found")
+		f.Unlock()
+		return
 	}
 
 	dfu, err := dfufile.Read(filename)
 
+	f.Lock()
 	if err != nil {
-		fmt.Println("DFU File Format Failed: ", err)
-		return err
+		f.err = fmt.Errorf("DFU File Format Failed: %v", err)
+		return
 	}
-
-	fmt.Println("Connecting to device...")
+	f.status = "Connecting to device..."
+	f.Unlock()
+	fmt.Println(f.status)
 
 	dev, err := dfudevice.Open(SPARKMAXDFUVID, SPARKMAXDFUPID)
 	defer dev.Close()
 
 	if err != nil {
-		fmt.Println("Failed to initialize ", err)
-		return err
+		f.Lock()
+		f.err = fmt.Errorf("Failed to initialize: %v", err)
+		f.Unlock()
+		return
 	}
 
 	bar := StartNew()
@@ -222,28 +294,32 @@ func updateFirmware(filename string) error {
 	err = dfudevice.WriteImage(dfu.Images[0], dev)
 
 	if err != nil {
-		fmt.Println("Write DFUFile Failed ", err)
-		return err
+		f.Lock()
+		f.err = fmt.Errorf("Write DFUFile Failed %v", err)
+		f.Unlock()
+		return
 	}
 
 	verify, err := dfudevice.VerifyImage(dfu.Images[0], dev)
 
 	if err != nil || verify == false {
-		fmt.Println("Failed to verify DFU Image: ", err)
-		return err
+		f.Lock()
+		f.err = fmt.Errorf("Failed to verify DFU Image: %v", err)
+		f.Unlock()
+		return
 	}
 
 	err = dev.ExitDFU(uint(dfu.Images[0].Targets[0].Prefix.Address))
 
 	if err != nil || verify == false {
-		fmt.Println("Failed to exit DFU mode: ", err)
-		return err
+		f.Lock()
+		f.err = fmt.Errorf("Failed to exit DFU mode: %v", err)
+		f.Unlock()
+		return
 	}
 
 	fmt.Println("")
 	fmt.Println("Success!")
-
-	return nil
 }
 
 func (s *firmwareCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {

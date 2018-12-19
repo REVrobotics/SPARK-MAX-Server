@@ -260,7 +260,7 @@ message firmwareResponse {
 
     //Return true if the firmware was updated, false otherwise
     //Returns false when polling the firmware version
-    bool updateSuccess = 2;
+    bool updateStarted = 2;
     
     rootResponse root = 3;
     uint32 major = 4;
