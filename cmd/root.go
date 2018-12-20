@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 REV Robotics LLC (support@revrobotics.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,14 +43,9 @@ var port uint
 // default port
 var defaultPort uint = 8001
 
-// Version of application
-const (
-	AppVersion = "0.1.5"
-)
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Version: AppVersion,
+	Version: "Undefined",
 	Use:     "sparkmax",
 	Short:   "configure and control REV CAN BLDC controller",
 	Long: `Use this tool to configure and command the REV CAN BLDC
@@ -85,6 +80,10 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func SetVersion(version string) {
+	rootCmd.Version = version
 }
 
 func init() {

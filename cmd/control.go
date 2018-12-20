@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 REV Robotics LLC (support@revrobotics.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,20 +56,21 @@ func (s *disconnectCommand) ExpectedType() string {
 
 func (s *pingCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
 	r := &sparkmax.PingResponse{Connected: sparkmax.IsConnected()}
-	isFWUpdating := firmwareThread.IsRunning()
+	/*
+		isFWUpdating := firmwareThread.IsRunning()
 
-	if isFWUpdating {
-		r.IsUpdating = isFWUpdating
-		r.UpdateStageMessage = firmwareThread.GetStatus()
-		r.UpdateStagePercent = firmwareThread.GetPercent()
+		if isFWUpdating {
+			r.IsUpdating = isFWUpdating
+			r.UpdateStageMessage = firmwareThread.GetStatus()
+			r.UpdateStagePercent = firmwareThread.GetPercent()
 
-		fwErr := firmwareThread.GetError()
-		if fwErr != nil {
-			tmp := sparkmax.RootResponse{Error: fwErr.Error()}
-			r.Root = &tmp
+			fwErr := firmwareThread.GetError()
+			if fwErr != nil {
+				tmp := sparkmax.RootResponse{Error: fwErr.Error()}
+				r.Root = &tmp
+			}
 		}
-	}
-
+	*/
 	resp.Resp = &sparkmax.ResponseWire_Ping{Ping: r}
 	return resp, err
 }

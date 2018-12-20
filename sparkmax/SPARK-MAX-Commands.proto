@@ -1,3 +1,17 @@
+// Copyright © 2018 REV Robotics LLC (support@revrobotics.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 syntax = "proto3";
 
 package sparkmax;
@@ -187,18 +201,6 @@ message pingResponse {
     //This will be false while updating. After an update is complete, 
     //Connect() will need to be called again
     bool connected = 2;
-
-    //Returns true if the application is in the process of updating a SPARK MAX
-    //wait for this flag to go false to determine if it is done updating
-    bool isUpdating = 3;
-
-    //If isUpdating = true, this will return a status message for the state
-    //of the process the update is on
-    string updateStageMessage = 4;
-
-    //If isUpdating = true, this will return a percentage value of how far
-    //along on the particular update stage the firmware update is
-    float updateStagePercent = 5;
 }
 
 /*
@@ -284,6 +286,29 @@ message firmwareResponse {
     uint32 build = 6;
     bool isDebug = 7;
     string hardwareVersion = 8;
+
+    //Returns true if the application is in the process of updating a SPARK MAX
+    //wait for this flag to go false to determine if it is done updating
+    bool isUpdating = 9;
+
+    //If isUpdating = true, this will return a status message for the state
+    //of the process the update is on
+    string updateStageMessage = 10;
+
+    //If isUpdating = true, this will return a percentage value of how far
+    //along on the particular update stage the firmware update is
+    float updateStagePercent = 11;
+
+    //Returns true if the application has finished updating firmware
+    //since the last call to this message. This flag will clear once
+    //read. This flag only tells if the update is done, and does
+    //not imply a successful update.
+    bool updateComplete = 12;
+
+    //This field is only valid when updateComplete = true
+    //If this flag returns false, check root.error to 
+    //get the error during the update process
+    bool updateCompletedSuccessfully = 13;
 }
 
 /*

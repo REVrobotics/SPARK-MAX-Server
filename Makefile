@@ -9,6 +9,11 @@ GOGET=$(GOCMD) get
 BINARY_NAME_WINDOWS=sparkmax.exe
 BINARY_UNIX=sparkmax.out
 
+# Versioning, increment every time called
+BUILD_NUMBER_FILE := build-number.txt
+BUILD_DATE := `date -u +.%Y%m%d.%H%M%S`
+
+
 CURRENT_DIR=$(shell pwd)
 PROJECT_PATH=${GOPATH}/src/github.com/REVrobotics/SPARK-MAX-Server/
 
@@ -29,8 +34,9 @@ $(info ${CGO_CFLAGS})
 
 all: build
 build: 
+	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 	protoc -I./sparkmax --go_out=./sparkmax ./sparkmax/SPARK-MAX*.proto
-	$(GOBUILD) -o $(BINARY_NAME) -v
+	$(GOBUILD) -o $(BINARY_NAME) -v -ldflags "-s -w -X main.BuildNumber=`cat ${BUILD_NUMBER_FILE}` -X 'main.BuildDate=`date +%Y-%m-%d%_I:%M:%S`'"
 
 clean: 
 	$(GOCLEAN)

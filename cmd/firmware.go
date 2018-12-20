@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 REV Robotics LLC (support@revrobotics.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,11 +60,35 @@ func sendBootloaderCommand() {
 	sparkmax.SparkWriteFrame(frame)
 }
 
+var hasRunUpdateFlag bool
+
 func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, error) {
 	var resp sparkmax.FirmwareResponse
 	var err error
 	var frameIn sparkmax.UsbFrame
 	frame := sparkmax.BroadcastFrame()
+	resp.IsUpdating = false
+
+	if firmwareThread.IsRunning() {
+		resp.IsUpdating = true
+		resp.UpdateStageMessage = firmwareThread.GetStatus()
+		resp.UpdateStagePercent = firmwareThread.GetPercent()
+		resp.UpdateComplete = false
+		return &resp, err
+	} else if hasRunUpdateFlag == true {
+		hasRunUpdateFlag = false
+		//Update has completed since last call
+		resp.UpdateComplete = true
+		resp.UpdateCompletedSuccessfully = true
+
+		err = firmwareThread.GetError()
+
+		if err != nil {
+			resp.UpdateCompletedSuccessfully = false
+			tmp := sparkmax.RootResponse{Error: err.Error()}
+			resp.Root = &tmp
+		}
+	}
 
 	if command.Filename == "" {
 		frame.Header.API = sparkmax.CmdBcastFirmware
@@ -94,6 +118,10 @@ func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, er
 				sendBootloaderCommand()
 				sparkmax.Disconnect()
 			}
+		} else {
+			fmt.Println("Entering bootloader...")
+			sendBootloaderCommand()
+			sparkmax.Disconnect()
 		}
 
 		//Wait for up to 5 seconds for device to enter DFU mode
@@ -116,6 +144,8 @@ func Firmware(command *sparkmax.FirmwareRequest) (*sparkmax.FirmwareResponse, er
 		}
 
 		resp.UpdateStarted = true
+		resp.IsUpdating = true
+		hasRunUpdateFlag = true
 	}
 
 	return &resp, err

@@ -18,6 +18,15 @@ import (
 	"github.com/REVrobotics/SPARK-MAX-Server/cmd"
 )
 
+var BuildNumber = "Undefined"
+var BuildDate = "Undefined"
+
+const (
+	BuildMajor = "1"
+	BuildMinor = "0"
+)
+
 func main() {
+	cmd.SetVersion(BuildMajor + "." + BuildMinor + "." + BuildNumber + " Built " + BuildDate)
 	cmd.Execute()
 }
