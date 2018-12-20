@@ -45,7 +45,7 @@ var defaultPort uint = 8001
 
 // Version of application
 const (
-	AppVersion = "0.1.1"
+	AppVersion = "0.1.5"
 )
 
 // rootCmd represents the base command when called without any subcommands

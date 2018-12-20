@@ -201,9 +201,71 @@ const (
 
 type firmwareUpdateThread struct {
 	sync.Mutex
-	status  string
-	running bool
-	err     error
+	status      string
+	progress    uint
+	progressInc uint
+	progressMax uint
+	running     bool
+	err         error
+}
+
+func (f *firmwareUpdateThread) Reset() {
+	f.Lock()
+	f.progress = 0
+	f.Unlock()
+}
+
+func (f *firmwareUpdateThread) Increment() {
+	f.Lock()
+	f.progress = f.progress + f.progressInc
+	f.Unlock()
+}
+
+func (f *firmwareUpdateThread) SetStatus(status string) {
+	f.Lock()
+	f.status = status
+	f.Unlock()
+}
+
+func (f *firmwareUpdateThread) SetIncrement(increment uint) {
+	f.Lock()
+	f.progressInc = increment
+	f.Unlock()
+}
+
+func (f *firmwareUpdateThread) SetMax(max uint) {
+	f.Lock()
+	f.progressMax = max
+	f.Unlock()
+}
+
+func (f *firmwareUpdateThread) GetStatus() string {
+	f.Lock()
+	status := f.status
+	f.Unlock()
+	return status
+}
+
+func (f *firmwareUpdateThread) GetPercent() float32 {
+	f.Lock()
+	val := f.progress
+	max := f.progressMax
+	f.Unlock()
+	return float32(val) / float32(max)
+}
+
+func (f *firmwareUpdateThread) IsRunning() bool {
+	f.Lock()
+	isRunning := f.running
+	f.Unlock()
+	return isRunning
+}
+
+func (f *firmwareUpdateThread) GetError() error {
+	f.Lock()
+	err := f.err
+	f.Unlock()
+	return err
 }
 
 var firmwareThread firmwareUpdateThread
@@ -211,9 +273,10 @@ var firmwareThread firmwareUpdateThread
 func startFirmwareUpdate(filename string) error {
 	firmwareThread.Lock()
 	if firmwareThread.running == true {
-		return fmt.Errorf("Firmware update already running, must wait for completion")
+		err := fmt.Errorf("Firmware update already running, must wait for completion")
+		firmwareThread.Unlock()
+		return err
 	}
-	firmwareThread.Unlock()
 
 	firmwareThread = firmwareUpdateThread{}
 	firmwareThread.running = true
@@ -229,10 +292,9 @@ func (f *firmwareUpdateThread) waitOnFirmwareUpdate(timeout time.Duration) error
 
 	pollTime := time.Duration(100)
 
+	fmt.Println("")
 	for timeLeft > 0 {
-		firmwareThread.Lock()
-		running := firmwareThread.running
-		firmwareThread.Unlock()
+		running := firmwareThread.IsRunning()
 
 		if running == false {
 			break
@@ -242,11 +304,7 @@ func (f *firmwareUpdateThread) waitOnFirmwareUpdate(timeout time.Duration) error
 		timeLeft = timeLeft - pollTime
 	}
 
-	firmwareThread.Lock()
-	err := firmwareThread.err
-	firmwareThread.Unlock()
-
-	return err
+	return firmwareThread.GetError()
 }
 
 func (f *firmwareUpdateThread) updateFirmware(filename string) {
@@ -269,13 +327,12 @@ func (f *firmwareUpdateThread) updateFirmware(filename string) {
 
 	dfu, err := dfufile.Read(filename)
 
-	f.Lock()
 	if err != nil {
+		f.Lock()
 		f.err = fmt.Errorf("DFU File Format Failed: %v", err)
+		f.Unlock()
 		return
 	}
-	f.status = "Connecting to device..."
-	f.Unlock()
 	fmt.Println(f.status)
 
 	dev, err := dfudevice.Open(SPARKMAXDFUVID, SPARKMAXDFUPID)
@@ -290,6 +347,7 @@ func (f *firmwareUpdateThread) updateFirmware(filename string) {
 
 	bar := StartNew()
 	dev.RegisterProgress(&bar)
+	dev.RegisterProgress(f)
 
 	err = dfudevice.WriteImage(dfu.Images[0], dev)
 

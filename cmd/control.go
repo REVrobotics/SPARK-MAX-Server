@@ -56,6 +56,20 @@ func (s *disconnectCommand) ExpectedType() string {
 
 func (s *pingCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
 	r := &sparkmax.PingResponse{Connected: sparkmax.IsConnected()}
+	isFWUpdating := firmwareThread.IsRunning()
+
+	if isFWUpdating {
+		r.IsUpdating = isFWUpdating
+		r.UpdateStageMessage = firmwareThread.GetStatus()
+		r.UpdateStagePercent = firmwareThread.GetPercent()
+
+		fwErr := firmwareThread.GetError()
+		if fwErr != nil {
+			tmp := sparkmax.RootResponse{Error: fwErr.Error()}
+			r.Root = &tmp
+		}
+	}
+
 	resp.Resp = &sparkmax.ResponseWire_Ping{Ping: r}
 	return resp, err
 }

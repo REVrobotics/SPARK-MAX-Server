@@ -183,6 +183,9 @@ message pingRequest {
 message pingResponse {
     rootResponse root = 1;
     bool connected = 2;
+    bool isUpdating = 3;
+    string updateStageMessage = 4;
+    float updateStagePercent = 5;
 }
 
 /*
