@@ -20,6 +20,7 @@ import (
 
 var BuildNumber = "Undefined"
 var BuildDate = "Undefined"
+var BuildCommit = ""
 
 const (
 	BuildMajor = "1"
@@ -27,6 +28,6 @@ const (
 )
 
 func main() {
-	cmd.SetVersion(BuildMajor + "." + BuildMinor + "." + BuildNumber + " Built " + BuildDate)
+	cmd.SetVersion(BuildMajor + "." + BuildMinor + "." + BuildNumber + " Built " + BuildDate + " " + BuildCommit)
 	cmd.Execute()
 }
