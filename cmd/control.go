@@ -35,6 +35,12 @@ func init() {
 func (s *connectCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
 	err = sparkmax.Connect(req.GetConnect().Device)
 	r := &sparkmax.ConnectResponse{Connected: sparkmax.IsConnected()}
+
+	if err != nil {
+		tmp := sparkmax.RootResponse{Error: err.Error()}
+		r.Root = &tmp
+	}
+
 	resp.Resp = &sparkmax.ResponseWire_Connect{Connect: r}
 	return resp, err
 }
@@ -46,6 +52,12 @@ func (s *connectCommand) ExpectedType() string {
 func (s *disconnectCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
 	err = sparkmax.Disconnect()
 	r := &sparkmax.DisconnectResponse{Connected: sparkmax.IsConnected()}
+
+	if err != nil {
+		tmp := sparkmax.RootResponse{Error: err.Error()}
+		r.Root = &tmp
+	}
+
 	resp.Resp = &sparkmax.ResponseWire_Disconnect{Disconnect: r}
 	return resp, err
 }

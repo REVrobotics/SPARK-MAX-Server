@@ -168,6 +168,7 @@ message connectRequest {
 */
 message connectResponse {
     bool connected = 1;
+    rootResponse root = 2;
 }
 
 /*
@@ -182,6 +183,7 @@ message disconnectRequest {
 */
 message disconnectResponse {
     bool connected = 1;
+    rootResponse root = 2;
 }
 
 /*
