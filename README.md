@@ -18,6 +18,8 @@ Steps to build the sparkusb server/cli tool
 - Working Go environment [intalled](https://golang.org/doc/install) 
 *Not sure the minimum dependancy, as of development we are using 1.10.3, the ubuntu package in 16.04 usses 1.6 which does not work properly. Ubuntu 18.04 uses 1.10.1 and is ok (Same with Linux Mint 19). Successfully built using go 1.7 on a raspberry pi zero w.*
 
+- Windows requires the [Visual C++ Redistributable 2013](https://www.microsoft.com/en-us/download/details.aspx?id=40784).
+
 - Make build system
 
 ## Go dependencies:
