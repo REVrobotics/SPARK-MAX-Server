@@ -168,7 +168,7 @@ func ListParameters(command *sparkmax.ParameterListRequest) (*sparkmax.Parameter
 	allParams.Parameters = make([]*sparkmax.ParameterResponse, len(sparkmax.ConfigParam_value))
 	for _, idx := range sparkmax.ConfigParam_value {
 		req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam(idx)}
-		resp, err := GetParameter(&req)
+		resp, _ := GetParameter(&req)
 
 		allParams.Parameters[idx] = resp
 	}
