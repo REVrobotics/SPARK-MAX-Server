@@ -370,6 +370,7 @@ message parameterResponse {
     paramType type = 2;
     paramStatus status = 3;
     rootResponse root = 4;
+    uint32 number = 5;
 }
 
 message parameterListRequest { 
@@ -377,8 +378,7 @@ message parameterListRequest {
 }
 
 message parameterListResponse {
-    repeated string parameter = 1;
-    repeated paramType type = 2;
+    repeated parameterResponse parameters = 1;
     rootResponse root = 3;
 }
 

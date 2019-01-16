@@ -20,6 +20,7 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"text/tabwriter"
 
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 	"github.com/spf13/cobra"
@@ -43,6 +44,9 @@ optional parameter is the value for that parameter.
 To set a negative number, use the -- argument, example:
 
 sparkmax.exe parameter -- kOutputMin_2 -1
+
+To dump all parameters set by the device use:
+'sparkmax.exe parameter all'
 
 Parameter ID list is as follows:
 
@@ -159,7 +163,37 @@ func GetParameter(command *sparkmax.GetParameterRequest) (*sparkmax.ParameterRes
 	return &resp, err
 }
 
+func ListParameters(command *sparkmax.ParameterListRequest) (*sparkmax.ParameterListResponse, error) {
+	allParams := sparkmax.ParameterListResponse{}
+	allParams.Parameters = make([]*sparkmax.ParameterResponse, len(sparkmax.ConfigParam_value))
+	for _, idx := range sparkmax.ConfigParam_value {
+		req := sparkmax.GetParameterRequest{Parameter: sparkmax.ConfigParam(idx)}
+		resp, err := GetParameter(&req)
+
+		allParams.Parameters[idx] = resp
+	}
+	return &allParams, nil
+}
+
 func runParameter(cmd *cobra.Command, args []string) {
+	if args[0] == "all" || args[0] == "dump" {
+		resp, err := ListParameters(&sparkmax.ParameterListRequest{})
+
+		if err != nil {
+			fmt.Println("Failed to get parameter list: ", err)
+		}
+
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+		for i, param := range resp.Parameters {
+			fmt.Fprintf(w, "%s:\tType: %s\tValue: %s\tStatus: %s\r\n",
+				sparkmax.ConfigParam_name[int32(i)],
+				sparkmax.ParamType_name[int32(param.Type)],
+				param.Value,
+				sparkmax.ParamStatus_name[int32(param.Status)])
+		}
+		w.Flush()
+		return
+	}
 	//TODO: Allow non-exact spelling
 	if val, ok := sparkmax.ConfigParam_value[args[0]]; ok {
 		if len(args) == 1 {
@@ -196,9 +230,11 @@ func runParameter(cmd *cobra.Command, args []string) {
 
 type setParameterCommand struct{}
 type getParameterCommand struct{}
+type listAllParameterCommand struct{}
 
 var getParameterCmd = getParameterCommand{}
 var setParameterCmd = setParameterCommand{}
+var listAllParameterCmd = listAllParameterCommand{}
 
 func (s *setParameterCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
 	r, err := SetParameter(req.GetSetParameter())
@@ -226,4 +262,18 @@ func (g *getParameterCommand) SparkCommandProcess(req sparkmax.RequestWire) (res
 
 func (g *getParameterCommand) ExpectedType() string {
 	return "GetParameter"
+}
+
+func (g *listAllParameterCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
+	r, err := ListParameters(&sparkmax.ParameterListRequest{})
+	if err != nil {
+		tmp := sparkmax.RootResponse{Error: err.Error()}
+		r.Root = &tmp
+	}
+	resp.Resp = &sparkmax.ResponseWire_Parameterlist{Parameterlist: r}
+	return resp, err
+}
+
+func (g *listAllParameterCommand) ExpectedType() string {
+	return "ParameterList"
 }
