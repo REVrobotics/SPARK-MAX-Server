@@ -86,6 +86,7 @@ func SetParameter(command *sparkmax.SetParameterRequest) (*sparkmax.ParameterRes
 	var rawMsg uint32
 	var err error
 	resp.Type = getParameterType(command.Parameter)
+	resp.Number = uint32(command.Parameter)
 
 	//Parse to string from raw bytes of the appropriate type
 	switch resp.Type {
@@ -146,6 +147,7 @@ func GetParameter(command *sparkmax.GetParameterRequest) (*sparkmax.ParameterRes
 	rawMsg := binary.LittleEndian.Uint32(frameIn.Data[2:6])
 	resp.Type = sparkmax.ParamType(frameIn.Data[6])
 	resp.Status = sparkmax.ParamStatus(frameIn.Data[7])
+	resp.Number = uint32(command.Parameter)
 
 	//Parse to string from raw bytes of the appropriate type
 	switch resp.Type {
@@ -184,9 +186,9 @@ func runParameter(cmd *cobra.Command, args []string) {
 		}
 
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
-		for i, param := range resp.Parameters {
+		for _, param := range resp.Parameters {
 			fmt.Fprintf(w, "%s:\tType: %s\tValue: %s\tStatus: %s\r\n",
-				sparkmax.ConfigParam_name[int32(i)],
+				sparkmax.ConfigParam_name[int32(param.Number)],
 				sparkmax.ParamType_name[int32(param.Type)],
 				param.Value,
 				sparkmax.ParamStatus_name[int32(param.Status)])
