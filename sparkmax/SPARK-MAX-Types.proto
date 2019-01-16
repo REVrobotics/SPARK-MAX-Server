@@ -63,7 +63,7 @@ enum inputMode {
 /*
 * Faults type enum, these valInvalidIDues match the SPARK firmware
 */
-enum faults {
+enum faultBits {
     Brownout = 0;
     Overcurrent = 1;
     Overvoltage = 2;

@@ -30,14 +30,14 @@ type drvStatusCommand struct {
 
 // setpointCmd represents the setpoint command
 var drvStatusCmd = &drvStatusCommand{cobra.Command{
-	Use:   "drvstatus",
+	Use:   "faults",
 	Short: "Read the SPI status registers from the DRV8320",
 	Long: `Read the two status registers from the DRV8320 over SPI.
 	The definition of each register can be found in the device 
 	datasheet here: http://www.ti.com/lit/ds/symlink/drv8320.pdf`,
 	Run:     runDRVStatus,
 	Args:    cobra.ExactArgs(0),
-	Aliases: []string{"drv"},
+	Aliases: []string{"drv", "drvstatus", "stat", "status"},
 	PreRun:  preRunConnect,
 	PostRun: postRunDisconnect,
 }}
@@ -80,6 +80,23 @@ func drvUintToStat1(Stat1Bits uint16, Stat1 *sparkmax.DRVStat1) {
 	Stat1.SA_OC = false
 }
 
+func faultUintToFaults(FaultBits uint16, Faults *sparkmax.FaultFlags) {
+	Faults.Brownout = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["Brownout"])) != 0
+	Faults.Overcurrent = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["Overcurrent"])) != 0
+	Faults.Overvoltage = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["Overvoltage"])) != 0
+	Faults.MotorFault = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["MotorFault"])) != 0
+	Faults.SensorFault = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["SensorFault"])) != 0
+	Faults.Stall = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["Stall"])) != 0
+	Faults.EEPROMCRC = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["EEPROMCRC"])) != 0
+	Faults.CANTX = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["CANTX"])) != 0
+	Faults.CANRX = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["CANRX"])) != 0
+	Faults.OtherFault = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["OtherFault"])) != 0
+	Faults.SoftLimitFwd = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["SoftLimitFwd"])) != 0
+	Faults.SoftLimitRev = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["SoftLimitRev"])) != 0
+	Faults.HardLimitFwd = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["HardLimitFwd"])) != 0
+	Faults.HardLimitRev = (FaultBits & bitLocationToMask(sparkmax.FaultBits_value["HardLimitRev"])) != 0
+}
+
 func drvStatus(command *sparkmax.DRVStatusRequest) (*sparkmax.DRVStatusResponse, error) {
 	var resp sparkmax.DRVStatusResponse
 	frame := sparkmax.DefaultFrame()
@@ -95,11 +112,17 @@ func drvStatus(command *sparkmax.DRVStatusRequest) (*sparkmax.DRVStatusResponse,
 	} else {
 		Stat0Bits := binary.LittleEndian.Uint16(frameIn.Data[0:2])
 		Stat1Bits := binary.LittleEndian.Uint16(frameIn.Data[2:4])
+		faultBits := binary.LittleEndian.Uint16(frameIn.Data[4:6])
+		stickyFaultBits := binary.LittleEndian.Uint16(frameIn.Data[6:8])
 		resp.Stat0 = &sparkmax.DRVStat0{}
 		resp.Stat1 = &sparkmax.DRVStat1{}
+		resp.Faults = &sparkmax.FaultFlags{}
+		resp.StickyFaults = &sparkmax.FaultFlags{}
 
 		drvUintToStat0(Stat0Bits, resp.Stat0)
 		drvUintToStat1(Stat1Bits, resp.Stat1)
+		faultUintToFaults(faultBits, resp.Faults)
+		faultUintToFaults(stickyFaultBits, resp.StickyFaults)
 	}
 	return &resp, err
 }
@@ -110,8 +133,16 @@ func runDRVStatus(cmd *cobra.Command, args []string) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in drvStatus flash: %s\n", err.Error())
 	} else {
+		jsonFaults, _ := json.MarshalIndent(resp.Faults, "", "\t")
+		formattedLine := fmt.Sprintf("Faults Set:\r\n%s", string(jsonFaults))
+		fmt.Print(formattedLine)
+
+		jsonStickyFaults, _ := json.MarshalIndent(resp.StickyFaults, "", "\t")
+		formattedLine = fmt.Sprintf("\r\nSticky Faults Set:\r\n%s", string(jsonStickyFaults))
+		fmt.Print(formattedLine)
+
 		jsonStat0, _ := json.MarshalIndent(resp.Stat0, "", "\t")
-		formattedLine := fmt.Sprintf("Flags Set for DRV Stat0:\r\n%s", string(jsonStat0))
+		formattedLine = fmt.Sprintf("\r\nFlags Set for DRV Stat0:\r\n%s", string(jsonStat0))
 		fmt.Print(formattedLine)
 
 		jsonStat1, _ := json.MarshalIndent(resp.Stat1, "", "\t")

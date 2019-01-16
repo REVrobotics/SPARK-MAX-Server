@@ -109,7 +109,12 @@ service sparkMaxServer {
     rpc Follow(followerRequest) returns (rootResponse) {}
 
     /*
-    * Get the status of the DRV8320 device.
+    * Get the faults, sticky faults, and status of the DRV8320 device.
+    */
+    rpc ClearFaults(clearFaultsRequest) returns (clearFaultsResponse) {}
+
+    /*
+    * Get the faults, sticky faults, and status of the DRV8320 device.
     */
     rpc DRVStatus(DRVStatusRequest) returns (DRVStatusResponse) {}
 }
@@ -133,6 +138,7 @@ message RequestWire {
         burnRequest             burn = 23;
         parameterListRequest    parameterList = 24;
         DRVStatusRequest        drvStatus = 25;
+        clearFaultsRequest      clearFaults = 26;
     }
 }
 
@@ -153,6 +159,7 @@ message ResponseWire {
         pingResponse            ping = 20;
         burnResponse            burn = 21;
         DRVStatusResponse       drvStatus = 25;
+        clearFaultsResponse     clearFaults = 26;
     }
 }
 
@@ -400,6 +407,14 @@ message followerRequest {
     uint32 followerconfig = 3;
 }
 
+message clearFaultsRequest {
+    rootCommand root = 1;
+}
+
+message clearFaultsResponse {
+    rootResponse root = 1;
+}
+
 /*
 * Request for status from the DRV8320
 */
@@ -414,6 +429,102 @@ message DRVStatusResponse {
     DRVStat0 stat0 = 1;
     DRVStat1 stat1 = 2;
     rootResponse root = 3;
+    FaultFlags faults = 4;
+    FaultFlags stickyFaults = 5;
+}
+
+message FaultFlags {
+    /*
+    * Indicates voltage went below the level that the motor driver
+    * voltage will cut off.
+    */
+    bool Brownout = 1;
+
+    /*
+    * Indicates the motor current reached the value set by
+    * kCurrentChop (default 115A)
+    */
+    bool Overcurrent = 2;
+
+    /*
+    * Indicates the voltage exceeded the recommended max
+    */
+    bool Overvoltage = 3;
+
+    /*
+    * Indicates a fault with the motor, e.g. mismatch 
+    * motor type?
+    */
+    bool MotorFault = 4;
+
+    /*
+    * Indicates the fault with the sensor, most likey a 
+    * disconnected sensor, or a brushless motor configured
+    * in a mode other than Hall Sensor mode
+    */
+    bool SensorFault = 5;
+
+    /*
+    * Not implemented
+    */
+    bool Stall = 6;
+
+    /*
+    * Indicates an error with the internally stored settings
+    */
+    bool EEPROMCRC = 7;
+
+    /*
+    * Indicates an error with CAN transmission
+    */
+    bool CANTX = 8;
+
+    /*
+    * Indicates an error with CAN Reception
+    */
+    bool CANRX = 9;
+
+    /*
+    * Indicates the motor controller has reset. This flag is 
+    * set in the 'Faults' bit when the device first powers on, and cleared
+    * when initialization is complete (but still persists as a sticky fault)
+    */
+    bool HasReset = 10;
+
+    /*
+    * Indicates a fault with the motor driver IC, use the DRV status bits
+    * to determine the cause
+    */
+    bool DRVFault = 11;
+
+    /*
+    * Indicates some other fault not covered by the other bits
+    */
+    bool OtherFault = 12;
+
+    /*
+    * Indicates the configured fwd soft limit was triggered, whether or not 
+    * enabled.
+    */
+    bool SoftLimitFwd = 13;
+
+    /*
+    * Indicates the configured rev soft limit was triggered, whether or not 
+    * enabled.
+    */
+    bool SoftLimitRev = 14;
+
+    /*
+    * Indicates the configured fwd hard limit was triggered (limit switch input), 
+    * whether or not enabled.
+    */
+    bool HardLimitFwd = 15;
+
+    /*
+    * Indicates the configured rev hard limit was triggered (limit switch input), 
+    * whether or not enabled.
+    */
+    bool HardLimitRev = 16;
 }
 
 /*
