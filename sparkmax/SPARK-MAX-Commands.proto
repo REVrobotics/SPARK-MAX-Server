@@ -117,6 +117,11 @@ service sparkMaxServer {
     * Get the faults, sticky faults, and status of the DRV8320 device.
     */
     rpc DRVStatus(DRVStatusRequest) returns (DRVStatusResponse) {}
+
+    /*
+    * Get the faults, sticky faults, and status of the DRV8320 device.
+    */
+    rpc Telemetry(telemetryRequest) returns (telemetryResponse) {}
 }
 
 /*
@@ -139,6 +144,7 @@ message RequestWire {
         parameterListRequest    parameterList = 24;
         DRVStatusRequest        drvStatus = 25;
         clearFaultsRequest      clearFaults = 26;
+        telemetryRequest        telemetry = 27;
     }
 }
 
@@ -160,6 +166,7 @@ message ResponseWire {
         burnResponse            burn = 21;
         DRVStatusResponse       drvStatus = 25;
         clearFaultsResponse     clearFaults = 26;
+        telemetryResponse       telemetry = 27;
     }
 }
 
@@ -646,4 +653,23 @@ message DRVStat1 {
     * Always 0 for DRV8320
     */
     bool SA_OC = 11;
+}
+
+enum telemetryId {
+    SensorPosition = 0;
+}
+
+message telemetryData {
+    telemetryId id = 1;
+    float value = 2;
+}
+
+message telemetryRequest {
+    rootCommand root = 1;
+    telemetryData data = 2;
+}
+
+message telemetryResponse {
+    rootResponse root = 1;
+    repeated telemetryData data = 2;
 }

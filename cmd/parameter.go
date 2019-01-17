@@ -67,6 +67,7 @@ func init() {
 	rootCmd.AddCommand(parameterCmd)
 	sparkmax.RegisterCommand(&getParameterCmd)
 	sparkmax.RegisterCommand(&setParameterCmd)
+	sparkmax.RegisterCommand(&listAllParameterCmd)
 }
 
 func getParameterType(paramID sparkmax.ConfigParam) sparkmax.ParamType {

@@ -31,10 +31,11 @@ type drvStatusCommand struct {
 // setpointCmd represents the setpoint command
 var drvStatusCmd = &drvStatusCommand{cobra.Command{
 	Use:   "faults",
-	Short: "Read the SPI status registers from the DRV8320",
-	Long: `Read the two status registers from the DRV8320 over SPI.
-	The definition of each register can be found in the device 
-	datasheet here: http://www.ti.com/lit/ds/symlink/drv8320.pdf`,
+	Short: "Read the faults, sticky faults and SPI status registers from the DRV8320",
+	Long: `Read the faults, sticky faults  the two status registers 
+	from the DRV8320 over SPI. The definition of each register can 
+	be found in the device datasheet here: 
+	http://www.ti.com/lit/ds/symlink/drv8320.pdf`,
 	Run:     runDRVStatus,
 	Args:    cobra.ExactArgs(0),
 	Aliases: []string{"drv", "drvstatus", "stat", "status"},
