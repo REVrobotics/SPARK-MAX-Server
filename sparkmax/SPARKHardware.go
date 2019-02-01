@@ -125,8 +125,8 @@ func Read() (UsbFrame, error) {
 	}
 
 	if len%FrameSize != 0 {
-		fmt.Println(buf)
-		return frame, fmt.Errorf("Packet frame unaligned, size: %d", len)
+		//return frame, fmt.Errorf("Packet frame unaligned, size: %d", len)
+		return frame, nil
 	}
 
 	//TODO: Depending on frame size, parse multiple frames

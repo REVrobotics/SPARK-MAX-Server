@@ -24,7 +24,7 @@ var BuildCommit = ""
 
 const (
 	BuildMajor = "1"
-	BuildMinor = "0"
+	BuildMinor = "1"
 )
 
 func main() {
