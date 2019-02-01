@@ -36,3 +36,6 @@ dist/
 
 #pre-compiled binary libs
 *.lib
+
+#release files
+*.zip
