@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 	"github.com/spf13/cobra"
@@ -55,6 +56,11 @@ func FactoryReset(command *sparkmax.FactoryResetRequest) (*sparkmax.RootResponse
 	var resp sparkmax.RootResponse
 	var err error
 	frame := sparkmax.DefaultFrame()
+
+	if Verbosity >= 2 {
+		log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+		log.Printf("Factory Reset: Full Wipe: %s Do Burn: %s\r\n", command.GetFullWipe(), command.GetBurnAfterWrite())
+	}
 
 	if command.GetFullWipe() == true {
 		frame.Header.API = sparkmax.CmdApiFactoryReset

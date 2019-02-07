@@ -15,6 +15,8 @@
 package spark0mq
 
 import (
+	"log"
+
 	"github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 	"github.com/golang/protobuf/proto"
 
@@ -30,17 +32,17 @@ type Spark0mqServer struct {
 	publisher chan []byte
 }
 
-func Spark0mqStart(port int) (Spark0mqServer, error) {
+func Spark0mqStart(port, verbosity int) (Spark0mqServer, error) {
 	fmt.Printf("Starting smark0mq REQ on port: %d\r\n", port)
 
 	var server Spark0mqServer
 
 	server.port = port
-	server.verbosity = 0
+	server.verbosity = verbosity
 	server.running = true
 	server.publisher = make(chan []byte, 32)
 
-	go spark0mqREQ(port)
+	go spark0mqREQ(port, verbosity)
 	return server, nil
 }
 
@@ -52,7 +54,7 @@ func (s *Spark0mqServer) IsRunning() bool {
 	return s.running
 }
 
-func spark0mqREQ(port int) {
+func spark0mqREQ(port, verbosity int) {
 	//  Socket to talk to clients
 	responder, err := zmq.NewSocket(zmq.REP)
 	if err != nil {
@@ -68,19 +70,24 @@ func spark0mqREQ(port int) {
 		//  Wait for next request from client
 		msg, _ := responder.RecvBytes(0)
 
-		//fmt.Println("Received ", msg)
+		if verbosity >= 4 {
+			log.Println("Received ", msg)
+		}
 
-		resp, err := parseMessage(msg)
+		resp, err := parseMessage(msg, verbosity)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
 		//  Send reply back to client
 		responder.SendBytes(resp, 0)
-		//fmt.Println("Sent ", resp)
+
+		if verbosity >= 4 {
+			log.Println("Sent ", resp)
+		}
 	}
 }
 
-func parseMessage(msg []byte) (rawBytes []byte, err error) {
+func parseMessage(msg []byte, verbosity int) (rawBytes []byte, err error) {
 	req := sparkmax.RequestWire{}
 	root := &sparkmax.RootResponse{}
 	var resp sparkmax.ResponseWire
@@ -90,6 +97,9 @@ func parseMessage(msg []byte) (rawBytes []byte, err error) {
 		root.Error = err.Error()
 		resp.Resp = &sparkmax.ResponseWire_Root{Root: root}
 	} else {
+		if verbosity >= 3 {
+			log.Println("ZeroMQ running: ", req.String())
+		}
 		resp, err = sparkmax.RunCommand(req)
 	}
 

@@ -34,6 +34,9 @@ var Device string
 // Persist mode keeps connection alive while application is running
 var Persist bool
 
+// Verbosity 0 (default) don't show any messages, 1 show some, 2 show all
+var Verbosity uint
+
 // Remote mode sets up a TCP/IP server to stream the command line
 var Remote bool
 
@@ -57,7 +60,7 @@ externally. It can update firmware, set and get parameters
 and save/load configurations.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if Remote == true {
-			server, err := spark0mq.Spark0mqStart(int(port))
+			server, err := spark0mq.Spark0mqStart(int(port), int(Verbosity))
 			if err != nil {
 				log.Fatalf("Failed to start server %v", err)
 			}
@@ -92,15 +95,15 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.USB-BLDC-TOOL.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sparkmax-server.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.PersistentFlags().StringVarP(&Device, "device", "d", "", "Set the device COM port")
 	rootCmd.PersistentFlags().BoolVarP(&Persist, "interactive", "i", false, "Keep connection alive between commands")
 	rootCmd.PersistentFlags().BoolVarP(&Remote, "remote", "r", false, "Run a TCP/IP server to stream commands")
 	rootCmd.PersistentFlags().UintVarP(&port, "port", "p", defaultPort, "Set port for 0mq server")
+	rootCmd.PersistentFlags().UintVar(&Verbosity, "verbosity", 0, "Set verbosity 0-3")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -116,9 +119,9 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".USB-BLDC-TOOL" (without extension).
+		// Search config in home directory with name ".sparkmax-server" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".USB-BLDC-TOOL")
+		viper.SetConfigName(".sparkmax-server")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

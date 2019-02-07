@@ -16,7 +16,9 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 	"github.com/spf13/cobra"
@@ -54,7 +56,18 @@ func burnFlash(command *sparkmax.BurnRequest) (*sparkmax.BurnResponse, error) {
 	frame.Data[0] = 0xA3
 	frame.Data[1] = 0x3A
 
-	_, err := sparkmax.SparkWriteFrame(frame)
+	//_, err := sparkmax.SparkWriteFrame(frame)
+
+	err := sparkmax.Write(frame)
+
+	time.Sleep(time.Millisecond * 500)
+
+	_, err = sparkmax.Read()
+
+	if Verbosity >= 2 {
+		log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+		log.Println("Burn Command")
+	}
 
 	if err != nil {
 		var tmp sparkmax.RootResponse

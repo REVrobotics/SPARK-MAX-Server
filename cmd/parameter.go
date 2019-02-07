@@ -17,6 +17,7 @@ package cmd
 import (
 	"encoding/binary"
 	"fmt"
+	"log"
 	"math"
 	"os"
 	"strconv"
@@ -88,6 +89,11 @@ func SetParameter(command *sparkmax.SetParameterRequest) (*sparkmax.ParameterRes
 	var err error
 	resp.Type = getParameterType(command.Parameter)
 	resp.Number = uint32(command.Parameter)
+
+	if Verbosity >= 2 {
+		log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+		log.Printf("Set Parameter: %s %s", sparkmax.ConfigParam_name[int32(command.Parameter)], command.Value)
+	}
 
 	//Parse to string from raw bytes of the appropriate type
 	switch resp.Type {
@@ -161,6 +167,11 @@ func GetParameter(command *sparkmax.GetParameterRequest) (*sparkmax.ParameterRes
 	case sparkmax.ParamType_float32:
 		rawMsgFloat := math.Float32frombits(rawMsg)
 		resp.Value = strconv.FormatFloat(float64(rawMsgFloat), 'f', 6, 32)
+	}
+
+	if Verbosity >= 2 {
+		log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+		log.Printf("Get Parameter: %s %s\r\n", sparkmax.ConfigParam_name[int32(command.Parameter)], resp.Value)
 	}
 
 	return &resp, err
