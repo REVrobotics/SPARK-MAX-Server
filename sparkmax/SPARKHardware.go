@@ -59,6 +59,18 @@ func IsConnected() bool {
 	if localPort == nil {
 		return false
 	}
+
+	//Write a command to check
+	frame := DefaultFrame()
+	frame.Header.CommandType = CmdTypeExtended
+	frame.Header.API = 0x020
+	_, err := SparkWriteFrame(frame)
+
+	if err != nil {
+		Disconnect()
+		return false
+	}
+
 	return true
 }
 
@@ -125,8 +137,8 @@ func Read() (UsbFrame, error) {
 	}
 
 	if len%FrameSize != 0 {
-		//return frame, fmt.Errorf("Packet frame unaligned, size: %d", len)
-		return frame, nil
+		return frame, fmt.Errorf("Packet frame unaligned, size: %d", len)
+		//return frame, nil
 	}
 
 	//TODO: Depending on frame size, parse multiple frames

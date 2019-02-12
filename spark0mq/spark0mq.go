@@ -98,9 +98,13 @@ func parseMessage(msg []byte, verbosity int) (rawBytes []byte, err error) {
 		resp.Resp = &sparkmax.ResponseWire_Root{Root: root}
 	} else {
 		if verbosity >= 3 {
-			log.Println("ZeroMQ running: ", req.String())
+			log.Println("ZeroMQ Recieved: ", req.String())
 		}
 		resp, err = sparkmax.RunCommand(req)
+	}
+
+	if verbosity >= 3 {
+		log.Println("ZeroMQ Response: ", resp.String())
 	}
 
 	rawBytes, err = proto.Marshal(&resp)
