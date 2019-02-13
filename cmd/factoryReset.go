@@ -114,15 +114,11 @@ func runFactoryReset(cmd *cobra.Command, args []string) {
 }
 
 func (s *factoryResetCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp sparkmax.ResponseWire, err error) {
-	r, err := Telemetry(req.GetTelemetry())
-	if err != nil {
-		tmp := sparkmax.RootResponse{Error: err.Error()}
-		r.Root = &tmp
-	}
-	resp.Resp = &sparkmax.ResponseWire_Telemetry{Telemetry: r}
+	r, err := FactoryReset(req.GetFactoryReset())
+	resp.Resp = &sparkmax.ResponseWire_Root{Root: r}
 	return resp, err
 }
 
 func (s *factoryResetCommand) ExpectedType() string {
-	return "factoryReset"
+	return "FactoryReset"
 }

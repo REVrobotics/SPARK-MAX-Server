@@ -163,5 +163,5 @@ func (s *drvStatusCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp s
 }
 
 func (s *drvStatusCommand) ExpectedType() string {
-	return "drvStatus"
+	return "DrvStatus"
 }

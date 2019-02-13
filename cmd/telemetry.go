@@ -124,5 +124,5 @@ func (s *telemetryCommand) SparkCommandProcess(req sparkmax.RequestWire) (resp s
 }
 
 func (s *telemetryCommand) ExpectedType() string {
-	return "telemetry"
+	return "Telemetry"
 }
