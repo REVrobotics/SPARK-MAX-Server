@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"time"
 
 	sparkmax "github.com/REVrobotics/SPARK-MAX-Server/sparkmax"
 	"github.com/spf13/cobra"
@@ -74,7 +75,18 @@ func FactoryReset(command *sparkmax.FactoryResetRequest) (*sparkmax.RootResponse
 
 	frame.Data[4] = uint8(sparkmax.ParamType_bool)
 
-	_, err = sparkmax.SparkWriteFrame(frame)
+	//_, err = sparkmax.SparkWriteFrame(frame)
+
+	err = sparkmax.Write(frame)
+
+	time.Sleep(time.Millisecond * 500)
+
+	_, err = sparkmax.Read()
+
+	if Verbosity >= 2 {
+		log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+		log.Println("Factory Reset Command")
+	}
 
 	if err != nil {
 		resp.Error = err.Error()
