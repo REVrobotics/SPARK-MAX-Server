@@ -84,7 +84,7 @@ GUI.`,
 func sendHeartbeat(enable bool) error {
 	frame := sparkmax.DefaultFrame()
 
-	frame.Header.API = sparkmax.CmdApiHeartbeat
+	frame.Header.API = sparkmax.CmdApiUSBHB
 
 	if enable {
 		frame.Data[0] = 1

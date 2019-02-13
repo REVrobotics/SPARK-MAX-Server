@@ -113,6 +113,7 @@ const (
 	CmdApiIdAssign       = 0x095
 	CmdApiFirmware       = 0x098
 	CmdApiEnum           = 0x099
+	CmdApiUSBHB          = 0x09A
 	CmdApiMechPos        = 0x0A0
 
 	ExtCmdBootloader = 0x010
